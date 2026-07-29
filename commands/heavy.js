@@ -66,6 +66,18 @@ module.exports = {
                         .setDescription("What flavor of helpless restraint to wear...")
                         .setAutocomplete(true),
                 )
+        )
+        .addSubcommand((subcommand) =>
+            subcommand
+                .setName("any")
+                .setDescription("Equip any kind of heavy bondage")
+                .addUserOption((opt) => opt.setName("user").setDescription("Who to put the thing on..."))
+                .addStringOption((opt) =>
+                    opt
+                        .setName("type")
+                        .setDescription("What flavor of helpless restraint to wear...")
+                        .setAutocomplete(true),
+                )
         ),
 	async autoComplete(interaction) {
         try {
@@ -73,10 +85,10 @@ module.exports = {
             let subcommand = interaction.options.getSubcommand();
             let chosenuserid = interaction.options.get("user")?.value ?? interaction.user.id; // Note we can only retrieve the user ID here!
             let autocompletes = process.autocompletes.heavy;
-            if (subcommand != "furniture") {
+            if ((subcommand != "furniture") && (subcommand != "any")) {
                 autocompletes = autocompletes.filter((f) => getBaseHeavy(f.value).heavytags.includes(subcommand));
             }
-            else {
+            else if (subcommand == "furniture") {
                 autocompletes = autocompletes.filter((f) => getBaseHeavy(f.value).heavytags.length == 0);
             }
             let matches = didYouMean(focusedValue, autocompletes, {
@@ -107,7 +119,7 @@ module.exports = {
             let targetuser = interaction.options.getUser("user") ? interaction.options.getUser("user") : interaction.user;
             let heavychoice = interaction.options.getString("type");
             if (!heavychoice) {
-                if (interaction.options.getSubcommand() == "arms") { heavychoice = "armbinder_latex" }
+                if ((interaction.options.getSubcommand() == "arms") || (interaction.options.getSubcommand() == "any")) { heavychoice = "armbinder_latex" }
                 if (interaction.options.getSubcommand() == "legs") { heavychoice = "legbinder_latex" }
                 if (interaction.options.getSubcommand() == "container") { heavychoice = "pole_dancer" }
                 if (interaction.options.getSubcommand() == "furniture") { heavychoice = "furniture_couch" }

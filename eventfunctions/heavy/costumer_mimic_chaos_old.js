@@ -84,7 +84,7 @@ let tick = async (serverID, userID, datain) => {
             }
             else if ((randomchoice == 1) && !blocks.includes("mitten")) {
                 // Mitten
-                arr = process.mittentypes.entries().filter((f) => {
+                arr = Object.keys(process.mittentypes).map((k) => process.mittentypes[k]).filter((f) => {
                     let goodtoreturn = true;
                     tags.forEach((t) => {
                         if (f.tags && f.tags.includes(t)) {
@@ -110,7 +110,7 @@ let tick = async (serverID, userID, datain) => {
                 outfitpieces.push({ category: "mittens", itemtowear: choice.value, color: null })
             } 
             else if ((randomchoice == 2) && !blocks.includes("collar")) {
-                arr = process.collartypes.entries().filter((f) => {
+                arr = Object.keys(process.collartypes).map((k) => process.collartypes[k]).filter((f) => {
                     let goodtoreturn = true;
                     tags.forEach((t) => {
                         if (f.tags && f.tags.includes(t)) {

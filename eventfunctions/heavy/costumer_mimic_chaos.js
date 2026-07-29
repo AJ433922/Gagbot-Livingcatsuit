@@ -51,10 +51,26 @@ let dressprotocoltick = async (serverID, userID, heavy) => {
             let randomchoice = Math.floor(Math.random() * 9); // PLZ BE RANDOM
             let arr;
             let choice;
+            console.log(`${i}, ${randomchoice}`);
             if (randomchoice == 0) {
                 // Gag
-                arr = Object.keys(process.gagtypes)
-                choice = arr[Math.floor(arr.length * Math.random())];
+                arr = Object.entries(process.gagtypes).filter((f) => {
+                    let goodtoreturn = true;
+                    tags.forEach((t) => {
+                        if (f.tags && f.tags.includes(t)) {
+                            goodtoreturn = false;
+                        }
+                    })
+                    if (f.hidden) { goodtoreturn = false }
+                    return goodtoreturn;
+                })
+                arr.forEach((w) => {
+                    goodtags.forEach((t) => {
+                        if (w.tags && w.tags.includes(t)) {
+                            arr.push(w) // double the chance to get a thing of that tag
+                        }
+                    })
+                })
                 // unique choices only.
                 while (outfitpieceschosen.includes(choice)) {
                     choice = arr[Math.floor(arr.length * Math.random())];
@@ -64,13 +80,14 @@ let dressprotocoltick = async (serverID, userID, heavy) => {
             }
             else if ((randomchoice == 1) && !blocks.includes("mitten")) {
                 // Mitten
-                arr = process.mittentypes.entries().filter((f) => {
+                arr = Object.entries(process.mittentypes).filter((f) => {
                     let goodtoreturn = true;
                     tags.forEach((t) => {
                         if (f.tags && f.tags.includes(t)) {
                             goodtoreturn = false;
                         }
                     })
+                    if (f.hidden) { goodtoreturn = false }
                     return goodtoreturn;
                 })
                 arr.forEach((w) => {
@@ -90,13 +107,14 @@ let dressprotocoltick = async (serverID, userID, heavy) => {
                 outfitpieces.push(choice.value)
             } 
             else if ((randomchoice == 2) && !blocks.includes("collar")) {
-                arr = process.collartypes.entries().filter((f) => {
+                arr = Object.entries(process.collartypes).filter((f) => {
                     let goodtoreturn = true;
                     tags.forEach((t) => {
                         if (f.tags && f.tags.includes(t)) {
                             goodtoreturn = false;
                         }
                     })
+                    if (f.hidden) { goodtoreturn = false }
                     return goodtoreturn;
                 })
                 arr.forEach((w) => {
@@ -125,6 +143,7 @@ let dressprotocoltick = async (serverID, userID, heavy) => {
                             goodtoreturn = false;
                         }
                     })
+                    if (f.hidden) { goodtoreturn = false }
                     return goodtoreturn;
                 })
                 arr.forEach((f) => {
@@ -154,6 +173,7 @@ let dressprotocoltick = async (serverID, userID, heavy) => {
                             goodtoreturn = false;
                         }
                     })
+                    if (f.hidden) { goodtoreturn = false }
                     return goodtoreturn;
                 })
                 arr.forEach((f) => {
@@ -175,14 +195,14 @@ let dressprotocoltick = async (serverID, userID, heavy) => {
             }
             else if ((randomchoice == 5) && !blocks.includes("heavy")) {
                 // This one has to go to the end, so it is pushed to the heavyend option.
-                arr = [...process.heavytypes]
-                arr = arr.filter((f) => {
+                arr = Object.entries(process.heavytypes).filter((f) => {
                     let goodtoreturn = true;
                     tags.forEach((t) => {
                         if (f.tags && f.tags.includes(t)) {
                             goodtoreturn = false;
                         }
                     })
+                    if (f.hidden) { goodtoreturn = false }
                     return goodtoreturn;
                 })
                 arr.forEach((w) => {
@@ -202,14 +222,14 @@ let dressprotocoltick = async (serverID, userID, heavy) => {
                 heavyend = choice.value;
             }
             else if ((randomchoice == 5) && !blocks.includes("headwear")) {
-                arr = [...process.headtypes]
-                arr = arr.filter((f) => {
+                arr = Object.entries(process.headtypes).filter((f) => {
                     let goodtoreturn = true;
                     tags.forEach((t) => {
                         if (f.tags && f.tags.includes(t)) {
                             goodtoreturn = false;
                         }
                     })
+                    if (f.hidden) { goodtoreturn = false }
                     return goodtoreturn;
                 })
                 arr.forEach((w) => {
@@ -239,6 +259,8 @@ let dressprotocoltick = async (serverID, userID, heavy) => {
                     })
                     return goodtoreturn;
                 })
+                // Filter any hidden items
+                arr = arr.filter((f) => !f.hidden);
                 arr.forEach((w) => {
                     goodtags.forEach((t) => {
                         if (w.tags && Object.keys(w.tags).includes(t)) {
