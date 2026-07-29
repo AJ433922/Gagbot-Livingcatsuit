@@ -4,4 +4,6 @@ exports.name = "Gasmask (Aphrodisiacs)";
 
 exports.tags = ["latex", "gasmask", "drug"];
 
+exports.blockgag = true;
+
 exports.itemdescription = `The **Gasmask (Aphrodisiacs)** will cause any arousal you gain to be doubled. `

@@ -4,6 +4,8 @@ exports.name = "Gasmask (Linked)";
 
 exports.tags = ["latex"];
 
+exports.blockgag = true;
+
 // Remove the shared hose if it is present
 exports.onUnlock = (data) => {
     if (process.headwear && process.headwear[data.serverID] && process.headwear[data.serverID][data.userID] && process.headwear[data.serverID][data.userID].sharedbreathhose) {

@@ -3,3 +3,5 @@
 exports.name = "Gasmask";
 
 exports.tags = ["latex", "gasmask"];
+
+exports.blockgag = true;

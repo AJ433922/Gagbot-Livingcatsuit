@@ -89,12 +89,6 @@ class MessageAST {
             // Now iterate over each location, nesting deeper with a reducer. 
             if (modifylocation.length > 0) {
                 let nested = modifylocation.reduce((prev, curr) => {
-                    console.log(`This is current prev:`)
-                    console.log(prev)
-                    console.log(`Its data is: `)
-                    console.log(prev.data)
-                    console.log(`data ${curr}`);
-                    console.log(prev.data[curr]);
                     if (prev.data[curr]) {
                         return prev.data[curr];
                     }

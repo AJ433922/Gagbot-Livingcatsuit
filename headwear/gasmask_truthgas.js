@@ -4,4 +4,6 @@ exports.name = "Gasmask (Truth Gas)";
 
 exports.tags = ["latex", "gasmask"];
 
+exports.blockgag = true;
+
 exports.hidden = true; // Disable it from being displayed in the list
