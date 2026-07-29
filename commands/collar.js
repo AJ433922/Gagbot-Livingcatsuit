@@ -54,7 +54,7 @@ module.exports = {
 				await handleConsent(interaction, interaction.user.id);
 				return;
 			}
-			let collarselected = interaction.options.getString("type");
+			let collarselected = interaction.options.getString("type") ?? "collar_leather";
 
 			// Build data tree:
 			let data = {
@@ -108,6 +108,9 @@ module.exports = {
 			let choice_collartype = interaction.customId.split("_")[3].length > 0 ? `${interaction.customId.split("_")[3]}_${interaction.customId.split("_")[4]}` : undefined;
             if (choice_collartype.endsWith("_undefined")) { // This is an ugly workaround
                 choice_collartype = choice_collartype.replace("_undefined", "");
+            }
+            if ((choice_collartype == "") || (choice_collartype == undefined) || (choice_collartype == null)) {
+                choice_collartype = "leather"
             }
 
 			// Build data tree:

@@ -106,7 +106,7 @@ exports.lockinteraction = function (interaction, data) {
 
     // Keyholder Select text
     let userselecttext = new TextDisplayBuilder().setContent(`Select a keyholder to hold your keys...`);
-    pagecomponents.push(textaboutlock)
+    pagecomponents.push(userselecttext)
 
     // Keyholder Select Section
     let userselect = new UserSelectMenuBuilder()
@@ -138,13 +138,13 @@ exports.lockinteraction = function (interaction, data) {
             .setCustomId(`lockconfig_${data.uuid}_leavebutton`)
             .setLabel("Don't Lock")
             .setStyle(ButtonStyle.Danger)
-            .setDisabled(),
+            .setDisabled(false),
         // Page Up
         new ButtonBuilder()
             .setCustomId(`lockconfig_${data.uuid}_lockbutton`)
             .setLabel("Lock")
             .setStyle(ButtonStyle.Success)
-            .setDisabled(),
+            .setDisabled(false),
     ]
     pagecomponents.push(new ActionRowBuilder().addComponents(...buttons));
 

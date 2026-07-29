@@ -84,13 +84,13 @@ module.exports = {
 				},
 			};
             if (braorbelt == "chastitybelt") {
-                if (bondagetype && !getChastityName(interaction.guildId, interaction.user.id, bondagetype)) {
-                    bondagetype = undefined; // Just delete it, we got something invalid lol
+                if ((bondagetype && !getChastityName(interaction.guildId, interaction.user.id, bondagetype)) || (!bondagetype) || (bondagetype == null)) {
+                    bondagetype = "belt_silver"; // Just delete it, we got something invalid lol
                 }
             }
 			else {
-                if (bondagetype && !getChastityBraName(interaction.guildId, interaction.user.id, bondagetype)) {
-                    bondagetype = undefined; // Just delete it, we got something invalid lol
+                if ((bondagetype && !getChastityBraName(interaction.guildId, interaction.user.id, bondagetype)) || (!bondagetype) || (bondagetype == null)) {
+                    bondagetype = "bra_silver"; // Just delete it, we got something invalid lol
                 }
             }
 

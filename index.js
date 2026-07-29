@@ -11,6 +11,7 @@ const { restartChastityTimers } = require('./functions/timelockfunctions.js');
 const { loadHeavyTypes } = require('./functions/heavyfunctions.js');
 const { loadHeadwearTypes } = require('./functions/headwearfunctions.js')
 const { setUpCorsets } = require('./functions/corsetfunctions.js');
+const { setUpLocks } = require('./functions/lockfunctions.js');
 const { assignMemeImages, generateListTexts } = require('./functions/interactivefunctions.js');
 const { backupsAreAnnoying, saveFiles, processUnlockTimes, processTimedEvents, importFileNames, scavengeUsers, removeOldMessages } = require('./functions/timefunctions.js');
 const { loadEmoji } = require("./functions/messagefunctions.js");
@@ -109,6 +110,7 @@ assignMemeImages();
 setUpToys();
 setUpChastity();
 setUpCorsets();
+setUpLocks();
 
 // Build the Overview
 process.helpmodals = {
