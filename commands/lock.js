@@ -28,7 +28,8 @@ module.exports = {
 		.setDescription("Put a lock on a restraint...")
         .addUserOption((opt) => opt.setName("user").setDescription("The person wearing the restraint to lock"))
         .addStringOption((opt) => opt.setName("restraint").setDescription("Which restraint to lock?").setAutocomplete(true))
-        .addStringOption((opt) => opt.setName("locktype").setDescription("Which kind of lock to put on?").setAutocomplete(true)),
+        .addStringOption((opt) => opt.setName("locktype").setDescription("Which kind of lock to put on?").setAutocomplete(true))
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages), // Temporary measure to ensure this isn't leaked yet!
 	async autoComplete(interaction) {
 		const focusedValue = interaction.options.getFocused(true); // Note, we're extracting the entire object this time. 
 
