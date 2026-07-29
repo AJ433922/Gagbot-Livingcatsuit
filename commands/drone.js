@@ -88,7 +88,7 @@ module.exports = {
                     dronetext = `${dronetext}, ${additional}`
                 }
             }
-            messageSend({ channel: interaction.channel }, ("`" + dronetext + "`"), await getPFP(interaction.guildId, interaction.member), await getAlternateName(interaction.guildId, interaction.member), interaction.channel.parentId ? undefined : interaction.channel.id, true)
+            messageSend({ channel: interaction.channel }, ("`" + dronetext + "`"), await getPFP(interaction.guildId, interaction.member), await getAlternateName(interaction.guildId, interaction.member), (interaction.channel.type == 0) ? undefined : interaction.channel.id, true)
             await interaction.editReply({ content: `Status code ${chosencode} sent!`})
 		} catch (err) {
 			console.log(err);
