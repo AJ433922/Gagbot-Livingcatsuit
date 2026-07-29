@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, TextDisplayBuilder, MessageFlags } = require("discord.js");
+const { SlashCommandBuilder, TextDisplayBuilder, MessageFlags, PermissionFlagsBits } = require("discord.js");
 const { handleConsent } = require("./../functions/interactivefunctions.js");
 const { getText } = require("./../functions/textfunctions.js");
 const { getHeavy } = require("../functions/getters/heavy/getHeavy.js");
