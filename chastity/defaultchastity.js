@@ -106,6 +106,9 @@ function Chastity() {
 
     // Name
     this.name = "Default Chastity"
+
+    // Permitted Lock Types
+    this.locktypes = ["small", "large"];
 }
 
 exports.Chastity = Chastity;

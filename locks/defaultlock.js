@@ -48,7 +48,7 @@ function Lock() {
     // Modify Host Lock
     // { uuid: uuid, param: string, value: any }
     this.modifyLock = (data) => {
-        let lock = getRestraintByUUID(data.uuid).lock;
+        let lock = getRestraintByUUID(data.uuid)?.restraint.lock;
         if (data.param && data.value) {
             lock[data.param] = data.value;
         }
@@ -57,7 +57,7 @@ function Lock() {
     // Modify Host Restraint - This generally should NOT be needed.
     // { uuid: uuid, param: string, value: any }
     this.modifyRestraint = (data) => {
-        let lock = getRestraintByUUID(data.uuid);
+        let lock = getRestraintByUUID(data.uuid)?.restraint;
         if (data.param && data.value) {
             lock[data.param] = data.value;
         }

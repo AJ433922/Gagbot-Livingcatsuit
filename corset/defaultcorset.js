@@ -62,6 +62,9 @@ function Corset() {
 
     // Name
     this.name = "Default Corset"
+
+    // Permitted Lock Types
+    this.locktypes = ["small", "large"];
 }
 
 exports.Corset = Corset;

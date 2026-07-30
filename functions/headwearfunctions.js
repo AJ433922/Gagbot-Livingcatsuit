@@ -96,6 +96,7 @@ const loadHeadwearTypes = () => {
             })
         }
         headweartypes[file.replace(".js", "")] = head;
+        if (!headweartypes[file.replace(".js", "")].locktypes) { headweartypes[file.replace(".js", "")].locktypes = ["small"] }
         headweartypes[file.replace(".js", "")].itemdescription = `### ${head.name}\n${head.blockinspect ? `- Blinding 🕶️\n` : ""}${head.blockinspect ? `- Blocks Emotes 🎭\n`: ""}${head.blockgag ? `- Prevents Changing Gags 👄\n` : ""}-# Tags: ${head.tags ? `${head.tags.join(", ")}\n` : ""}\n${head.itemdescription ? head.itemdescription : ""}`
         headweartypes[file.replace(".js", "")].value = headweartypes[file.replace(".js", "")] // Compatibility with old .value code
         headweartypes[file.replace(".js", "")].removeItem = function (data) { removeHeadwear(data.serverID, data.userID, this.value) }

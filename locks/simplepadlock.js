@@ -3,6 +3,7 @@ const { getRestraintByUUID } = require("../functions/getters/lock/getRestraintBy
 const { getLockAwaiting } = require("../functions/getters/lock/getLockAwaiting");
 const { updateLockAwaiting } = require("../functions/setters/lock/updateLockAwaiting");
 const { removeLockAwaiting } = require("../functions/setters/lock/removeLockAwaiting");
+const { getPronouns } = require("../functions/getters/config/getPronouns");
 
 /***********
  * This is a basic keyed padlock for large restraints. It allows for permanent locking to a keyholder. 
@@ -101,11 +102,11 @@ exports.name = "Simple Padlock"
 exports.locktype = "large"
 exports.desc = `A simple lock that has a key. The key can be cloned for others to have access as well. This lock will not expire until it is unlocked.`
 
-exports.lockinteraction = function (interaction, data) {
+exports.lockinteraction = function (interaction, data, update = false) {
     let pagecomponents = [];
 
     // Keyholder Select text
-    let userselecttext = new TextDisplayBuilder().setContent(`Select a keyholder to hold your keys...`);
+    let userselecttext = new TextDisplayBuilder().setContent(`**Select a keyholder to hold your keys...**`);
     pagecomponents.push(userselecttext)
 
     // Keyholder Select Section
@@ -115,9 +116,50 @@ exports.lockinteraction = function (interaction, data) {
         .setMaxValues(1);
     pagecomponents.push(new ActionRowBuilder().addComponents(userselect));
 
+    // Keyholder Select text
+    if (getLockAwaiting(data.uuid)?.keyholderID) {
+        let holdtext = ``;
+        //let itemtext = `**${getLockAwaiting(data.uuid)?.restraintobject}**` // We need *another* function to feed a restraint object and get the display name of it. 
+        if (getLockAwaiting(data.uuid)?.keyholderID == getLockAwaiting(data.uuid)?.userID) {
+            // Holding self keys
+            if (interaction.user.id == getLockAwaiting(data.uuid)?.userID) {
+                // This is ourself!
+                holdtext = `*You will be holding your own key!*`
+            }
+            else {
+                // This is someone else!
+                holdtext = `*<@${getLockAwaiting(data.uuid)?.userID}> will be holding ${getPronouns(getLockAwaiting(data.uuid)?.serverID, getLockAwaiting(data.uuid)?.userID, "possessiveDeterminer")} key!*`
+            }
+        }
+        else {
+            // Someone else is holding the key
+            if (interaction.user.id == getLockAwaiting(data.uuid)?.userID) {
+                // This is ourself!
+                holdtext = `*<@${getLockAwaiting(data.uuid)?.keyholderID}> will be holding your key!*`
+            }
+            else {
+                // This is someone else
+                if (interaction.user.id == getLockAwaiting(data.uuid)?.keyholderID) {
+                    // We're holding someone else's key
+                    holdtext = `*You will be holding <@${getLockAwaiting(data.uuid)?.userID}>'s key!*`
+                }
+                else {
+                    // Someone else will be holding their key
+                    holdtext = `*<@${getLockAwaiting(data.uuid)?.keyholderID}> will be holding <@${getLockAwaiting(data.uuid)?.userID}>'s key!*`
+                }
+            }
+        }
+        let userkeytext = new TextDisplayBuilder().setContent(`-# ${holdtext}`);
+        pagecomponents.push(userkeytext)
+    }
+    else {
+        let userkeytext = new TextDisplayBuilder().setContent(`-# *No keyholder currently selected!*`);
+        pagecomponents.push(userkeytext)
+    }
+    
     // Allow Clones to Propagate Section
     let propagatesection = new SectionBuilder()
-        .addTextDisplayComponents((text) => text.setContent(`Allow cloned keyholders to add or remove other cloned keyholders?`))
+        .addTextDisplayComponents((text) => text.setContent(`**Allow cloned keyholders to add or remove other cloned keyholders?**`))
         .setButtonAccessory((button) =>
             button
                 .setCustomId(`lockconfig_${data.uuid}_setpropagation`)
@@ -144,11 +186,16 @@ exports.lockinteraction = function (interaction, data) {
             .setCustomId(`lockconfig_${data.uuid}_lockbutton`)
             .setLabel("Lock")
             .setStyle(ButtonStyle.Success)
-            .setDisabled(false),
+            .setDisabled(!getLockAwaiting(data.uuid)?.keyholderID),
     ]
     pagecomponents.push(new ActionRowBuilder().addComponents(...buttons));
 
-    interaction.editReply({ components: pagecomponents, flags: [MessageFlags.IsComponentsV2, MessageFlags.Ephemeral] })
+    if (update) {
+        interaction.update({ components: pagecomponents, flags: [MessageFlags.IsComponentsV2, MessageFlags.Ephemeral] })
+    }
+    else {
+        interaction.editReply({ components: pagecomponents, flags: [MessageFlags.IsComponentsV2, MessageFlags.Ephemeral] })
+    }
 }
 
 exports.lockinteractionresponse = function(interaction) {
@@ -166,19 +213,20 @@ exports.lockinteractionresponse = function(interaction) {
 
     if (command == "setkeyholder") {
         let userid = interaction.values[0] ?? interaction.user.id; // Either them or us lol
-        updateLockAwaiting(uuid, "keyholder", userid);
-        this.lockinteraction(interaction, { uuid: uuid });
+        updateLockAwaiting(uuid, "keyholderID", userid);
+        this.lockinteraction(interaction, { uuid: uuid }, true);
     }
     else if (command == "setpropagation") {
         // Flip the bit, if it exists. 
         updateLockAwaiting(uuid, "allowclonetoclone", !getLockAwaiting(uuid)?.allowclonetoclone);
+        this.lockinteraction(interaction, { uuid: uuid }, true);
     }
     else if (command == "leavebutton") {
         // Delete the awaiting lock object
         removeLockAwaiting(uuid);
         // Attempt to delete the message that invoked this
         try {
-            interaction.message.delete();
+            interaction.editReply({ content: `This lock has been deleted.`, components: [] })
         }
         catch (err) {
             console.log(err);
@@ -193,6 +241,20 @@ exports.lockinteractionresponse = function(interaction) {
     }
     else if (command == "lockbutton") {
         // Engage the lock!
-
+        try {
+            interaction.editReply({ content: `This lock has been engaged.`, components: [] })
+        }
+        catch (err) {
+            console.log(err);
+            // Can't delete for some reason, edit away all its contents
+            try {
+                interaction.editReply({ content: `This lock has been engaged.`, components: [] })
+            }
+            catch (err2) {
+                console.log(err2);
+            }
+        }
+        // Delete the awaiting lock object
+        removeLockAwaiting(uuid);
     }
 }

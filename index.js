@@ -30,6 +30,7 @@ const { processdatatoload } = require(`./lists/processdatatoload.js`);
 const { addBellCollarReact } = require('./functions/setters/collar/addBellCollarReact.js');
 const { setRecentChannel } = require(`./functions/setters/config/setRecentChannel.js`);
 const { setProcessVariable } = require('./functions/setters/config/setProcessVariable.js');
+const { getLockAwaiting } = require('./functions/getters/lock/getLockAwaiting.js');
 
 // Prevent node from killing us immediately when we do the next line.
 process.stdin.resume();
@@ -391,6 +392,16 @@ client.on('interactionCreate', async (interaction) => {
                 if (process.eventfunctions[eventfunctionset] && process.eventfunctions[eventfunctionset][filecommand] && process.eventfunctions[eventfunctionset][filecommand].extraconfigresponse) {
                     process.eventfunctions[eventfunctionset][filecommand].extraconfigresponse(interaction);
                 }
+            }
+            else if (interaction.customId.startsWith("lockconfig_")) {
+                let lockfromuuid = getLockAwaiting(interaction.customId.split("_")[1])
+                if (!lockfromuuid) { 
+                    console.log(`Invalid lock`)
+                    console.log(interaction);
+                    return;
+                }
+                let configfunc = process.locktypes[lockfromuuid.locktype]
+                configfunc.lockinteractionresponse(interaction); 
             }
             else if (interaction.customId.startsWith("buttonboard")) {
                 buttonboard(interaction); // The button board reply function is in contextcommands/message/Button Board.js
