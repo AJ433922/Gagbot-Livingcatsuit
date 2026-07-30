@@ -3,6 +3,7 @@ const { userIsWearingItem } = require("../functions/getters/config/userIsWearing
 const { createLockAwaiting } = require("../functions/setters/lock/createLockAwaiting");
 const { MessageFlags } = require("discord.js");
 const { getBaseLock } = require("./getters/lock/getBaseLock");
+const { getBaseItem } = require("./getters/config/getBaseItem");
 const path = require("path");
 const fs = require("fs");
 
@@ -71,11 +72,17 @@ function addLockModal(interaction) {
     }
     if (!canPlaceLock(interaction.guildId, locktarget.id, interaction.user.id, locktype)) {
         if (locktarget.id == interaction.user.id) {
-            interaction.editReply({ content: `You are unable to place that kind of lock on yourself.`, flags: MessageFlags.Ephemeral })
+            interaction.editReply({ content: `You are unable to place a ${getBaseLock(locktype).name} on yourself.`, flags: MessageFlags.Ephemeral })
         }
         else {
-            interaction.editReply({ content: `You are unable to place that kind of lock on ${locktarget}.`, flags: MessageFlags.Ephemeral })
+            interaction.editReply({ content: `You are unable to place a ${getBaseLock(locktype).name} on ${locktarget}.`, flags: MessageFlags.Ephemeral })
         }
+        return;
+    }
+
+    // Check if the restraint target is the right kind for the lock we want to apply. 
+    if (!getBaseItem(itemtolock).locktypes.includes(getBaseLock(locktype).locktype)) {
+        interaction.editReply({ content: `That is an incorrectly sized lock for that restraint.`, flags: MessageFlags.Ephemeral })
         return;
     }
 

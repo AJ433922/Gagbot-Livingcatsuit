@@ -21,14 +21,16 @@ const { addLockModal } = require("../functions/lockfunctions.js");
 const { default: didYouMean, ReturnTypeEnums } = require("didyoumean2");
 const { getOption } = require("../functions/getters/config/getOption.js");
 const { getTaggedList } = require("../functions/getters/config/getTaggedList.js");
+const { getBaseLock } = require("../functions/getters/lock/getBaseLock.js");
+const { getBaseItem } = require("../functions/getters/config/getBaseItem.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName("lock")
 		.setDescription("Put a lock on a restraint...")
         .addUserOption((opt) => opt.setName("user").setDescription("The person wearing the restraint to lock"))
-        .addStringOption((opt) => opt.setName("restraint").setDescription("Which restraint to lock?").setAutocomplete(true))
-        .addStringOption((opt) => opt.setName("locktype").setDescription("Which kind of lock to put on?").setAutocomplete(true))
+        .addStringOption((opt) => opt.setName("restraint").setDescription("Which restraint to lock?").setAutocomplete(true).setRequired(true))
+        .addStringOption((opt) => opt.setName("locktype").setDescription("Which kind of lock to put on?").setAutocomplete(true).setRequired(true))
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages), // Temporary measure to ensure this isn't leaked yet!
 	async autoComplete(interaction) {
 		const focusedValue = interaction.options.getFocused(true); // Note, we're extracting the entire object this time. 
@@ -86,7 +88,15 @@ module.exports = {
         else if (focusedValue.name == "locktype") {
             try {
                 let chosenuserid = interaction.options.get("user")?.value ?? interaction.user.id; // Note we can only retrieve the user ID here!
+                let locktarget = interaction.options.get("restraint")?.value;
                 let autocompletes = process.autocompletes.lock;
+                // If locktarget is specified, filter out all locks to just what is eligible for that restraint target
+                autocompletes = autocompletes.filter((f) => locktarget && getBaseItem(locktarget).locktypes.includes(getBaseLock(f.value).locktype))
+                if (autocompletes.length == 0) {
+                    interaction.respond([])
+                    return;
+                }
+
                 let matches = didYouMean(focusedValue.value, autocompletes, {
                     matchPath: ['name'], 
                     returnType: ReturnTypeEnums.ALL_SORTED_MATCHES, // Returns any match meeting 20% of the input
