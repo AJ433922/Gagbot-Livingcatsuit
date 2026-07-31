@@ -36,6 +36,7 @@ let wearabletypes = [
 	{ name: "Stylish Hat", value: "stylish_hat", category: "Hat", colorable: true },
 	{ name: "Top Hat", value: "top_hat", category: "Hat", colorable: true },
 	{ name: "Fedora", value: "fedora", category: "Hat", colorable: true },
+    { name: "Ushanka", value: "ushanka", category: "Hat", colorable: true },
 	{ name: "Cowboy Hat", value: "cowboy_hat", category: "Hat", colorable: true },
 	{ name: "Fascinator", value: "fascinator", category: "Hat", colorable: true },
 	{ name: "Witch Hat", value: "witchhat_normal", category: "Hat", colorable: true, uniqueColors: ["Flowery", "Ridiculously Big", "Starry"] },
