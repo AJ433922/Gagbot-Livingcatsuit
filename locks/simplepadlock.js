@@ -3,7 +3,9 @@ const { getRestraintByUUID } = require("../functions/getters/lock/getRestraintBy
 const { getLockAwaiting } = require("../functions/getters/lock/getLockAwaiting");
 const { updateLockAwaiting } = require("../functions/setters/lock/updateLockAwaiting");
 const { removeLockAwaiting } = require("../functions/setters/lock/removeLockAwaiting");
+const { applyLockAwaiting } = require("../functions/setters/lock/applyLockAwaiting");
 const { getPronouns } = require("../functions/getters/config/getPronouns");
+const { getItemName } = require("../functions/getters/config/getItemName");
 
 /***********
  * This is a basic keyed padlock for large restraints. It allows for permanent locking to a keyholder. 
@@ -94,7 +96,9 @@ exports.modifyClones = function(data) {
 exports.initializeLock = function(data) {
     // Initialize it by setting the person who started this as the keyholder. 
     let lock = getLockAwaiting(data.uuid);
+    console.log(lock);
     updateLockAwaiting(data.uuid, "keyholder", data.keyholderID);
+    updateLockAwaiting(data.uuid, "restraintname", getItemName(lock.restraintobject));
 }
 
 // Base Data
@@ -104,6 +108,10 @@ exports.desc = `A simple lock that has a key. The key can be cloned for others t
 
 exports.lockinteraction = function (interaction, data, update = false) {
     let pagecomponents = [];
+
+    // Main Title text
+    let maintitle = new TextDisplayBuilder().setContent(`## Applying a Simple Padlock to ${(getLockAwaiting(data.uuid)?.userID == interaction.user.id) ? "your" : `<@${getLockAwaiting(data.uuid)?.userID}>'s`} ${getLockAwaiting(data.uuid)?.restraintname}`);
+    pagecomponents.push(maintitle)
 
     // Keyholder Select text
     let userselecttext = new TextDisplayBuilder().setContent(`**Select a keyholder to hold your keys...**`);
@@ -226,13 +234,13 @@ exports.lockinteractionresponse = function(interaction) {
         removeLockAwaiting(uuid);
         // Attempt to delete the message that invoked this
         try {
-            interaction.editReply({ content: `This lock has been deleted.`, components: [] })
+            interaction.update({ components: [new TextDisplayBuilder().setContent(`This lock has been deleted.`)] })
         }
         catch (err) {
             console.log(err);
             // Can't delete for some reason, edit away all its contents
             try {
-                interaction.editReply({ content: `This lock has been deleted.`, components: [] })
+                interaction.update({ components: [new TextDisplayBuilder().setContent(`This lock has been deleted.`)] })
             }
             catch (err2) {
                 console.log(err2);
@@ -242,19 +250,21 @@ exports.lockinteractionresponse = function(interaction) {
     else if (command == "lockbutton") {
         // Engage the lock!
         try {
-            interaction.editReply({ content: `This lock has been engaged.`, components: [] })
+            let userID = getLockAwaiting(uuid).userID;
+            let lockrestraint = getLockAwaiting(uuid).restraintname
+            let appliedlock = applyLockAwaiting(uuid);
+            if (appliedlock == "NoAccess") {
+                interaction.update({ components: [new TextDisplayBuilder().setContent(`You don't have access to apply a Simple Padlock to <@${userID}>'s ${lockrestraint}.`)] })
+            }
+            else if (appliedlock == "NoRestraint") {
+                interaction.update({ components: [new TextDisplayBuilder().setContent(`<@${userID}> is not wearing a ${lockrestraint}!`)] })
+            }
+            else {
+                interaction.update({ components: [new TextDisplayBuilder().setContent(`Applying lock!`)] })
+            }
         }
         catch (err) {
             console.log(err);
-            // Can't delete for some reason, edit away all its contents
-            try {
-                interaction.editReply({ content: `This lock has been engaged.`, components: [] })
-            }
-            catch (err2) {
-                console.log(err2);
-            }
         }
-        // Delete the awaiting lock object
-        removeLockAwaiting(uuid);
     }
 }

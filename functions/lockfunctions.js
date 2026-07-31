@@ -4,8 +4,10 @@ const { createLockAwaiting } = require("../functions/setters/lock/createLockAwai
 const { MessageFlags } = require("discord.js");
 const { getBaseLock } = require("./getters/lock/getBaseLock");
 const { getBaseItem } = require("./getters/config/getBaseItem");
+const { getUserWornRestraint } = require("./getters/config/getUserWornRestraint");
 const path = require("path");
 const fs = require("fs");
+const { getItemType } = require("./getters/config/getItemType");
 
 // Imports each lock in ./locks and makes them accessible as objects
 // in process.locktypes mapped to their respective ids.
@@ -87,7 +89,7 @@ function addLockModal(interaction) {
     }
 
     // They can probably place the item, so generate a lock interaction and serve the modal. 
-    let uuid = createLockAwaiting(interaction.guildId, locktarget.id, interaction.user.id, locktype);
+    let uuid = createLockAwaiting(interaction.guildId, locktarget.id, interaction.user.id, locktype, getUserWornRestraint(interaction.guildId, locktarget.id, getItemType(itemtolock), itemtolock));
 
     if (!uuid) {
         interaction.editReply({ content: `Something went wrong creating the lock.`, flags: MessageFlags.Ephemeral })
