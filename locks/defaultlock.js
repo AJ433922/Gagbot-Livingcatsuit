@@ -48,7 +48,7 @@ function Lock() {
 
     // Remove this lock
     this.removeLock = (data) => {
-        removeLock(data.uuid);
+        removeLock(data.uuid, { id: data.keyholderID });
     }
 
     // Modify Host Lock

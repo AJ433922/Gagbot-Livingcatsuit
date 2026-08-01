@@ -18,6 +18,7 @@ const { getConsent } = require("../functions/getters/config/getConsent.js");
 const { statsAddCounter } = require("../functions/setters/config/statsAddCounter.js");
 const { getGag } = require("../functions/getters/gag/getGag.js");
 const { addLockModal } = require("../functions/lockfunctions.js");
+const { handleRemoveLock } = require("../functions/lockfunctions.js");
 const { default: didYouMean, ReturnTypeEnums } = require("didyoumean2");
 const { getOption } = require("../functions/getters/config/getOption.js");
 const { getTaggedList } = require("../functions/getters/config/getTaggedList.js");
@@ -29,7 +30,7 @@ module.exports = {
 		.setName("unlock")
 		.setDescription("Remove a lock from a restraint...")
         .addUserOption((opt) => opt.setName("user").setDescription("The person wearing the restraint to unlock"))
-        .addStringOption((opt) => opt.setName("restraint").setDescription("Which restraint to unlock?").setAutocomplete(true).setRequired(true))
+        .addStringOption((opt) => opt.setName("restraint").setDescription("Which restraint to unlock?").setAutocomplete(true))
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages), // Temporary measure to ensure this isn't leaked yet!
 	async autoComplete(interaction) {
 		const focusedValue = interaction.options.getFocused(true); // Note, we're extracting the entire object this time. 
@@ -63,7 +64,7 @@ module.exports = {
                 if (chastitybrabondage) {
                     outopts.push({ name: `Chastity Bra${chastitybrabondage.chastitytype ? `: ${getChastityBraName(interaction.guildId, chosenuserid)}` : " Bra"}`, value: getChastityBra(interaction.guildId, chosenuserid).chastitytype });
                 }
-                if (headbondage.length > 0) {
+                if (headbondage && headbondage.length > 0) {
                     outopts.push({ name: `Head Restraints`, value: getHeadwear(interaction.guildId, chosenuserid)[0] });
                 }
                 if (corsetbondage) {
@@ -86,7 +87,7 @@ module.exports = {
     async execute(interaction) {
         try {
             await interaction.deferReply({ flags: MessageFlags.Ephemeral })
-            addLockModal(interaction);
+            handleRemoveLock(interaction);
         }
         catch (err) {
             console.log(err);

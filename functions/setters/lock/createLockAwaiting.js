@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const { getBaseLock } = require("../../getters/lock/getBaseLock");
+const { markForSave } = require("../../other/markForSave");
 
 /*********
  * Creates a new entry in awaitinglock and assigns it a UUID. 
@@ -24,6 +25,7 @@ function createLockAwaiting(serverID, userID, keyholderID, locktype, restraintob
 
     if (process.awaitinglock == undefined) { process.awaitinglock = {}}
     process.awaitinglock[uuid] = lockobject;
+    markForSave("awaitinglock")
 
     getBaseLock(locktype).initializeLock({ uuid: uuid });
 

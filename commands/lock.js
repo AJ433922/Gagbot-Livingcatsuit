@@ -29,8 +29,8 @@ module.exports = {
 		.setName("lock")
 		.setDescription("Put a lock on a restraint...")
         .addUserOption((opt) => opt.setName("user").setDescription("The person wearing the restraint to lock"))
-        .addStringOption((opt) => opt.setName("restraint").setDescription("Which restraint to lock?").setAutocomplete(true).setRequired(true))
-        .addStringOption((opt) => opt.setName("locktype").setDescription("Which kind of lock to put on?").setAutocomplete(true).setRequired(true))
+        .addStringOption((opt) => opt.setName("restraint").setDescription("Which restraint to lock?").setAutocomplete(true))
+        .addStringOption((opt) => opt.setName("locktype").setDescription("Which kind of lock to put on?").setAutocomplete(true))
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages), // Temporary measure to ensure this isn't leaked yet!
 	async autoComplete(interaction) {
 		const focusedValue = interaction.options.getFocused(true); // Note, we're extracting the entire object this time. 
@@ -64,7 +64,7 @@ module.exports = {
                 if (chastitybrabondage) {
                     outopts.push({ name: `Chastity Bra${chastitybrabondage.chastitytype ? `: ${getChastityBraName(interaction.guildId, chosenuserid)}` : " Bra"}`, value: getChastityBra(interaction.guildId, chosenuserid).chastitytype });
                 }
-                if (headbondage.length > 0) {
+                if (headbondage && headbondage.length > 0) {
                     outopts.push({ name: `Head Restraints`, value: getHeadwear(interaction.guildId, chosenuserid)[0] });
                 }
                 if (corsetbondage) {

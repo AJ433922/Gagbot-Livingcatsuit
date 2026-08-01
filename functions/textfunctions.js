@@ -1683,7 +1683,7 @@ const texts_lock = {
             // Applying to self
             "self": {
                 // Locking the lock on self
-                "self": [
+                "selflock": [
                     {
                         only: (t) => {
                             return (t.c2 == "chastity");
@@ -1720,7 +1720,7 @@ const texts_lock = {
                         only: (t) => {
                             return (t.c2 == "corset");
                         },
-                        text: `USER_TAG wriggles slightly as USER_THEY place a Simple Padlock on USER_THEIR VAR_C1, securing it on the ring of USER_THEIR corset! The laces won't loosen until it is removed with USER_THEIR key!`,
+                        text: `USER_TAG wriggles slightly as USER_THEY placeUSER_S a Simple Padlock on USER_THEIR VAR_C1, securing it on the ring of USER_THEIR corset! The laces won't loosen until it is removed with USER_THEIR key!`,
                     },
                     {
                         only: (t) => {
@@ -1729,7 +1729,7 @@ const texts_lock = {
                         text: `USER_TAG places a Simple Padlock over USER_THEIR VAR_C1 - binding USER_THEMSELF with it until it is removed with the key!`,
                     },
                 ],
-                "other": [
+                "otherlock": [
                     {
                         only: (t) => {
                             return (t.c2 == "chastity");
@@ -1766,7 +1766,7 @@ const texts_lock = {
                         only: (t) => {
                             return (t.c2 == "corset");
                         },
-                        text: `USER_TAG wriggles slightly as USER_THEY place a Simple Padlock on USER_THEIR VAR_C1, securing it on the ring of USER_THEIR corset! The laces won't loosen until it is removed with the key that USER_THEY just gave to TARGET_TAG!`,
+                        text: `USER_TAG wriggles slightly as USER_THEY placeUSER_S a Simple Padlock on USER_THEIR VAR_C1, securing it on the ring of USER_THEIR corset! The laces won't loosen until it is removed with the key that USER_THEY just gave to TARGET_TAG!`,
                     },
                     {
                         only: (t) => {
@@ -1778,7 +1778,7 @@ const texts_lock = {
             },
             "other": {
                 // Locking the lock on another
-                "self": [
+                "selflock": [
                     {
                         only: (t) => {
                             return (t.c2 == "chastity");
@@ -1824,7 +1824,7 @@ const texts_lock = {
                         text: `USER_TAG places a Simple Padlock over TARGET_TAG's VAR_C1, preventing anyone from removing it until USER_THEY unlock it with USER_THEIR key!`,
                     },
                 ],
-                "otherself": [
+                "otherselflock": [
                     // Locking it on another, but giving THEM the key
                     {
                         only: (t) => {
@@ -1871,7 +1871,7 @@ const texts_lock = {
                         text: `USER_TAG places a Simple Padlock over TARGET_TAG's VAR_C1, preventing it's removal until unlocked with the key that USER_THEY just gave to TARGET_THEM. Hopefully TARGET_THEY can figure out how to remove it!`,
                     },
                 ],
-                "other": [
+                "otherlock": [
                     // Locking it on another, but giving another person the key
                     {
                         only: (t) => {

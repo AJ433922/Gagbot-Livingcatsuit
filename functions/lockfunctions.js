@@ -1,4 +1,5 @@
 const { canPlaceLock } = require("../functions/getters/lock/canPlaceLock");
+const { canRemoveLock } = require("../functions/getters/lock/canRemoveLock");
 const { userIsWearingItem } = require("../functions/getters/config/userIsWearingItem");
 const { createLockAwaiting } = require("../functions/setters/lock/createLockAwaiting");
 const { MessageFlags } = require("discord.js");
@@ -8,6 +9,8 @@ const { getUserWornRestraint } = require("./getters/config/getUserWornRestraint"
 const path = require("path");
 const fs = require("fs");
 const { getItemType } = require("./getters/config/getItemType");
+const { getItemName } = require("./getters/config/getItemName");
+const { removeLock } = require("./setters/lock/removeLock");
 
 // Imports each lock in ./locks and makes them accessible as objects
 // in process.locktypes mapped to their respective ids.
@@ -56,7 +59,11 @@ function setUpLocks() {
 function addLockModal(interaction) {
     let locktarget = interaction.options.getUser("user") ?? interaction.user;
     let itemtolock = interaction.options.getString("restraint");
-    let locktype = interaction.options.getString("locktype");
+    if (itemtolock == null) {
+        interaction.editReply({ content: `Please select an item to lock!` })
+        return;
+    }
+    let locktype = interaction.options.getString("locktype") ?? "simplepadlock";
     let baselocktype = getBaseLock(locktype);
     // If the user isn't wearing that item or it has a lock or the locker isn't allowed, tell them to leave
     if (!baselocktype) {
@@ -99,5 +106,54 @@ function addLockModal(interaction) {
     baselocktype.lockinteraction(interaction, { uuid: uuid })
 } 
 
+/*****
+ * Handles removing a lock from a /unlock command. 
+ * 
+ * - (interaction) interaction - An Interaction as piped from a /lock command
+ * ---
+ * ##### Returns an interaction end state
+ *****/
+function handleRemoveLock(interaction) {
+    let locktarget = interaction.options.getUser("user") ?? interaction.user;
+    let itemtolock = interaction.options.getString("restraint");
+    if (itemtolock == null) {
+        interaction.editReply({ content: `Please select an item to remove!` })
+        return;
+    }
+    let locktoremove = getUserWornRestraint(interaction.guildId, locktarget.id, getItemType(itemtolock), itemtolock)
+    console.log(locktoremove);
+    // If the user isn't wearing that item or it has a lock or the locker isn't allowed, tell them to leave
+    if (!locktoremove) {
+        if (locktarget.id == interaction.user.id) {
+            interaction.editReply({ content: `You aren't wearing a ${getItemName(itemtolock)}!`, flags: MessageFlags.Ephemeral })
+        }
+        else {
+            interaction.editReply({ content: `${locktarget} isn't wearing a ${getItemName(itemtolock)}!`, flags: MessageFlags.Ephemeral })
+        }
+        return;
+    }
+    if (!locktoremove.lock) {
+        if (locktarget.id == interaction.user.id) {
+            interaction.editReply({ content: `Your ${getItemName(itemtolock)} isn't locked!`, flags: MessageFlags.Ephemeral })
+        }
+        else {
+            interaction.editReply({ content: `${locktarget}'s ${getItemName(itemtolock)} isn't locked!`, flags: MessageFlags.Ephemeral })
+        }
+        return;
+    }
+    if (!canRemoveLock(interaction.guildId, locktarget.id, interaction.user.id, locktoremove?.lock?.uuid)) {
+        if (locktarget.id == interaction.user.id) {
+            interaction.editReply({ content: `You can't remove the ${getBaseLock(locktoremove?.lock?.locktype).name} on your ${getItemName(itemtolock)}.`, flags: MessageFlags.Ephemeral })
+        }
+        else {
+            interaction.editReply({ content: `You can't remove the ${getBaseLock(locktoremove?.lock?.locktype).name} on ${locktarget}'s ${getItemName(itemtolock)}.`, flags: MessageFlags.Ephemeral })
+        }
+        return;
+    }
+
+    removeLock(locktoremove?.lock?.uuid, interaction.user);
+} 
+
 exports.setUpLocks = setUpLocks;
 exports.addLockModal = addLockModal;
+exports.handleRemoveLock = handleRemoveLock;

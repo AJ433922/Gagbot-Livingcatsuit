@@ -64,8 +64,8 @@ exports.canTransfer = (data) => {
 
 // The condition to allow removing the lock
 exports.canUnlock = (data) => {
-    let lock = getRestraintByUUID(data.uuid).lock;
-    if (lock.keyholder == data.userID) {
+    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
+    if (lock.keyholderID == data.keyholderID) {
         return true;
     } 
 }
@@ -258,7 +258,7 @@ exports.lockinteractionresponse = function(interaction) {
             let lockrestraint = getLockAwaiting(uuid).restraintname
             let appliedlock = applyLockAwaiting(uuid);
             let targettype = (userID == interaction.user.id) ? "self" : "other"
-            let further = [(keyholderID == interaction.user.id) ? "self" : (keyholderID == userID) ? "otherself" : "other"]
+            let further = [(keyholderID == interaction.user.id) ? "selflock" : (keyholderID == userID) ? "otherselflock" : "otherlock"]
             let extratext = (further[0] == "other") ? [keyholderID] : undefined;
             if (appliedlock == "NoAccess") {
                 interaction.update({ components: [new TextDisplayBuilder().setContent(`You don't have access to apply a Simple Padlock to <@${userID}>'s ${lockrestraint}.`)] })
@@ -268,7 +268,7 @@ exports.lockinteractionresponse = function(interaction) {
             }
             else {
                 interaction.update({ components: [new TextDisplayBuilder().setContent(`Applying lock!`)] })
-                sendLockToast({ serverID: interaction.guildId, userID: userID, actionuser: interaction.user.id, actiontype: "lock", locktype: "simplepadlock", restraintname: lockrestraint, restrainttype: lockrestrainttype })
+                sendLockToast({ serverID: interaction.guildId, userID: userID, actionuser: interaction.user.id, actiontype: "lock", locktype: "simplepadlock", restraintname: lockrestraint, restrainttype: lockrestrainttype, targettype: targettype, extratext: extratext, further: further })
             }
         }
         catch (err) {
