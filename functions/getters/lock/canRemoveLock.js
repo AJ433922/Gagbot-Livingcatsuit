@@ -10,7 +10,7 @@ const { getRestraintByUUID } = require("./getRestraintByUUID");
  * - (user id) keyholderID - The person removing the lock
  * - (string) uuid - The uuid of lock we're trying to remove
  * ---
- * ##### Returns true if allowed to place the lock. 
+ * ##### Returns true if allowed to remove the lock. 
  **********/
 function canRemoveLock(serverID, userID, keyholderID, uuid) {
     let restraintlock = getRestraintByUUID(uuid)?.restraint?.lock;
