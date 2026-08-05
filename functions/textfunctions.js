@@ -42,20 +42,20 @@ const texts_chastity = {
                     ] 
                 },
                 nochastity: [
-                    `USER_TAG puts a VAR_C2 on and clicks a tiny lock on it before stashing the key for safekeeping!`,
-                    `USER_TAG slips a VAR_C2 on and turns the key, locking USER_THEMSELF away... but USER_THEY still USER_HAVE the key.`,
-                    `USER_TAG whispers a sweet goodbye as USER_THEY wrapUSER_S a VAR_C2 around USER_THEIR waist, sealing USER_THEIR chastity away under lock and key.`,
+                    `USER_TAG puts a VAR_C2 on and clicks the little fastener shut! Now it just needs a lock to ensure it doesn't get so easily removed...`,
+                    `USER_TAG slips a VAR_C2 on and pinches the fasteners shut, sealing USER_THEMSELF away... but USER_THEY could still remove it. For now.`,
+                    `USER_TAG whispers a sweet goodbye as USER_THEY wrapUSER_S a VAR_C2 around USER_THEIR waist, sealing USER_THEIR chastity away. USER_THEY_CAP needUSER_S only find a lock to finish the deal!`,
                     {
                         required: (t) => {
                             return getArousal(t.serverID, t.interactionuser.id) > 10;
                         },
-                        text: `Taking calm, deep breaths, USER_TAG wraps a VAR_C2 on USER_THEIR waist before USER_THEY touch there. USER_THEY_CAP still USER_HAVE the key, but at least it's something...`,
+                        text: `Taking calm, deep breaths, USER_TAG wraps a VAR_C2 on USER_THEIR waist before USER_THEY touch there. USER_THEY_CAP could still remove the belt, but at least it's something...`,
                     },
                     {
                         required: (t) => {
                             return getArousal(t.serverID, t.interactionuser.id) > 20;
                         },
-                        text: `In a vain attempt to be a good USER_PRAISEOBJECT, USER_TAG locks USER_THEMSELF up with a VAR_C2. Though, USER_THEY USER_ISARE still holding the key.`,
+                        text: `In a vain attempt to be a good USER_PRAISEOBJECT, USER_TAG puts USER_THEMSELF in a VAR_C2. Though, USER_THEY USER_ISARE still able to remove it until it's locked.`,
                     },
                     {
                         only: (t) => {
@@ -74,20 +74,20 @@ const texts_chastity = {
             noheavy: {
                 chastity: { key_other: [`You are already locked in a chastity bra and TARGET_TAG has the key!`], key_self: [`You are already locked in a chastity bra and you're holding the key!`] },
                 nochastity: [
-                    `USER_TAG puts a VAR_C2 on and clicks a tiny lock on it before stashing the key for safekeeping!`,
-                    `USER_TAG slips a VAR_C2 on and turns the key, locking USER_THEIR breasts away... but USER_THEY still USER_HAVE the key.`,
-                    `USER_TAG whispers a sweet goodbye as USER_THEY wrapUSER_S a VAR_C2 around USER_THEIR chest, sealing USER_THEIR chastity away under lock and key.`,
+                    `USER_TAG puts a VAR_C2 on and clicks the clasp shut on it! USER_THEIR_CAP chest is so armored now!`,
+                    `USER_TAG slips a VAR_C2 on and pinches the little clasp shut, sealing USER_THEIR breasts away... Imagine what would happen if one were to lock it!`,
+                    `USER_TAG whispers a sweet goodbye as USER_THEY wrapUSER_S a VAR_C2 around USER_THEIR chest. USER_THEY_CAP can still get inside quite easily though.`,
                     {
                         required: (t) => {
                             return getArousal(t.serverID, t.interactionuser.id) > 10;
                         },
-                        text: `Taking calm, deep breaths, USER_TAG wraps a VAR_C2 on USER_THEIR chest before USER_THEY touch there. USER_THEY_CAP still USER_HAVE the key, but at least it's something...`,
+                        text: `Taking calm, deep breaths, USER_TAG wraps a VAR_C2 on USER_THEIR chest before USER_THEY touch there. USER_THEY_CAP just needs to put a lock on to protect USER_THEIR chastity...`,
                     },
                     {
                         required: (t) => {
                             return getArousal(t.serverID, t.interactionuser.id) > 20;
                         },
-                        text: `In a vain attempt to be a good USER_PRAISEOBJECT, USER_TAG locks USER_THEMSELF up with a VAR_C2. Though, USER_THEY USER_ISARE still holding the key.`,
+                        text: `In a vain attempt to be a good USER_PRAISEOBJECT, USER_TAG puts USER_THEMSELF in a VAR_C2. However, good USER_PRAISEOBJECTs *also* place locks on USER_THEIR chastity.`,
                     },
                 ],
             },
@@ -105,7 +105,9 @@ const texts_chastity = {
                     ]
                 },
                 nochastity: [
-                    `USER_TAG grabs TARGET_TAG and wraps a VAR_C2 around TARGET_THEIR waist and clicking the lock shut before TARGET_THEY can even react!`
+                    `USER_TAG grabs TARGET_TAG and wraps a VAR_C2 around TARGET_THEIR waist and clicking the fastener shut before TARGET_THEY can even react! It just needs a lock to seal the deal!`,
+                    `USER_TAG gingerly wraps a VAR_C2 around TARGET_TAG's waist, giggling as USER_THEY lean over TARGET_THEIR shoulder to whisper sweet nothings as TARGET_THEIR pleasure is sealed away...`,
+                    `USER_TAG knows that TARGET_TAG is a good USER_PRAISEOBJECT, and good USER_PRAISEOBJECTs wear chastity. A VAR_C2 is conjured and wrapped around TARGET_THEIR waist to ensure TARGET_THEY TARGET_ISARE good.`
                 ],
             },
             heavy: {
@@ -128,7 +130,8 @@ const texts_chastity = {
                     ]
                 },
                 nochastity: [
-                    `USER_TAG grabs TARGET_TAG and wraps a VAR_C2 around TARGET_THEIR chest and clicks the lock shut before TARGET_THEY can even react!`
+                    `USER_TAG grabs TARGET_TAG and wraps a VAR_C2 around TARGET_THEIR chest and does the clasp on it before TARGET_THEY can even react!`,
+                    `USER_TAG steps from behind TARGET_TAG and wraps a VAR_C2 around TARGET_THEIR chest, pulling TARGET_THEM into a bit of a hug as USER_THEY do the clasp in front, sealing away TARGET_THEIR breasts.`
                 ],
             },
             heavy: {
@@ -149,7 +152,7 @@ const texts_collar = {
 		self: {
 			nofreeuse: { 
                 namedcollar: [
-                    `USER_TAG puts a VAR_C2 on USER_THEIR neck, clicking a lock on the lockable buckle and hiding the key.`,
+                    `USER_TAG puts a VAR_C2 on USER_THEIR neck. USER_THEY_CAP beam brightly as USER_THEY proudly displayUSER_S it to the world to see!`,
                     {
                         only: (t) => {
                             return t.c2.includes("Handcuff Amulet");
@@ -163,7 +166,7 @@ const texts_collar = {
             },
 			freeuse: { 
                 namedcollar: [
-                    `USER_TAG puts a VAR_C2 on USER_THEIR neck, clicking a lock on the lockable buckle and hiding the key. A little tag hangs off the collar with "Free Use!" written on it!`,
+                    `USER_TAG puts a VAR_C2 on USER_THEIR neck. USER_THEY_CAP beam brightly as USER_THEY proudly displayUSER_S it to the world to see! A little tag hangs off the collar with "Free Use!" written on it!`,
                     {
                         only: (t) => {
                             return t.c2.includes("Handcuff Amulet");
@@ -177,9 +180,10 @@ const texts_collar = {
             },
 		},
 		other: {
+             // This should never happen in the future
 			nofreeuse: { 
                 namedcollar: [
-                    `USER_TAG puts a VAR_C2 on USER_THEIR neck, clicking a lock on the lockable buckle and then handing the key to TARGET_TAG.`,
+                    `USER_TAG puts a VAR_C2 on USER_THEIR neck, clicking a lock on the lockable buckle and then handing the key to TARGET_TAG.`, 
                     {
                         only: (t) => {
                             return t.c2.includes("Handcuff Amulet");
@@ -1728,6 +1732,12 @@ const texts_lock = {
                         },
                         text: `USER_TAG places a Simple Padlock over USER_THEIR VAR_C1 - binding USER_THEMSELF with it until it is removed with the key!`,
                     },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "mitten");
+                        },
+                        text: `USER_TAG places a Simple Padlock on USER_THEIR VAR_C1, clumsily clicking the lock shut. Using both hands, USER_THEY carefully grabUSER_S the key and tuckUSER_S it away!`,
+                    },
                 ],
                 "otherlock": [
                     {
@@ -1773,6 +1783,12 @@ const texts_lock = {
                             return (t.c2 == "heavy");
                         },
                         text: `USER_TAG places a Simple Padlock over USER_THEIR VAR_C1 - binding USER_THEMSELF with it until it is removed with the key! USER_THEY_CAP handUSER_S it to TARGET_TAG for safekeeping.`,
+                    },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "mitten");
+                        },
+                        text: `USER_TAG places a Simple Padlock on USER_THEIR VAR_C1, clumsily clicking the lock shut. Using both hands, USER_THEY carefully grabUSER_S the key and offerUSER_S it to TARGET_TAG!`,
                     },
                 ]
             },
@@ -1823,6 +1839,12 @@ const texts_lock = {
                         },
                         text: `USER_TAG places a Simple Padlock over TARGET_TAG's VAR_C1, preventing anyone from removing it until USER_THEY unlock it with USER_THEIR key!`,
                     },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "mitten");
+                        },
+                        text: `USER_TAG places a Simple Padlock on TARGET_TAG's VAR_C1, using USER_THEIR fingers to click the lock shut!. With a small flourish, USER_THEY pullUSER_S the key out of the lock and then hideUSER_S it away.`,
+                    },
                 ],
                 "otherselflock": [
                     // Locking it on another, but giving THEM the key
@@ -1869,6 +1891,12 @@ const texts_lock = {
                             return (t.c2 == "heavy");
                         },
                         text: `USER_TAG places a Simple Padlock over TARGET_TAG's VAR_C1, preventing it's removal until unlocked with the key that USER_THEY just gave to TARGET_THEM. Hopefully TARGET_THEY can figure out how to remove it!`,
+                    },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "mitten");
+                        },
+                        text: `USER_TAG places a Simple Padlock on TARGET_TAG's VAR_C1, using USER_THEIR fingers to click the lock shut!. As if to tease TARGET_THEM, USER_THEY putUSER_S it next to TARGET_THEM.`,
                     },
                 ],
                 "otherlock": [
@@ -1917,6 +1945,12 @@ const texts_lock = {
                         },
                         text: `USER_TAG places a Simple Padlock over TARGET_TAG's VAR_C1, preventing it's removal until unlocked with the key that USER_THEY just gave to <@VAR_C3>.`,
                     },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "mitten");
+                        },
+                        text: `USER_TAG places a Simple Padlock on TARGET_TAG's VAR_C1, using USER_THEIR fingers to click the lock shut!. After the mittens are securely locked, USER_THEY giveUSER_S the key to <@VAR_C3>.`,
+                    },
                 ]
             }
         }
@@ -1952,7 +1986,7 @@ const texts_mitten = {
                 `USER_TAG wriggles USER_THEIR fingers into some VAR_C2. Gags will be impossible to remove!`,
                 `As if USER_THEY wantUSER_S to be gagged, USER_TAG renders USER_THEIR hands useless with a pair of VAR_C2!`,
                 `USER_TAG puts on a pair of VAR_C2 with a pair of padlocks. USER_THEYLL_CAP be unable to remove a gag if someone puts one on USER_THEM!`,
-                `USER_TAG balls up USER_THEIR fist as USER_THEY slipUSER_S USER_THEIR hands into a pair of bondage mittens and secure them!`
+                `USER_TAG balls up USER_THEIR fist as USER_THEY slipUSER_S USER_THEIR hands into a pair of VAR_C2 and secureUSER_S them!`
             ]
         },
         other: {
@@ -3831,6 +3865,7 @@ const texts_unchastity = {
 								text: `USER_TAG reaches USER_THEIR fingers uselessly towards USER_THEIR seal, but USER_THEIR fingers can't bypass the magic protections!`,
 							},
 						],
+                    nolock: [`USER_TAG undoes the hooks holding USER_THEIR chastity belt around USER_THEIR waist, letting it come loose as USER_THEY putUSER_S it away for the next time USER_THEY needUSER_S to be denied!`] // Need to write seal lines here
 				},
 				// ephemeral
 				nochastity: [`You aren't wearing a chastity belt!`],
@@ -3843,6 +3878,7 @@ const texts_unchastity = {
 					},
 					// ephemeral
 					nokey: [`You don't have the key for TARGET_TAG's belt!`],
+                    nolock: [`USER_TAG unhooks the plastic tag holding TARGET_TAG's belt shut, freeing TARGET_THEM from its torments!`]
 				},
 				// ephemeral
 				nochastity: [`TARGET_TAG is not wearing a chastity belt!`],
@@ -3870,6 +3906,7 @@ const texts_unchastity = {
 						nofumble: [`USER_TAG puts the key in the lock on USER_THEIR bra and unlocks it, freeing USER_THEIR breasts from that wretched prison!`],
 					},
 					nokey: [`USER_TAG caresses USER_THEIR fingers uselessly on the smooth metal of USER_THEIR chastity bra's breast cups, but USER_THEY can't unlock it without the key!`],
+                    nolock: [`USER_TAG undoes the retaining fastener on USER_THEIR chastity bra, letting it clang on the floor as USER_THEIR chest is met with the brisk air of the dungeon once more!`]
 				},
 				// ephemeral
 				nochastity: [`You aren't wearing a chastity bra!`],
@@ -3882,6 +3919,7 @@ const texts_unchastity = {
 					},
 					// ephemeral
 					nokey: [`You don't have the key for TARGET_TAG's bra!`],
+                    nolock: [`USER_TAG pinches the little fastener on TARGET_TAG's chastity bra, letting it come loose and fall off of USER_THEIR chest. The bra clangs on the floor with a dull sound.`]
 				},
 				// ephemeral
 				nochastity: [`TARGET_TAG is not wearing a chastity bra!`],
@@ -4692,7 +4730,12 @@ const texts_unheavy = {
 const texts_unmitten = {
 	heavy: { self: [`USER_TAG wriggles USER_THEIR hands in USER_THEIR VAR_C1, but can't get good leverage to take USER_THEIR mittens off!`], other: [`USER_TAG uses USER_THEIR nose to help TARGET_TAG but can't help TARGET_THEM out of TARGET_THEIR mittens!`] },
 	noheavy: { 
-        other: { 
+        other: {
+            noaccess: [
+                `USER_TAG tries to pull off TARGET_TAG's mittens, but the lock holds them firmly on TARGET_THEIR wrists!`,
+                `USER_TAG tugs at the wrist cuffs on TARGET_TAG's mittens, but the little lock prevents any hope of giving TARGET_THEM TARGET_THEIR fingers any time soon...`,
+                `USER_TAG pokes and prods at the little locks holding TARGET_TAG's mittens on. They're quite secure and offer no hope of removing them any time soon...`
+            ], 
             gag: [`USER_TAG takes off TARGET_TAG's VAR_C2 so TARGET_THEY can take off TARGET_THEIR gag!`], 
             nogag: [`USER_TAG takes off TARGET_TAG's VAR_C2. Now TARGET_THEY could take off any gag someone wants to put on TARGET_THEM!`] 
         }, 

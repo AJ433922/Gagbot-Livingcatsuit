@@ -27,6 +27,9 @@ exports.category = "Chastity Belt"
 // Name
 exports.name = "Petals of Anguish"
 
+// This will be broken with the Locks 2.0 update, so might as well hide it. 
+exports.hidden = true;
+
 // Tags
 exports.tags = ["chastity"]
 
