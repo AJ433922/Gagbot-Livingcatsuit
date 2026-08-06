@@ -126,14 +126,14 @@ function processHeadwearEmoji(serverID, userID, msgTree, msgModified, dollvisoro
 
 	let replaceemote = "";
 	let wornheadwear = getHeadwear(serverID, userID);
-	let isDoll = getHeadwear(serverID, userID).find((headwear) => DOLLVISORS.includes(headwear))
+	let isDoll = getHeadwear(serverID, userID)?.find((headwear) => DOLLVISORS.includes(headwear.type))
 	if(!isDoll){		// Doll Visors overwrite all other emoji replacements due to codeblock formatting
 		for (let i = 0; i < wornheadwear.length; i++) {
-			if (getHeadwearBlocks(wornheadwear[i]) && getHeadwearBlocks(wornheadwear[i]).replaceemote != undefined) {
-				if (getHeadwearBlocks(wornheadwear[i]).replaceemote.startsWith("EMOJI_")) {
-					replaceemote = process.emojis[getHeadwearBlocks(wornheadwear[i]).replaceemote.replace("EMOJI_", "")];
+			if (getHeadwearBlocks(wornheadwear[i].type) && getHeadwearBlocks(wornheadwear[i].type).replaceemote != undefined) {
+				if (getHeadwearBlocks(wornheadwear[i].type).replaceemote.startsWith("EMOJI_")) {
+					replaceemote = process.emojis[getHeadwearBlocks(wornheadwear[i].type).replaceemote.replace("EMOJI_", "")];
 				} else {
-					replaceemote = getHeadwearBlocks(wornheadwear[i]).replaceemote;
+					replaceemote = getHeadwearBlocks(wornheadwear[i].type).replaceemote;
 				}
 			}
 		}
@@ -307,8 +307,8 @@ const truthgasopposites = (text, parent, msgModified) => {
 // Changes words and negates them
 function processHeadwearTruthgas(serverID, userID, msgTree, msgModified) {
     traceFirstParam(arguments[0]);
-	// Do nothing if no headwear blocks.
-	if (!getHeadwear(serverID, userID).includes("gasmask_truthgas")) { return }
+	// Do nothing if no headwear blocks. // This is not even used lol 
+	if (!getHeadwear(serverID, userID)?.includes("gasmask_truthgas")) { return }
 
     msgTree.callFunc(truthgasopposites, true, undefined, [msgModified])
 };

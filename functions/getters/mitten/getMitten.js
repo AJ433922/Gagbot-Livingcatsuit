@@ -10,6 +10,7 @@ const { getProcessVariable } = require("../config/getProcessVariable");
  * ##### Returns the mitten object for the user. All mittens will have:
  * - mittenname: The ID of the mittens
  * - origbinder: The person who put the mittens on the user
+ * - lock?: If specified, the item is locked and needs to be checked for access
  ******/
 function getMitten(serverID, userID) {
     traceFirstParam(arguments[0]);

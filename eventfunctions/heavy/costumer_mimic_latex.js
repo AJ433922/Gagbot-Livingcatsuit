@@ -279,7 +279,7 @@ let tick = async (serverID, userID, datain) => {
                 break;
 
             case "headwear":
-                if (!getHeadwear(serverID, userID) || (getHeadwear(serverID, userID) && (getHeadwear(serverID, userID).getHeadwearName != nextitem.itemtowear))) {
+                if (!getHeadwear(serverID, userID) || (!getHeadwear(serverID, userID)?.find((h) => h.type == nextitem.itemtowear))) {
                     data.headwear = true;
                     data.textdata.c1 = getHeadwearName(serverID, undefined, nextitem.itemtowear), // headwear name
 

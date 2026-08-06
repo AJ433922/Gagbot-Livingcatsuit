@@ -127,7 +127,7 @@ function punishDoll(serverID, userID, amount) {
 		console.log(process.dolls[serverID][userID]);
 		// Compute punishments by dividing violations by punishThresh.
 		let punishThresh = getOption(serverID, userID, "dollpunishthresh");
-        if (getHeadwear(serverID, userID).find((headwear) => headwear === "dollmaker_visor")) {
+        if (getHeadwear(serverID, userID)?.find((headwear) => headwear.type === "dollmaker_visor")) {
             punishThresh = 2; // Forced to 2 if dollmakers visor
         }
 		let punishments = Math.floor(doll.violations / punishThresh);

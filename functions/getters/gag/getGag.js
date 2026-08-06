@@ -11,6 +11,7 @@ const { traceFirstParam } = require("../../other/TESTS/traceFirstParam");
  * - gagtype: The ID of the gag
  * - intensity: How tight the gag is (1-10)
  * - origbinder: Who put the gag on the user
+ * - lock?: If specified, the item is locked and needs to be checked for access
  **********/
 function getGag(serverID, userID, gagbyname) {
     traceFirstParam(arguments[0]);

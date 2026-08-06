@@ -250,10 +250,10 @@ async function rollGagbotKeyAction(serverID, userID, type) {
                     let masktypes = process.autocompletes.headtypes.map((f) => f.value);
                     let chosenmask = masktypes[Math.floor(Math.random() * masktypes.length)]
 
-                    data.textdata.c2 = getHeadwearName(serverID, userID, chosenmask)
+                    data.textdata.c2 = getHeadwearName(chosenmask)
 
                     // Now check if it's allowed with an extreme and if we're not wearing it already. Also omit any lockable masks. 
-                    if (getAllowedExtreme(serverID, interactionuser, targetuser, "mask", chosenmask) && !getHeadwear(serverID, userID).includes(chosenmask) && !getBaseHeadwear(chosenmask).lockable && !userHasTags(serverID, userID, getItemTags(chosenmask, true))) {
+                    if (getAllowedExtreme(serverID, interactionuser, targetuser, "mask", chosenmask) && !getHeadwear(serverID, userID)?.find((h) => h.type == chosenmask) && !getBaseHeadwear(chosenmask).lockable && !userHasTags(serverID, userID, getItemTags(chosenmask, true))) {
                         messageSendChannel(getText(data), getRecentChannel(serverID, userID).messagechannelid)
                         assignHeadwear(serverID, userID, chosenmask, interactionuser.id);
                         heldkeys[`${serverID}_${userID}_${type}`].lastaction = (Date.now() + (Math.floor(getOption(serverID, userID, "gagbotheldkeyaction") * (0.5 + Math.random() * 0.5))))

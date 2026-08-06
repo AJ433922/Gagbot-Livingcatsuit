@@ -273,7 +273,7 @@ function calcBreath(serverID, user) {
             }
         })
 	}
-    let userheadwear = getHeadwear(serverID, user);
+    let userheadwear = getHeadwear(serverID, user)?.map((h) => h.type);
     if (userheadwear.includes("gasmask") || userheadwear.includes("gasmasklinked") || userheadwear.includes("gasmask_hornygas") || userheadwear.includes("gasmask_truthgas")) {
         // It is harder to breathe in a gasmask or share air
         recoveryCoefficient = recoveryCoefficient * 0.7 

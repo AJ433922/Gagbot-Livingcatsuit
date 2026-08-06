@@ -3,4 +3,5 @@ exports.name = "Muzzle (Leather Lockable)";
 
 exports.tags = ["leather", "lockableheadwear"];
 exports.blockgag = true;
-exports.lockable = true;
+//exports.lockable = true;
+exports.hidden = true;

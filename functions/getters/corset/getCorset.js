@@ -13,6 +13,7 @@ const { getProcessVariable } = require("../config/getProcessVariable");
  * - timestamp: The time the corset was put on
  * - origbinder: The user ID who put the corset on the user
  * - type: The type of corset (defaults to "corset_leather")
+ * - lock?: If specified, the item is locked and needs to be checked for access
  * ###### Additional properties may be added by other functions
  *********/
 function getCorset(serverID, user) {

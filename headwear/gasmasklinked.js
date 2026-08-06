@@ -8,9 +8,7 @@ exports.blockgag = true;
 
 // Remove the shared hose if it is present
 exports.onUnlock = (data) => {
-    if (process.headwear && process.headwear[data.serverID] && process.headwear[data.serverID][data.userID] && process.headwear[data.serverID][data.userID].sharedbreathhose) {
-        delete process.headwear[data.serverID][data.userID].sharedbreathhose;
-    }
+    return true // No longer need to delete anything on the headwear object because sharedbreathhose is attached to the gasmask object. 
 }
 
 exports.itemdescription = `The **Gasmask (Linked)** will share your arousal over time with the person you give your hose to so you both balance out. They must also give their hose to you to link them.`

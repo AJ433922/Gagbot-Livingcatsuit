@@ -42,7 +42,7 @@ function convertPronounsText(text, data) {
 	let user = { subject: getPronouns(data.serverID, interactionuser.id, "subject"), object: getPronouns(data.serverID, interactionuser.id, "object"), possessive: getPronouns(data.serverID, interactionuser.id, "possessive"), possessiveDeterminer: getPronouns(data.serverID, interactionuser.id, "possessiveDeterminer"), reflexive: getPronouns(data.serverID, interactionuser.id, "reflexive"), subjectIs: getPronouns(data.serverID, interactionuser.id, "subjectIs"), subjectWill: getPronouns(data.serverID, interactionuser.id, "subjectWill") };
 
 	let isDoll = false;
-	if ((getOption(data.serverID, interactionuser.id, "dollforcedit") == "enabled" && getHeadwear(data.serverID, interactionuser.id).find((headwear) => DOLLVISORS.includes(headwear))) || getHeadwear(data.serverID, interactionuser.id).find((headwear) => headwear === "dollmaker_visor")) {
+	if ((getOption(data.serverID, interactionuser.id, "dollforcedit") == "enabled" && getHeadwear(data.serverID, interactionuser.id)?.find((headwear) => DOLLVISORS.includes(headwear.type))) || getHeadwear(data.serverID, interactionuser.id)?.find((headwear) => headwear.type === "dollmaker_visor")) {
 		((user.subject = "it"), (user.object = "it"), (user.possessive = "its"), (user.possessiveDeterminer = "its"), (user.reflexive = "itself"), (user.subjectIs = "it's"), (user.subjectWill = "it'll"));
 		isDoll = true;
 	}
@@ -50,7 +50,7 @@ function convertPronounsText(text, data) {
 	let target = { subject: getPronouns(data.serverID, targetuser.id, "subject"), object: getPronouns(data.serverID, targetuser.id, "object"), possessive: getPronouns(data.serverID, targetuser.id, "possessive"), possessiveDeterminer: getPronouns(data.serverID, targetuser.id, "possessiveDeterminer"), reflexive: getPronouns(data.serverID, targetuser.id, "reflexive"), subjectIs: getPronouns(data.serverID, targetuser.id, "subjectIs"), subjectWill: getPronouns(data.serverID, targetuser.id, "subjectWill") };
 
 	let targetDoll = false;
-	if (getOption(data.serverID, targetuser.id, "dollforcedit") == "enabled" && getHeadwear(data.serverID, targetuser.id).find((headwear) => DOLLVISORS.includes(headwear))) {
+	if (getOption(data.serverID, targetuser.id, "dollforcedit") == "enabled" && getHeadwear(data.serverID, targetuser.id)?.find((headwear) => DOLLVISORS.includes(headwear.type))) {
 		((target.subject = "it"), (target.object = "it"), (target.possessive = "its"), (target.possessiveDeterminer = "its"), (target.reflexive = "itself"), (target.subjectIs = "it's"), (target.subjectWill = "it'll"));
 		targetDoll = true;
 	}

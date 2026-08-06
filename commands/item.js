@@ -33,8 +33,8 @@ module.exports = {
 		try {
 			if (subcommand == "protect") {
 				// Headwear
-				let itemswornhead = getHeadwear(interaction.guildId, interaction.user.id);
-				let itemslockedhead = getLockedHeadgear(interaction.guildId, interaction.user.id);
+				let itemswornhead = []; //getHeadwear(interaction.guildId, interaction.user.id);
+				let itemslockedhead = []; //getLockedHeadgear(interaction.guildId, interaction.user.id);
 
 				let sorted = itemswornhead.filter((f) => !itemslockedhead.includes(f));
 
@@ -45,7 +45,7 @@ module.exports = {
 				let sortedwearable = itemswornwearable.filter((f) => !itemslockedwearable.includes(f));
 
 				sorted = sorted.map((f) => {
-					return { name: getHeadwearName(interaction.guildId, undefined, f), value: `${f}+head` };
+					return { name: getHeadwearName(f.type), value: `${f}+head` };
 				});
 				sortedwearable = sortedwearable.map((f) => {
 					return { name: getWearableName(undefined, f), value: `${f}+wearable` };
@@ -66,11 +66,11 @@ module.exports = {
 					await interaction.respond(sorted.filter((f) => f.name.toLowerCase().includes(focusedValue.toLowerCase())).slice(0, 10));
 				}
 			} else {
-				let itemslockedhead = getLockedHeadgear(interaction.guildId, interaction.user.id);
+				let itemslockedhead = [] //getLockedHeadgear(interaction.guildId, interaction.user.id);
 				let itemslockedwearable = getLockedWearable(interaction.guildId, interaction.user.id);
 
 				let sorted = itemslockedhead.map((f) => {
-					return { name: getHeadwearName(interaction.guildId, undefined, f), value: `${f}+head` };
+					return { name: getHeadwearName(f.type), value: `${f}+head` };
 				});
 				let sortedwearable = itemslockedwearable.map((f) => {
 					return { name: getWearableName(undefined, f), value: `${f}+wearable` };
@@ -98,9 +98,9 @@ module.exports = {
 					let chosenitemparts = chosenitem.split("+");
 					let replytextname;
 					if (chosenitemparts[1] == "head") {
-						if (getHeadwearName(interaction.guildId, undefined, chosenitemparts[0])) {
+						if (getHeadwearName(chosenitemparts[0])) {
 							addLockedHeadgear(interaction.guildId, interaction.user.id, chosenitemparts[0]);
-							replytextname = getHeadwearName(interaction.guildId, undefined, chosenitemparts[0]);
+							replytextname = getHeadwearName(chosenitemparts[0]);
 						} else {
 							interaction.reply({ content: `Item ${replytextname} is an invalid item! Try again.`, flags: MessageFlags.Ephemeral });
 							return;

@@ -231,11 +231,11 @@ async function generateOutfitModal(serverID, userID, menu, page, options) {
 
 		// Headwear section
 		texts = `### Headwear:\n`;
-		if (!(getHeadwear(serverID, userID).length > 0)) {
+		if (!(getHeadwear(serverID, userID))) {
 			texts = `${texts}Not worn`;
 		} else {
 			texts = `${texts}${getHeadwear(serverID, userID)
-				.map((g) => getHeadwearName(serverID, undefined, g))
+				.map((g) => getHeadwearName(g.type))
 				.join(", ")}`;
 		}
 		pagecomponents.push(
@@ -247,7 +247,7 @@ async function generateOutfitModal(serverID, userID, menu, page, options) {
 						.setLabel(options.slice(bitselector, bitselector + 1) == "1" ? `Save` : `Disabled`)
 						.setStyle(options.slice(bitselector, bitselector + 1) == "1" ? ButtonStyle.Success : ButtonStyle.Danger)
 						// Block if element doesn't exist
-						.setDisabled(!(getHeadwear(serverID, userID).length > 0)),
+						.setDisabled(!getHeadwear(serverID, userID)),
 				),
 		);
 		bitselector++;
@@ -580,15 +580,15 @@ async function inspectModal(serverID, userID, inspectuserIDin, menu, page) {
             wearingtext = `${wearingtext}\n${process.emojis.gag} Gags: **${getGags(serverID, inspectuserID).map((g) => { return `${convertGagText(g.gagtype)} (${g.intensity})`}).join(", ")}**`
         }
         // Headwear
-        if (getHeadwear(serverID, inspectuserID).length > 0) {
-            wearingtext = `${wearingtext}\n${process.emojis.gasmask} Masks: **${getHeadwear(serverID, inspectuserID).map((h) => (!getLockedHeadgear(serverID, inspectuserID).includes(h) ? getHeadwearName(serverID, undefined, h) : `*${getHeadwearName(serverID, undefined, h)}*`)).join(", ")}**`
+        if (getHeadwear(serverID, inspectuserID)) {
+            wearingtext = `${wearingtext}\n${process.emojis.gasmask} Masks: **${getHeadwear(serverID, inspectuserID).map((h) => (!h.lock ? getHeadwearName(h.type) : `*${getHeadwearName(h.type)}*`)).join(", ")}**`
             let lockedheadgears = [];
-            if (process.headwear[serverID][inspectuserID]) { lockedheadgears = Object.keys(process.headwear[serverID][inspectuserID]) }
+            /*if (getHeadwear[serverID][inspectuserID]) { lockedheadgears = Object.keys(process.headwear[serverID][inspectuserID]) }
             lockedheadgears.forEach((lh) => {
                 if (process.headwear[serverID][inspectuserID][lh] && process.headwear[serverID][inspectuserID][lh]?.lockable && process.headwear[serverID][inspectuserID][lh]?.origbinder) {
                     wearingtext = `${wearingtext}\n-# ‎   - **${process.headtypes[lh].name}** key held by <@${process.headwear[serverID][inspectuserID][lh].origbinder}>`
                 }
-            })
+            })*/
         }
         // Mittens
         if (getMitten(serverID, inspectuserID)) {
@@ -771,15 +771,15 @@ async function inspectModal(serverID, userID, inspectuserIDin, menu, page) {
             wearingtext = `${wearingtext}\n${process.emojis.gag} Gags: **${getGags(serverID, inspectuserID).map((g) => { return `${convertGagText(g.gagtype)} (${g.intensity})`}).join(", ")}**`
         }
         // Headwear
-        if (getHeadwear(serverID, inspectuserID).length > 0) {
-            wearingtext = `${wearingtext}\n${process.emojis.gasmask} Masks: **${getHeadwear(serverID, inspectuserID).map((h) => (!getLockedHeadgear(serverID, inspectuserID).includes(h) ? getHeadwearName(serverID, undefined, h) : `*${getHeadwearName(serverID, undefined, h)}*`)).join(", ")}**`
+        if (getHeadwear(serverID, inspectuserID)) {
+            wearingtext = `${wearingtext}\n${process.emojis.gasmask} Masks: **${getHeadwear(serverID, inspectuserID).map((h) => (!h.lock ? getHeadwearName(h.type) : `*${getHeadwearName(h.type)}*`)).join(", ")}**`
             let lockedheadgears = [];
-            if (process.headwear[serverID][inspectuserID]) { lockedheadgears = Object.keys(process.headwear[serverID][inspectuserID]) }
+            /*if (process.headwear[serverID][inspectuserID]) { lockedheadgears = Object.keys(process.headwear[serverID][inspectuserID]) }
             lockedheadgears.forEach((lh) => {
                 if (process.headwear[serverID][inspectuserID][lh] && process.headwear[serverID][inspectuserID][lh]?.lockable && process.headwear[serverID][inspectuserID][lh]?.origbinder) {
                     wearingtext = `${wearingtext}\n-# ‎   - **${process.headtypes[lh].name}** key held by <@${process.headwear[serverID][inspectuserID][lh].origbinder}>`
                 }
-            })
+            })*/
         }
         // Mittens
         if (getMitten(serverID, inspectuserID)) {

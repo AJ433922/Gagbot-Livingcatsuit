@@ -4079,19 +4079,19 @@ const texts_ungag = {
                     failed: [
                         {
                             required: (t) => {
-                                return (t.c3 && getHeadwear(t.serverID, t.targetuser.id).includes(`gagharness_${t.c3}`))
+                                return (t.c3 && getHeadwear(t.serverID, t.targetuser.id)?.some((h) => h.type == `gagharness_${t.c3}`))
                             },
                             text: `USER_TAG tugs at USER_THEIR VAR_C2, but the straps on head harness hold it firmly to USER_THEIR head. USER_THEY_CAP twiddleUSER_S with the little locks on it.`
                         },
                         {
                             required: (t) => {
-                                return (t.c3 && getHeadwear(t.serverID, t.targetuser.id).includes(`gagharness_${t.c3}`))
+                                return (t.c3 && getHeadwear(t.serverID, t.targetuser.id)?.some((h) => h.type == `gagharness_${t.c3}`))
                             },
                             text: `It's not for lack of trying, but the straps circling USER_TAG's vision remind USER_THEM of the futility in trying to remove USER_THEIR locked gag.`
                         },
                         {
                             required: (t) => {
-                                return (t.c3 && getHeadwear(t.serverID, t.targetuser.id).includes(`gagharness_${t.c3}`))
+                                return (t.c3 && getHeadwear(t.serverID, t.targetuser.id)?.some((h) => h.type == `gagharness_${t.c3}`))
                             },
                             text: `USER_TAG paws at the head harness on USER_THEIR head, clearly forgetting that USER_THEY USER_ISARE meant to be gagged until USER_THEIR head harness is unlocked.`
                         },
@@ -4121,13 +4121,13 @@ const texts_ungag = {
                     failed: [
                         {
                             required: (t) => {
-                                return (t.c3 && getHeadwear(t.serverID, t.targetuser.id).includes(`gagharness_${t.c3}`))
+                                return (t.c3 && getHeadwear(t.serverID, t.targetuser.id)?.some((h) => h.type == `gagharness_${t.c3}`))
                             },
                             text: `USER_TAG tugs at the VAR_C2 on TARGET_TAG's face, but fails miserably in removing the head harness holding the gag securely in TARGET_THEIR mouth.`
                         },
                         {
                             required: (t) => {
-                                return (t.c3 && getHeadwear(t.serverID, t.targetuser.id).includes(`gagharness_${t.c3}`))
+                                return (t.c3 && getHeadwear(t.serverID, t.targetuser.id)?.some((h) => h.type == `gagharness_${t.c3}`))
                             },
                             text: `Despite USER_TAG's best efforts, TARGET_TAG's speech remains stolen from TARGET_THEM. A shame. Maybe someone should unlock the harness on TARGET_THEM!`
                         },

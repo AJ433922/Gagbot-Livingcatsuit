@@ -65,15 +65,20 @@ module.exports = {
 					if (getCollar(interaction.guildId, collaruser.id)) {
 						// we are wearing a collar
 						data.collar = true;
-						if (canAccessCollar(interaction.guildId, collaruser.id, interaction.user.id, true).access) {
+						if (getCollar(interaction.guildId, collaruser.id)?.lock && canRemoveLock(interaction.guildId, collaruser.id, interaction.user.id, getCollar(interaction.guildId, collaruser.id).lock.uuid)) {
 							// We have the key to our own collar
 							data.key = true;
 							interaction.reply(getText(data));
 							removeCollar(interaction.guildId, collaruser.id);
-						} else {
-							// We do not have the key to our collar.
+						} else if (getCollar(interaction.guildId, collaruser.id)?.lock) {
+                            // We do not have the key to our collar.
 							data.nokey = true;
 							interaction.reply(getText(data));
+                        } else {
+							// The collar isn't locked lol
+							data.nolock = true;
+							interaction.reply(getText(data));
+                            removeCollar(interaction.guildId, collaruser.id);
 						}
 					} else {
 						// We dont have a collar on. Ephemeral
@@ -86,15 +91,15 @@ module.exports = {
 					if (getCollar(interaction.guildId, collaruser.id)) {
 						// they are wearing a collar
 						data.collar = true;
-						if (canAccessCollar(interaction.guildId, collaruser.id, interaction.user.id, true).access) {
+						if (getCollar(interaction.guildId, collaruser.id)?.lock && canRemoveLock(interaction.guildId, collaruser.id, interaction.user.id, getCollar(interaction.guildId, collaruser.id).lock.uuid)) {
 							// We have the key to their collar
 							data.key = true;
 							interaction.reply(getText(data));
 							removeCollar(interaction.guildId, collaruser.id);
-						} else {
+						} else if (getCollar(interaction.guildId, collaruser.id)?.lock) {
 							// We do not have the key to their collar. Ephemeral
 							data.nokey = true;
-							if (!getCollar(interaction.guildId, collaruser.id).keyholderOnly && getCollar(interaction.guildId, collaruser.id).keyholder == collaruser.id) {
+							if (!getCollar(interaction.guildId, collaruser.id).keyholderOnly && getCollar(interaction.guildId, collaruser.id)?.lock.keyholderID == collaruser.id) {
 								// They're wearing an unlocked collar - its their choice!
 								data.nokeyholderonly = true;
 								interaction.reply({ content: getText(data), flags: MessageFlags.Ephemeral });
@@ -103,6 +108,11 @@ module.exports = {
 								data.keyholderonly = true;
 								interaction.reply({ content: getText(data), flags: MessageFlags.Ephemeral });
 							}
+						} else {
+							// The collar isn't locked, BUT we don't want them to take off our collar. That's our job. 
+							data.nokey = true;
+                            data.nokeyholderonly = true;
+							interaction.reply(getText(data));
 						}
 					} else {
 						// They dont have a collar on. Ephemeral
