@@ -152,7 +152,7 @@ const texts_collar = {
 		self: {
 			nofreeuse: { 
                 namedcollar: [
-                    `USER_TAG puts a VAR_C2 on USER_THEIR neck. USER_THEY_CAP beam brightly as USER_THEY proudly displayUSER_S it to the world to see!`,
+                    `USER_TAG puts a VAR_C2 on USER_THEIR neck. USER_THEY_CAP beamUSER_S brightly as USER_THEY proudly displayUSER_S it to the world to see!`,
                     {
                         only: (t) => {
                             return t.c2.includes("Handcuff Amulet");
@@ -166,7 +166,7 @@ const texts_collar = {
             },
 			freeuse: { 
                 namedcollar: [
-                    `USER_TAG puts a VAR_C2 on USER_THEIR neck. USER_THEY_CAP beam brightly as USER_THEY proudly displayUSER_S it to the world to see! A little tag hangs off the collar with "Free Use!" written on it!`,
+                    `USER_TAG puts a VAR_C2 on USER_THEIR neck. USER_THEY_CAP beamUSER_S brightly as USER_THEY proudly displayUSER_S it to the world to see! A little tag hangs off the collar with "Free Use!" written on it!`,
                     {
                         only: (t) => {
                             return t.c2.includes("Handcuff Amulet");
@@ -3977,7 +3977,16 @@ const texts_uncollar = {
                         },
                         text: `USER_TAG runs USER_THEIR fingers along USER_THEIR VAR_C2, but since USER_THEY promised not to remove it without permission, USER_THEY decideUSER_S to keep it on.`,
                     },
-                ] 
+                ],
+                nolock: [
+                    `USER_TAG undoes the strap holding USER_THEIR collar on USER_THEIR neck, smiling as the cool air touches USER_THEIR neck once more. The collar is put away for later use.`,
+                    {
+                        only: (t) => {
+                            return t.c2.includes("Handcuff Amulet");
+                        },
+                        text: `USER_TAG reaches up and undoes the little clasp holding USER_THEIR VAR_C2 on USER_THEIR neck. The fashionable kinky necklace is returned to it's rightful box to be worn next time!`,
+                    },
+                ]
             },
 			// Ephemeral
 			nocollar: [`You're not wearing a collar!`],
@@ -3995,7 +4004,15 @@ const texts_uncollar = {
                 ],
 				nokey: {
 					// Ephemeral
-					nokeyholderonly: [`TARGET_TAG's collar is unlocked, but it would be impolite to take it off!`],
+					nokeyholderonly: [
+                        `TARGET_TAG's collar is unlocked, but it would be impolite to take it off!`,
+                        {
+                            only: (t) => {
+                                return t.c2.includes("Handcuff Amulet");
+                            },
+                            text: `TARGET_TAG hasn't promised TARGET_THEIR necklace to anyone!`,
+                        },
+                    ],
 					// Ephemeral
 					keyholderonly: [
                         `You don't have the key for TARGET_TAG's collar!`,
