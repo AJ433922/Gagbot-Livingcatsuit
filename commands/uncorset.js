@@ -78,15 +78,22 @@ module.exports = {
 						// We are wearing a corset!
 						data.corset = true;
                         if (getCorset(interaction.guildId, corsetuser.id)?.lock && !canRemoveLock(interaction.guildId, corsetuser.id, interaction.user.id, getCorset(interaction.guildId, corsetuser.id).lock.uuid)) {
-                            // The corset is locked! 
+                            // The corset is locked and we aren't permitted to remove it 
                             data.noaccess = true;
                             interaction.reply(getText(data));
                         }
                         else if (getCorset(interaction.guildId, corsetuser.id)?.lock) {
                             // Locked, but we have the ability to remove it. 
+                            data.locked = true;
+                            interaction.reply(getText(data));
+                            removeCorset(interaction.guildId, corsetuser.id);
                         }
-						interaction.reply(getText(data));
-						removeCorset(interaction.guildId, corsetuser.id);
+                        else {
+                            // Corset is NOT locked, so it can just be removed. 
+                            data.nolocked = true;
+                            interaction.reply(getText(data));
+                            removeCorset(interaction.guildId, corsetuser.id);
+                        }
 					} else {
 						// We're not in a corset
 						data.nocorset = true;
