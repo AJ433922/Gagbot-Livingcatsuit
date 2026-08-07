@@ -1091,7 +1091,7 @@ const texts_heavy = {
                             return t.c2.includes("Lockdown Virus");
                         },
                         text: `USER_TAG taps a few too many pop-ups on USER_THEIR tablet and suddenly finds USER_THEIR joints seizing up! USER_THEIR_CAP OS Daemon processes are locked up from a rogue virus USER_THEY 'accidentally' allowed!`,
-                    },
+                    }
                 ],
                 legs: [
                     `USER_TAG pulls out a VAR_C2 and wraps it over USER_THEIR legs! USER_THEY_CAP will be quite unable to move now!`,
@@ -1129,6 +1129,18 @@ const texts_heavy = {
                             return t.c3.includes("Cuddle Puddle");
                         },
                         text: `USER_TAG walks towards the VAR_C2! It envelops USER_THEM in a neverending cascade of cuddles!`,
+                    },                
+                    {
+                        only: (t) => {
+                            return t.c2.includes("Duffel Bag");
+                        },
+                        text: `USER_TAG pulls the zip down on a VAR_C2 before slipping USER_THEMSELF inside and pulling the zipper closed behind USER_THEM!`,
+                    },                
+                    {
+                        only: (t) => {
+                            return t.c2.includes("Stable");
+                        },
+                        text: `USER_TAG opens the stall door of the VAR_C2, stepping through before closing and latching it behind USER_THEMSELF!`,
                     },
                 ],
                 furniture: [
@@ -1388,6 +1400,18 @@ const texts_heavy = {
                             return t.c3.includes("Cuddle Puddle");
                         },
                         text: `USER_TAG pulls TARGET_TAG into the VAR_C2! It welcomes TARGET_THEM as one of its own!`,
+                    },
+                    {
+                        only: (t) => {
+                            return t.c2.includes("Duffel Bag");
+                        },
+                        text: `USER_TAG pulls the zip down on a VAR_C2 before slipping TARGET_TAG inside and pulling the zipper closed, sealing TARGET_THEM inside!`,
+                    },                
+                    {
+                        only: (t) => {
+                            return t.c2.includes("Stable");
+                        },
+                        text: `USER_TAG opens the stall door of the VAR_C2, leading TARGET_TAG inside before slipping back out and latching it behind USER_THEM!`,
                     },
                 ],
                 furniture: [
