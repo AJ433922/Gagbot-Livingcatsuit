@@ -6963,10 +6963,20 @@ function getText(data) {
 					chosenphrases.push(a);
 				} else {
 					if (a.only != undefined && a.only(data_in)) {
-						onlyphrases.push(a.text);
+                        if (Array.isArray(a.text)) {
+                            onlyphrases.push(a.text[Math.floor(Math.random() * a.text.length)]);
+                        }
+                        else {
+                            onlyphrases.push(a.text);
+                        }
 						only = true;
 					} else if (a.required != undefined && a.required(data_in)) {
-						chosenphrases.push(a.text);
+                        if (Array.isArray(a.text)) {
+                            chosenphrases.push(a.text[Math.floor(Math.random() * a.text.length)]);
+                        }
+                        else {
+                            chosenphrases.push(a.text);
+                        }
 					}
 				}
 			});
