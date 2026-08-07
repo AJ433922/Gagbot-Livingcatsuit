@@ -4373,14 +4373,35 @@ const texts_unheavy = {
                 only: (t) => {
                     return t.c2.includes("Stable");
                 },
-                text: `USER_TAG tries to escape USER_THEIR stall! Unfortunately USER_THEIR bindings stop USER_THEM from working the latch~!`,
+                text: `USER_TAG tries to escape USER_THEIR VAR_C1! Unfortunately USER_THEIR bindings stop USER_THEM from working the latch~!`,
             },
             {
                 only: (t) => {
                     return t.c2.includes("Sphere");
                 },
-                text: `USER_TAG tries to escape the Sphere USER_THEY was caught in! However USER_THEIR struggles only make it wiggle slightly~!`,
+                text: `USER_TAG tries to escape the VAR_C1 USER_THEY was caught in! However USER_THEIR struggles only make it wiggle slightly~!`,
             },
+            {
+                only: (t) => {
+                    return t.c2.includes("Bed Restraints");
+                },
+                text: `USER_TAG tugs against the bindings holding USER_THEM on the bed! However USER_THEY soon flop back onto the plush bedding, tired out but no closer to escaping~!`,
+            },
+            {
+                only: (t) => {
+                    return t.c2.includes("Doll Case");
+                },
+                get text() {
+                    const options = [
+                        `USER_TAG squirms slightly in USER_THEIR VAR_C1! However the bindings hold firm, leaving USER_THEM fully on display~!`,
+                        `USER_TAG wiggles helplessly inside USER_THEIR VAR_C1!`,
+                        `USER_TAG strains against the restraints of USER_THEIR VAR_C1, only succeeding in drawing attention to the misbehaving doll~!`
+                    ];
+                    return options[Math.floor(Math.random() * options.length)];
+                }
+            },
+            
+
             // PURE_CONTAINERS - May be needed once containers can be struggled when seperate bindings are on arms and no longer take priority
             //{
             //    required: (t) => {
