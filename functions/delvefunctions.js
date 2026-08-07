@@ -362,7 +362,7 @@ const delveroomchoices = {
         shortdesc: "You find a room full of foliage including plants with pink flowers. The room gives off a faint pink haze.",
         longdesc: "You encounter a room full of vines, flowers and plants snaking around stone pillars. The vines look innocuous enough but the flowers are pink and in full bloom as the room gives off a distinctly pink haze. A small whiff makes you feel slightly woozy as you find yourself suddenly considering how you feel about the various bondage restraints you usually encounter in this place.",
         extradesc: (serverID, userID, text, delvedata, resolve) => {
-            if (getHeadwear(serverID, userID).find((f) => getBaseHeadwear(f)?.tags?.includes("gasmask"))) {
+            if (getHeadwear(serverID, userID)?.find((f) => getBaseHeadwear(f.type)?.tags?.includes("gasmask"))) {
                 text = `${text}\n\nYou are wearing a gasmask, so maintaining a clear head in this place should be trivial.`
             }
             return text;
@@ -390,7 +390,7 @@ const delveroomchoices = {
                     dexterity: 10,
                 },
                 statspecial: (serverID, userID, delvedata, resolve) => {
-                    if (getHeadwear(serverID, userID).find((f) => getBaseHeadwear(f)?.tags?.includes("gasmask"))) {
+                    if (getHeadwear(serverID, userID)?.find((f) => getBaseHeadwear(f.type)?.tags?.includes("gasmask"))) {
                         // If they are wearing a gasmask, they will always succeed.
                         delvedata.stats = {}; // This makes it 100%
                     }

@@ -1,5 +1,5 @@
 const { traceFirstParam } = require("../../other/TESTS/traceFirstParam");
-const { getProcessVariable } = require("../config/getProcessVariable");
+const { getSpecificHeadwear } = require("./getSpecificHeadwear");
 
 /********
  * Gets the person who put a piece of headwear on the user
@@ -12,7 +12,7 @@ const { getProcessVariable } = require("../config/getProcessVariable");
  ********/
 function getHeadwearBinder(serverID, userID, item) {
     traceFirstParam(arguments[0]);
-	return (getProcessVariable(serverID, userID, "headwear") && getProcessVariable(serverID, userID, "headwear")[item] && getProcessVariable(serverID, userID, "headwear")[item]?.origbinder);
+	return getSpecificHeadwear(serverID, userID, item).origbinder
 }
 
 exports.getHeadwearBinder = getHeadwearBinder;

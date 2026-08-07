@@ -23,9 +23,10 @@ function canAccessGag(serverID, userID, item) {
     }
 
     // Check if the user is wearing a mask that prevents modifying gags et al
-    let wornheadwear = getHeadwear(serverID, userID);
+    let wornheadwear = getHeadwear(serverID, userID) ?? [];
+
     wornheadwear.forEach((h) => {
-        if (getBaseHeadwear(h).blockgag) {
+        if (getBaseHeadwear(h.type).blockgag) {
             canaccess = false;
         }
     })

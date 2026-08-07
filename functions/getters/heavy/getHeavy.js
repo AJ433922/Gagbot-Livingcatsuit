@@ -14,6 +14,7 @@ const { getBaseHeavy } = require("./getBaseHeavy");
  * - origbinder: The person who applied this heavy bondage
  * - displayname: The display name of this heavy bondage
  * - namedcontainerowner?: User ID included in container checks
+ * - lock?: If specified, the item is locked and needs to be checked for access
  *********/
 function getHeavy(serverID, user, type, includenonbinding) {
     traceFirstParam(arguments[0]);

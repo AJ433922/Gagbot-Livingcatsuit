@@ -257,7 +257,7 @@ function handleDressProtocol(serverID, userID, dp) {
                         isworn = (getHeavyList(serverID, userID)?.find((h) => h.type == dp.items[i]));
                         break;
                     case "mask":
-                        isworn = (getHeadwear(serverID, userID)?.includes(dp.items[i]));
+                        isworn = (getHeadwear(serverID, userID)?.find((h) => h.type == dp.items[i]));
                         break;
                     // assignToy needs a force param to be accurately handled in an outfit. As such this is disabled for now. 
                     /*

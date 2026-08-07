@@ -19,8 +19,7 @@ function deleteGag(serverID, userID, specificgag, force = false) {
 	// Remove all gags if none is specified.
 	if (!specificgag && process.gags[serverID] && process.gags[serverID][userID]) {
         let lockedheadgears = [];
-        if (process.headwear[serverID] && process.headwear[serverID][userID]) { lockedheadgears = Object.keys(process.headwear[serverID][userID]) }
-        if ((lockedheadgears.length <= 1) || force) {
+        if ((lockedheadgears.length < 1) || force) {
             // They dont have anything locked on their head, business as usual. 
             process.gags[serverID][userID].forEach((g) => {
                 if (process.gagtypes[g.gagtype] && process.gagtypes[g.gagtype].onUnlock) {
@@ -34,11 +33,11 @@ function deleteGag(serverID, userID, specificgag, force = false) {
                 if (process.gagtypes[serverID] && process.gagtypes[serverID][g.gagtype] && process.gagtypes[serverID][g.gagtype].onUnlock) {
                     process.gagtypes[serverID][g.gagtype].onUnlock(userID);
                 }
-                if (!process.headwear[serverID][userID][`gagharness_${g.gagtype}`]) {
+                /*if (!process.headwear[serverID][userID][`gagharness_${g.gagtype}`]) {
                     // Splice out any gags that are eligible to be removed. 
                     let loc = process.gags[serverID][userID].findIndex((f) => f.gagtype == g.gagtype);
                     process.gags[serverID][userID].splice(loc, 1);
-                }
+                }*/
             })
         }
 	} else if (process.gags[serverID] && process.gags[serverID][userID]) {

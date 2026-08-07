@@ -261,8 +261,8 @@ function runTickEvents() {
 		Object.keys(process.headwear).forEach((serverid) => {
             Object.keys(process.headwear[serverid]).forEach((userid) => {
                 getHeadwear(serverid, userid).forEach((h) => {
-                    if (process.eventfunctions.headwear && process.eventfunctions.headwear[h] && process.eventfunctions.headwear[h].tick) {
-                        process.eventfunctions.headwear[h].tick(serverid, userid);
+                    if (process.eventfunctions.headwear && process.eventfunctions.headwear[h] && process.eventfunctions.headwear[h.type].tick) {
+                        process.eventfunctions.headwear[h.type].tick(serverid, userid);
                     }
                 });
             });

@@ -25,7 +25,7 @@ module.exports = {
         try {
             const focusedValue = interaction.options.getFocused();
             let chosenuserid = interaction.options.get("user")?.value ?? interaction.user.id; // Note we can only retrieve the user ID here!
-            let itemsworn = getHeadwear(interaction.guildId, chosenuserid);
+            let itemsworn = getHeadwear(interaction.guildId, chosenuserid)?.map((h) => h.type) ?? [];
             let autocompletes = process.autocompletes.headtypes.filter((f) => !itemsworn.includes(f.value));
             let matches = didYouMean(focusedValue, autocompletes, {
                 matchPath: ['name'], 
@@ -72,7 +72,7 @@ module.exports = {
 					interactionuser: interaction.user,
 					targetuser: headwearuser,
 					c1: getHeavy(interaction.guildId, interaction.user.id)?.displayname, // heavy bondage type
-					c2: getHeadwearName(interaction.guildId, headwearuser.id, headwearchoice),
+					c2: getHeadwearName(headwearchoice),
 				},
 			};
 
@@ -104,7 +104,7 @@ module.exports = {
 				if (headwearuser.id == interaction.user.id) {
 					// ourselves
 					data.self = true;
-					if (getHeadwear(interaction.guildId, headwearuser.id).includes(headwearchoice)) {
+					if (getHeadwear(interaction.guildId, headwearuser.id)?.find((h) => h.type == headwearchoice)) {
 						// Wearing the headgear already, Ephemeral
 						data.worn = true;
 						interaction.reply({ content: getText(data), flags: MessageFlags.Ephemeral });
@@ -116,7 +116,7 @@ module.exports = {
 				} else {
 					// Them
 					data.other = true;
-					if (getHeadwear(interaction.guildId, headwearuser.id).includes(headwearchoice)) {
+					if (getHeadwear(interaction.guildId, headwearuser.id)?.find((h) => h.type == headwearchoice)) {
 						// Wearing the headgear already, Ephemeral
 						data.worn = true;
 						interaction.reply({ content: getText(data), flags: MessageFlags.Ephemeral });
@@ -135,7 +135,7 @@ module.exports = {
 					if (headwearuser.id == interaction.user.id) {
 						// ourselves
 						data.self = true;
-						if (getHeadwear(interaction.guildId, headwearuser.id).includes(headwearchoice)) {
+						if (getHeadwear(interaction.guildId, headwearuser.id)?.find((h) => h.type == headwearchoice)) {
 							// Wearing the headgear already, Ephemeral
 							data.worn = true;
 							interaction.reply({ content: getText(data), flags: MessageFlags.Ephemeral });
@@ -147,7 +147,7 @@ module.exports = {
 					} else {
 						// Them
 						data.other = true;
-						if (getHeadwear(interaction.guildId, headwearuser.id).includes(headwearchoice)) {
+						if (getHeadwear(interaction.guildId, headwearuser.id)?.find((h) => h.type == headwearchoice)) {
 							// Wearing the headgear already, Ephemeral
 							data.worn = true;
 							interaction.reply({ content: getText(data), flags: MessageFlags.Ephemeral });
@@ -163,7 +163,7 @@ module.exports = {
 					if (headwearuser.id == interaction.user.id) {
 						// ourselves
 						data.self = true;
-						if (getHeadwear(interaction.guildId, headwearuser.id).includes(headwearchoice)) {
+						if (getHeadwear(interaction.guildId, headwearuser.id)?.find((h) => h.type == headwearchoice)) {
 							// Wearing the headgear already, Ephemeral
 							data.worn = true;
 							interaction.reply({ content: getText(data), flags: MessageFlags.Ephemeral });
@@ -173,7 +173,7 @@ module.exports = {
                             await interaction.deferReply({ flags: MessageFlags.Ephemeral });
                             await handleExtremeRestraint(interaction.guildId, interaction.user, targetuser, "mask", headwearchoice).then(
                                 async (success) => {
-                                    await interaction.followUp({ content: `Equipping ${getHeadwearName(interaction.guildId, headwearuser.id, headwearchoice)}`, flags: MessageFlags.Ephemeral })
+                                    await interaction.followUp({ content: `Equipping ${getHeadwearName(headwearchoice)}`, flags: MessageFlags.Ephemeral })
                                     let followupmessage = await generateExtraConfig(interaction, targetuser.id, headwearchoice, true)
                                     if (followupmessage) { 
                                         await interaction.followUp(followupmessage) 
@@ -182,9 +182,9 @@ module.exports = {
                                     assignHeadwear(interaction.guildId, headwearuser.id, headwearchoice, interaction.user.id);
                                 },
                                 async (reject) => {
-                                    let nomessage = `You have rejected the ${getHeadwearName(interaction.guildId, headwearuser.id, headwearchoice)}.`;
+                                    let nomessage = `You have rejected the ${getHeadwearName(headwearchoice)}.`;
                                     if (reject == "Disabled") {
-                                        nomessage = `${getHeadwearName(interaction.guildId, headwearuser.id, headwearchoice)} is currently disabled in your extreme options.`;
+                                        nomessage = `${getHeadwearName(headwearchoice)} is currently disabled in your extreme options.`;
                                     }
                                     if (reject == "Error") {
                                         nomessage = `Something went wrong - Submit a bug report!`;
@@ -199,7 +199,7 @@ module.exports = {
 					} else {
 						// Them
 						data.other = true;
-                        if (getHeadwear(interaction.guildId, headwearuser.id).includes(headwearchoice)) {
+                        if (getHeadwear(interaction.guildId, headwearuser.id)?.find((h) => h.type == headwearchoice)) {
                             // Wearing the headgear already, Ephemeral
                             data.worn = true;
                             interaction.reply({ content: getText(data), flags: MessageFlags.Ephemeral });
@@ -210,7 +210,7 @@ module.exports = {
                             await handleMajorRestraint(interaction.guildId, interaction.user, targetuser, "mask", headwearchoice).then(async () => {
                                 await handleExtremeRestraint(interaction.guildId, interaction.user, targetuser, "mask", headwearchoice).then(
                                     async (success) => {
-                                        await interaction.followUp({ content: `Equipping ${getHeadwearName(interaction.guildId, headwearuser.id, headwearchoice)}`, flags: MessageFlags.Ephemeral })
+                                        await interaction.followUp({ content: `Equipping ${getHeadwearName(headwearchoice)}`, flags: MessageFlags.Ephemeral })
                                         let followupmessage = await generateExtraConfig(interaction, targetuser.id, headwearchoice, true)
                                         if (followupmessage) { 
                                             await interaction.followUp(followupmessage) 
@@ -219,9 +219,9 @@ module.exports = {
                                         assignHeadwear(interaction.guildId, headwearuser.id, headwearchoice, interaction.user.id);
                                     },
                                     async (reject) => {
-                                        let nomessage = `${targetuser} rejected the ${getHeadwearName(interaction.guildId, headwearuser.id, headwearchoice)}.`;
+                                        let nomessage = `${targetuser} rejected the ${getHeadwearName(headwearchoice)}.`;
                                         if (reject == "Disabled") {
-                                            nomessage = `${getHeadwearName(interaction.guildId, headwearuser.id, headwearchoice)} is currently disabled in ${targetuser}'s Extreme options.`;
+                                            nomessage = `${getHeadwearName(headwearchoice)} is currently disabled in ${targetuser}'s Extreme options.`;
                                         }
                                         if (reject == "Error") {
                                             nomessage = `Something went wrong - Submit a bug report!`;
@@ -234,7 +234,7 @@ module.exports = {
                                 );
                             },
                             async (reject) => {
-                                let nomessage = `${targetuser} rejected the ${getHeadwearName(interaction.guildId, headwearuser.id, headwearchoice)}.`;
+                                let nomessage = `${targetuser} rejected the ${getHeadwearName(headwearchoice)}.`;
                                 if (reject == "Disabled") {
                                     nomessage = `${targetuser} has disabled being bound in major restraints without a collar.`;
                                 }

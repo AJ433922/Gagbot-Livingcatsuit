@@ -2,6 +2,7 @@ const { SlashCommandBuilder, MessageFlags, TextDisplayBuilder } = require("disco
 const { handleConsent } = require("./../functions/interactivefunctions.js");
 const { getText } = require("./../functions/textfunctions.js");
 const { default: didYouMean, ReturnTypeEnums } = require("didyoumean2");
+const { getHeadwearName } = require("../functions/getters/headwear/getHeadwearName.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -66,7 +67,7 @@ module.exports = {
 					interactionuser: interaction.user,
 					targetuser: headwearuser,
 					c1: getHeavy(interaction.user.id)?.displayname, // heavy bondage type
-					c2: getHeadwearName(headwearuser.id, headwearchoice),
+					c2: getHeadwearName(headwearchoice),
 				},
 			};
 

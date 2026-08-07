@@ -568,7 +568,7 @@ function updateArousalValues() {
                 let maxvibegain = traits.maxVibe ? (traits.maxVibe * VIBE_SCALING) : 9999
                 let vibearousalchange = growthmult * bounded(minvibegain, vibegains + chastityvibegains, maxvibegain);
                 // If the wearer is wearing Gasmask aphrodisiac, amplify the gain by 2x.
-                if (getHeadwear(server, user).includes("gasmask_hornygas")) { vibearousalchange = vibearousalchange * 2 }
+                if (getHeadwear(server, user)?.some((h) => h.type == "gasmask_hornygas")) { vibearousalchange = vibearousalchange * 2 }
                 const next = calcNextArousal(traits, time, arousal.arousal, arousal.prev, vibearousalchange, traits.decayCoefficient * UNBELTED_DECAY);
                 // set the values to the new ones
                 arousal.timestamp = now;
@@ -591,11 +591,11 @@ function updateSharedBreath() {
         let minadjustment = 0.1 * (getBotOption("bot-timetickrate") / 60000)
         for (const serverID in process.headwear) {
             for (const user in process.headwear[serverID]) {
-                if (getProcessVariable(serverID, user, "headwear").sharedbreathhose && !processed.includes(getProcessVariable(serverID, user, "headwear").sharedbreathhose) && !processed.includes(user)) {
+                if (getProcessVariable(serverID, user, "headwear").find((h) => h.type === "gasmasklinked")?.sharedbreathhose && !processed.includes(getProcessVariable(serverID, user, "headwear").find((h) => h.type === "gasmasklinked")?.sharedbreathhose) && !processed.includes(user)) {
                     //console.log(`Adjusting horniness for ${user} to ${process.headwear[user].sharedbreathhose}`)
                     // If both people are wearing the linked gasmask AND have each other designated to share breath...
-                    if (getHeadwear(serverID, user).includes("gasmasklinked") && getHeadwear(serverID, getProcessVariable(serverID, user, "headwear").sharedbreathhose).includes("gasmasklinked") && 
-                        (user == getProcessVariable(serverID, getProcessVariable(serverID, user, "headwear").sharedbreathhose, "headwear").sharedbreathhose)) {  
+                    if (getHeadwear(serverID, user)?.some((h) => h.type == "gasmasklinked") && getHeadwear(serverID, getHeadwear(serverID, user)?.find((h) => h.type == "gasmasklinked")?.sharedbreathhose)?.some((h) => h.type == "gasmasklinked") && 
+                        (user == getHeadwear(serverID, getHeadwear(serverID, user)?.find((h) => h.type == "gasmasklinked")?.sharedbreathhose))) {  
                         let personA = getArousal(serverID, user)
                         let personB = getArousal(serverID, getProcessVariable(serverID, user, "headwear").sharedbreathhose)
                         let diff = personA - personB;
@@ -604,13 +604,13 @@ function updateSharedBreath() {
                             // Person B is hornier, so person A should gain, person B should lose. 
                             addArousal(serverID, user, delta);
                             addArousal(serverID, getProcessVariable(serverID, user, "headwear").sharedbreathhose, -delta)
-                            console.log(`${getProcessVariable(serverID, user, "headwear").sharedbreathhose} sharing ${delta} arousal to ${user}`)
+                            //console.log(`${getProcessVariable(serverID, user, "headwear").sharedbreathhose} sharing ${delta} arousal to ${user}`)
                         }
                         else {
                             // Person A is hornier, so person B should gain, person A should lose. 
                             addArousal(serverID, getProcessVariable(serverID, user, "headwear").sharedbreathhose, delta);
                             addArousal(serverID, user, -delta)
-                            console.log(`${user} sharing ${delta} arousal to ${getProcessVariable(serverID, user, "headwear").sharedbreathhose}`)
+                            //console.log(`${user} sharing ${delta} arousal to ${getProcessVariable(serverID, user, "headwear").sharedbreathhose}`)
                         }
                         processed.push(user)
                         processed.push(getProcessVariable(serverID, user, "headwear").sharedbreathhose)

@@ -16,7 +16,7 @@ const { getHeadwear } = require("./getHeadwear");
 function getHeadwearRestrictions(serverID, userID) {
     traceFirstParam(arguments[0]);
     let allowedperms = { canEmote: true, canInspect: true, canGag: true, forcedtextemoji: false };
-    let wornheadwear = getHeadwear(serverID, userID);
+    let wornheadwear = getHeadwear(serverID, userID)?.map((h) => h.type) ?? [];
     for (let i = 0; i < wornheadwear.length; i++) {
         if (getHeadwearBlocks(wornheadwear[i]) && getHeadwearBlocks(wornheadwear[i]).blockemote) {
             allowedperms.canEmote = false;

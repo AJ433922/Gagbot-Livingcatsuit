@@ -39,7 +39,7 @@ function getItemName(item) {
             case "heavy":
                 return getHeavyName(item);
             case "mask":
-                return getHeadwearName("NoServer", undefined, item)
+                return getHeadwearName(item)
             case "toy":
                 return getBaseToy(item).toyname // Needs a dedicated getToyName function!
             default:
@@ -69,10 +69,8 @@ function getItemName(item) {
                 return getBaseCorset(item.type).name; // Needs a dedicated getCorsetName function!
             case "heavy":
                 return getHeavyName(item.type);
-            /*
             case "mask":
-                return getHeadwearName("NoServer", undefined, item)
-            */
+                return getHeadwearName(item.type)
             case "toy":
                 return getBaseToy(item.type).toyname // Needs a dedicated getToyName function!
             default:

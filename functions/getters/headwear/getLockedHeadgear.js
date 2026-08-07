@@ -11,7 +11,9 @@ const { getProcessVariable } = require("../config/getProcessVariable");
  *******/
 function getLockedHeadgear(serverID, userID) {
     traceFirstParam(arguments[0]);
-    return getProcessVariable(serverID, userID, "headwear")?.locked ?? []
+    console.log("Calling getLockedHeadgear")
+    console.log(new Error);
+    // return getProcessVariable(serverID, userID, "headwear")?.locked ?? []
 }
 
 exports.getLockedHeadgear = getLockedHeadgear;

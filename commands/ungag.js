@@ -147,8 +147,6 @@ module.exports = {
 							// We are wearing a gag
 							data.gag = true;
                             // Now check if we have any gags that are locked on!
-                            let lockedheadgears = [];
-                            if (process.headwear[interaction.guildId][gaggeduser.id]) { lockedheadgears = Object.keys(process.headwear[interaction.guildId][gaggeduser.id]) }
                             if (!canAccessGag(interaction.guildId, gaggeduser.id, gagtoremove)) {
                                 data.failed = true
                                 interaction.reply(getText(data));
@@ -157,10 +155,6 @@ module.exports = {
 								data.single = true;
 								interaction.reply(getText(data));
 								deleteGag(interaction.guildId, gaggeduser.id, gagtoremove);
-							} else if (lockedheadgears.find((h) => h.startsWith(`gagharness`))) {
-								data.multipleharnessed = true;
-								interaction.reply(getText(data));
-								deleteGag(interaction.guildId, gaggeduser.id);
 							} else {
                                 data.multiple = true;
 								interaction.reply(getText(data));
@@ -177,9 +171,6 @@ module.exports = {
 						if (getGag(interaction.guildId, gaggeduser.id)) {
 							// They are wearing a gag
 							data.gag = true;
-                            // Now check if we have any gags that are locked on!
-                            let lockedheadgears = [];
-                            if (process.headwear[interaction.guildId][gaggeduser.id]) { lockedheadgears = Object.keys(process.headwear[interaction.guildId][gaggeduser.id]) }
                             if (!canAccessGag(interaction.guildId, gaggeduser.id, gagtoremove)) {
                                 data.failed = true
                                 interaction.reply(getText(data));
@@ -193,12 +184,7 @@ module.exports = {
 									interaction.reply(getText(data));
 									deleteGag(interaction.guildId, gaggeduser.id, gagtoremove);
 								} else {
-                                    if (lockedheadgears.find((h) => h.startsWith(`gagharness`))) {
-                                        data.multipleharnessed = true;
-                                    }
-                                    else {
-                                        data.multiple = true;
-                                    }
+                                    data.multiple = true;
 									interaction.reply(getText(data));
 									deleteGag(interaction.guildId, gaggeduser.id);
 								}
@@ -215,12 +201,7 @@ module.exports = {
 											await interaction.followUp(getText(data));
 											deleteGag(interaction.guildId, gaggeduser.id, gagtoremove);
 										} else {
-											if (lockedheadgears.find((h) => h.startsWith(`gagharness`))) {
-                                                data.multipleharnessed = true;
-                                            }
-                                            else {
-                                                data.multiple = true;
-                                            }
+                                            data.multiple = true;
 											await interaction.followUp(getText(data));
 											deleteGag(interaction.guildId, gaggeduser.id);
 										}

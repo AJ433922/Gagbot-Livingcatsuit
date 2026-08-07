@@ -16,6 +16,7 @@ const { getProcessVariable } = require("../config/getProcessVariable");
  * - chastity: Permission to apply chastity devices to the user
  * - heavy: Permission to apply heavy bondage to the user
  * - mask: Permission to apply headwear to the user
+ * - lock?: If specified, the item is locked and needs to be checked for access
  * ###### Additional properties may be added by other functions
  *********/
 function getCollar(serverID, user) {

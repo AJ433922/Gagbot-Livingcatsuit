@@ -215,7 +215,7 @@ let tick = async (serverID, userID, datain) => {
                 messageSendChannel(getText(data), getRecentChannel(serverID, userID).channelid)
             }
             // Apply doll visor to the doll if it is not wearing it
-            else if (!getHeadwear(serverID, userID).some((d) => DOLLVISORS.includes(d))) {
+            else if (!getHeadwear(serverID, userID)?.some((d) => DOLLVISORS.includes(d.type))) {
                 data.headwear = true;
                 data.textdata.c1 = getHeadwearName(serverID, undefined, "doll_visor"), // mitten name
                     assignHeadwear(serverID, userID, "doll_visor", targetobject.id)
