@@ -18,6 +18,7 @@ const { getConsent } = require("../functions/getters/config/getConsent.js");
 const { statsAddCounter } = require("../functions/setters/config/statsAddCounter.js");
 const { getGag } = require("../functions/getters/gag/getGag.js");
 const { addLockModal } = require("../functions/lockfunctions.js");
+const { handleRemoveLock } = require("../functions/lockfunctions.js");
 const { default: didYouMean, ReturnTypeEnums } = require("didyoumean2");
 const { getOption } = require("../functions/getters/config/getOption.js");
 const { getTaggedList } = require("../functions/getters/config/getTaggedList.js");
@@ -26,11 +27,10 @@ const { getBaseItem } = require("../functions/getters/config/getBaseItem.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName("lock")
-		.setDescription("Put a lock on a restraint...")
-        .addUserOption((opt) => opt.setName("user").setDescription("The person wearing the restraint to lock"))
-        .addStringOption((opt) => opt.setName("restraint").setDescription("Which restraint to lock?").setAutocomplete(true))
-        .addStringOption((opt) => opt.setName("locktype").setDescription("Which kind of lock to put on?").setAutocomplete(true))
+		.setName("unlock")
+		.setDescription("Remove a lock from a restraint...")
+        .addUserOption((opt) => opt.setName("user").setDescription("The person wearing the restraint to unlock"))
+        .addStringOption((opt) => opt.setName("restraint").setDescription("Which restraint to unlock?").setAutocomplete(true))
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages), // Temporary measure to ensure this isn't leaked yet!
 	async autoComplete(interaction) {
 		const focusedValue = interaction.options.getFocused(true); // Note, we're extracting the entire object this time. 
@@ -39,14 +39,14 @@ module.exports = {
         if (focusedValue.name == "restraint") {
             try {
                 let chosenuserid = interaction.options.get("user")?.value ?? interaction.user.id; // Note we can only retrieve the user ID here!
-                let heavybondage = getHeavy(interaction.guildId, chosenuserid);
-                let gagbondage = getGagLast(interaction.guildId, chosenuserid);
-                let mittenbondage = getMitten(interaction.guildId, chosenuserid);
-                let chastitybondage = getChastity(interaction.guildId, chosenuserid);
-                let chastitybrabondage = getChastityBra(interaction.guildId, chosenuserid)
-                let headbondage = getHeadwear(interaction.guildId, chosenuserid);
-                let corsetbondage = getCorset(interaction.guildId, chosenuserid);
-                let collarbondage = getCollar(interaction.guildId, chosenuserid);
+                let heavybondage = getHeavy(interaction.guildId, chosenuserid)?.lock;
+                let gagbondage = getGagLast(interaction.guildId, chosenuserid)?.lock;
+                let mittenbondage = getMitten(interaction.guildId, chosenuserid)?.lock;
+                let chastitybondage = getChastity(interaction.guildId, chosenuserid)?.lock;
+                let chastitybrabondage = getChastityBra(interaction.guildId, chosenuserid)?.lock
+                let headbondage = getHeadwear(interaction.guildId, chosenuserid)?.lock;
+                let corsetbondage = getCorset(interaction.guildId, chosenuserid)?.lock;
+                let collarbondage = getCollar(interaction.guildId, chosenuserid)?.lock;
 
                 let outopts = [];
                 if (heavybondage) {
@@ -83,41 +83,11 @@ module.exports = {
                 console.log(err);
             }
         }
-
-        // Choosing the type of lock we want to add
-        else if (focusedValue.name == "locktype") {
-            try {
-                let chosenuserid = interaction.options.get("user")?.value ?? interaction.user.id; // Note we can only retrieve the user ID here!
-                let locktarget = interaction.options.get("restraint")?.value;
-                let autocompletes = process.autocompletes.lock;
-                // If locktarget is specified, filter out all locks to just what is eligible for that restraint target
-                autocompletes = autocompletes.filter((f) => locktarget && getBaseItem(locktarget).locktypes.includes(getBaseLock(f.value).locktype))
-                if (autocompletes.length == 0) {
-                    interaction.respond([])
-                    return;
-                }
-
-                let matches = didYouMean(focusedValue.value, autocompletes, {
-                    matchPath: ['name'], 
-                    returnType: ReturnTypeEnums.ALL_SORTED_MATCHES, // Returns any match meeting 20% of the input
-                    threshold: 0.2, // Default is 0.4 - this is how much of the word must exist. 
-                })
-                
-                if (matches.length == 0) {
-                    matches = autocompletes;
-                }
-                let newsorted = matches;
-                interaction.respond(newsorted.slice(0,25))
-            }
-            catch (err) {
-                console.log(err);
-            }
-        }
 	},
     async execute(interaction) {
         try {
             await interaction.deferReply({ flags: MessageFlags.Ephemeral })
-            addLockModal(interaction);
+            handleRemoveLock(interaction);
         }
         catch (err) {
             console.log(err);

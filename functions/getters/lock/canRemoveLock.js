@@ -1,5 +1,5 @@
-const { getOption } = require("../config/getOption");
 const { getHeavyBound } = require("../heavy/getHeavyBound");
+const { getBaseLock } = require("./getBaseLock");
 const { getRestraintByUUID } = require("./getRestraintByUUID");
 
 /**********
@@ -10,7 +10,7 @@ const { getRestraintByUUID } = require("./getRestraintByUUID");
  * - (user id) keyholderID - The person removing the lock
  * - (string) uuid - The uuid of lock we're trying to remove
  * ---
- * ##### Returns true if allowed to place the lock. 
+ * ##### Returns true if allowed to remove the lock. 
  **********/
 function canRemoveLock(serverID, userID, keyholderID, uuid) {
     let restraintlock = getRestraintByUUID(uuid)?.restraint?.lock;
@@ -24,7 +24,7 @@ function canRemoveLock(serverID, userID, keyholderID, uuid) {
         return false 
     } 
     if (getHeavyBound(serverID, keyholderID, userID)) {
-        return lock.canUnlock({ serverID: serverID, userID: userID, keyholderID: keyholderID })
+        return lock.canUnlock({ serverID: serverID, userID: userID, keyholderID: keyholderID, uuid: uuid })
     }
 }
 

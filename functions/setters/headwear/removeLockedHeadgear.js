@@ -2,7 +2,7 @@ const { markForSave } = require("../../other/markForSave");
 const { traceFirstParam } = require("../../other/TESTS/traceFirstParam");
 
 /**********
- * Removes a locked headwear item from the user.
+ * DEPRECATED (this will cause a crash): Removes a locked headwear item from the user.
  * 
  * - (server id) serverID - The server this is running on
  * - (user id) userID - The person wearing the headgear
@@ -12,7 +12,9 @@ const { traceFirstParam } = require("../../other/TESTS/traceFirstParam");
  **********/
 function removeLockedHeadgear(serverID, userID, headwear) {
     traceFirstParam(arguments[0]);
-	if (process.headwear == undefined) {
+    console.log("Calling removeLockedHeadgear")
+    console.log(new Error);
+	/*if (process.headwear == undefined) {
 		process.headwear = {};
 	}
     if (process.headwear[serverID] == undefined) {
@@ -29,7 +31,7 @@ function removeLockedHeadgear(serverID, userID, headwear) {
 				delete process.headwear[serverID][userID].locked;
 			}
 		}
-	}
+	}*/
 	markForSave("headwear");
 };
 

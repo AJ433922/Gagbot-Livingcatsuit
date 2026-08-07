@@ -1,3 +1,5 @@
+const { markForSave } = require("../../other/markForSave");
+
 /**********
  * Given a UUID, updates a property on that awaiting lock if it exists
  * 
@@ -11,6 +13,7 @@ function updateLockAwaiting(uuid, param, value) {
     if (process.awaitinglock && process.awaitinglock[uuid]) {
         process.awaitinglock[uuid][param] = value;
     }
+    markForSave("awaitinglock")
 }
 
 exports.updateLockAwaiting = updateLockAwaiting;

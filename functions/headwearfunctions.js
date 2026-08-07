@@ -109,13 +109,14 @@ const loadHeadwearTypes = () => {
     process.autocompletes.headtypes = headwearautocompletes;
 };
 
-function replaceEmoji(text, parent, replaceEmoji, msgModified, matchFound) {
-	if(text !== replaceEmoji){
+function replaceEmoji(text, parent, loc, replaceEmoji, msgModified, matchFound) {
+	if (text !== replaceEmoji){
 		msgModified.modified = true;
 		msgModified.emojiModified = true;
 		return replaceEmoji;
 	}else{
 		matchFound.found = true;
+        return replaceEmoji;
 	}
 }
 // Removes all emoji, optionally using an assigned emoji if they are wearing a mask with it!
@@ -126,20 +127,20 @@ function processHeadwearEmoji(serverID, userID, msgTree, msgModified, dollvisoro
 
 	let replaceemote = "";
 	let wornheadwear = getHeadwear(serverID, userID);
-	let isDoll = getHeadwear(serverID, userID).find((headwear) => DOLLVISORS.includes(headwear))
-	if(!isDoll){		// Doll Visors overwrite all other emoji replacements due to codeblock formatting
+	let isDoll = getHeadwear(serverID, userID)?.find((headwear) => DOLLVISORS.includes(headwear.type))
+	if (!isDoll) {		// Doll Visors overwrite all other emoji replacements due to codeblock formatting
 		for (let i = 0; i < wornheadwear.length; i++) {
-			if (getHeadwearBlocks(wornheadwear[i]) && getHeadwearBlocks(wornheadwear[i]).replaceemote != undefined) {
-				if (getHeadwearBlocks(wornheadwear[i]).replaceemote.startsWith("EMOJI_")) {
-					replaceemote = process.emojis[getHeadwearBlocks(wornheadwear[i]).replaceemote.replace("EMOJI_", "")];
+			if (getHeadwearBlocks(wornheadwear[i].type) && getHeadwearBlocks(wornheadwear[i].type).replaceemote != undefined) {
+				if (getHeadwearBlocks(wornheadwear[i].type).replaceemote.startsWith("EMOJI_")) {
+					replaceemote = process.emojis[getHeadwearBlocks(wornheadwear[i].type).replaceemote.replace("EMOJI_", "")];
 				} else {
-					replaceemote = getHeadwearBlocks(wornheadwear[i]).replaceemote;
+					replaceemote = getHeadwearBlocks(wornheadwear[i].type).replaceemote;
 				}
 			}
 		}
 	}
 	// Replace all instances of the emoji
-	let matchFound = { "found": false}
+	let matchFound = { "found": false }
 	msgTree.callFunc(replaceEmoji,true,["emoji","unicodeEmoji"],[replaceemote,msgModified,matchFound])
 
 	// If there is a forced emote, and it wasn't found in the message, and there were no emotes AT ALL, add one.
@@ -307,8 +308,8 @@ const truthgasopposites = (text, parent, msgModified) => {
 // Changes words and negates them
 function processHeadwearTruthgas(serverID, userID, msgTree, msgModified) {
     traceFirstParam(arguments[0]);
-	// Do nothing if no headwear blocks.
-	if (!getHeadwear(serverID, userID).includes("gasmask_truthgas")) { return }
+	// Do nothing if no headwear blocks. // This is not even used lol 
+	if (!getHeadwear(serverID, userID)?.includes("gasmask_truthgas")) { return }
 
     msgTree.callFunc(truthgasopposites, true, undefined, [msgModified])
 };

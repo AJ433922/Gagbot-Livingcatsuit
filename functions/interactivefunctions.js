@@ -1290,10 +1290,9 @@ async function generateExtraConfig(interaction, userid, itemname, force) {
                 }
             });
             // Headwear
-            getHeadwear(interaction.guildId, userid).forEach(async (h) => {
-                console.log(itemname)
-                if ((h == itemname) && process.eventfunctions.headwear && process.eventfunctions.headwear[h] && process.eventfunctions.headwear[h].extraconfig) {
-                    interactionoutput.push(await process.eventfunctions.headwear[h].extraconfig(interaction, userid, itemname));
+            getHeadwear(interaction.guildId, userid)?.forEach(async (h) => {
+                if ((h.type == itemname) && process.eventfunctions.headwear && process.eventfunctions.headwear[h.type] && process.eventfunctions.headwear[h.type].extraconfig) {
+                    interactionoutput.push(await process.eventfunctions.headwear[h.type].extraconfig(interaction, userid, itemname));
                 }
             });
             // Mittens
@@ -1350,10 +1349,10 @@ async function generateExtraConfig(interaction, userid, itemname, force) {
             }
         });
         // Headwear
-        getHeadwear(interaction.guildId, userid).forEach(async (h) => {
+        getHeadwear(interaction.guildId, userid)?.forEach(async (h) => {
             console.log(itemname)
-            if ((h == itemname) && process.eventfunctions.headwear && process.eventfunctions.headwear[h] && process.eventfunctions.headwear[h].extraconfig) {
-                interactionoutput.push(await process.eventfunctions.headwear[h].extraconfig(interaction, userid, itemname));
+            if ((h.type == itemname) && process.eventfunctions.headwear && process.eventfunctions.headwear[h.type] && process.eventfunctions.headwear[h.type].extraconfig) {
+                interactionoutput.push(await process.eventfunctions.headwear[h.type].extraconfig(interaction, userid, itemname));
             }
         });
         // Mittens

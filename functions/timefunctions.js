@@ -22,6 +22,7 @@ const { markForSave } = require("./other/markForSave.js");
 const { isWearingCollar } = require("./getters/collar/isWearingCollar.js");
 const { setUserVar } = require("./setters/config/setUserVar.js");
 const { getRecentChannel } = require("./getters/config/getRecentChannel.js");
+const { processdatatoload } = require("../lists/processdatatoload.js");
 
 // Takes input string, outputs a date object.
 const parseTime = (text) => {
@@ -143,114 +144,18 @@ const saveFiles = () => {
 			let processvar;
 			// Honestly, this could probably just be a similar thing like the processdatatoload at the beginning of index.js
 			// but meh. This allows for potential configuration later.
-			switch (k) {
-				case "wearable":
-					filepath = `${process.GagbotSavedFileDirectory}/wearables.txt`;
-					processvar = "wearable";
-					break;
-				case "gags":
-					filepath = `${process.GagbotSavedFileDirectory}/gaggedusers.txt`;
-					processvar = "gags";
-					break;
-				case "mitten":
-					filepath = `${process.GagbotSavedFileDirectory}/mittenedusers.txt`;
-					processvar = "mitten";
-					break;
-				case "chastity":
-					filepath = `${process.GagbotSavedFileDirectory}/chastityusers.txt`;
-					processvar = "chastity";
-					break;
-				case "chastitybra":
-					filepath = `${process.GagbotSavedFileDirectory}/chastitybrausers.txt`;
-					processvar = "chastitybra";
-					break;
-				case "arousal":
-					filepath = `${process.GagbotSavedFileDirectory}/arousal.txt`;
-					processvar = "arousal";
-					break;
-				case "toys":
-					filepath = `${process.GagbotSavedFileDirectory}/toyusers.txt`;
-					processvar = "toys";
-					break;
-				case "collar":
-					filepath = `${process.GagbotSavedFileDirectory}/collarusers.txt`;
-					processvar = "collar";
-					break;
-				case "heavy":
-					filepath = `${process.GagbotSavedFileDirectory}/heavyusers.txt`;
-					processvar = "heavy";
-					break;
-				case "pronouns":
-					filepath = `${process.GagbotSavedFileDirectory}/pronounsusers.txt`;
-					processvar = "pronouns";
-					break;
-				case "usercontext":
-					filepath = `${process.GagbotSavedFileDirectory}/usersdata.txt`;
-					processvar = "usercontext";
-					break;
-				case "consented":
-					filepath = `${process.GagbotSavedFileDirectory}/consentusers.txt`;
-					processvar = "consented";
-					break;
-				case "corset":
-					filepath = `${process.GagbotSavedFileDirectory}/corsetusers.txt`;
-					processvar = "corset";
-					break;
-				case "headwear":
-					filepath = `${process.GagbotSavedFileDirectory}/headwearusers.txt`;
-					processvar = "headwear";
-					break;
-				case "discardedKeys":
-					filepath = `${process.GagbotSavedFileDirectory}/discardedkeys.txt`;
-					processvar = "discardedKeys";
-					break;
-				case "configs":
-					filepath = `${process.GagbotSavedFileDirectory}/configs.txt`;
-					processvar = "configs";
-					break;
-				case "outfits":
-					filepath = `${process.GagbotSavedFileDirectory}/outfits.txt`;
-					processvar = "outfits";
-					break;
-				case "dolls":
-					filepath = `${process.GagbotSavedFileDirectory}/dollusers.txt`;
-					processvar = "dolls";
-					break;
-				case "webhooks":
-					filepath = `${process.GagbotSavedFileDirectory}/webhooks.txt`;
-					processvar = "webhookstoload";
-					break;
-                case "recordedmessages":
-					filepath = `${process.GagbotSavedFileDirectory}/recordedmessages.txt`;
-					processvar = "recordedmessages";
-					break;
-                case "recentmessages":
-					filepath = `${process.GagbotSavedFileDirectory}/recentmessages.txt`;
-					processvar = "recentmessages";
-					break;
-                case "delveuserdata":
-					filepath = `${process.GagbotSavedFileDirectory}/delveuserdata.txt`;
-					processvar = "delveuserdata";
-					break;
-                case "userstats":
-					filepath = `${process.GagbotSavedFileDirectory}/userstats.txt`;
-					processvar = "userstats";
-					break;
-                case "memberavatars":
-					filepath = `${process.GagbotSavedFileDirectory}/memberavatars.txt`;
-					processvar = "memberavatars";
-					break;
-                case "heldkeytimers":
-					filepath = `${process.GagbotSavedFileDirectory}/heldkeytimers.txt`;
-					processvar = "heldkeytimers";
-					break;
-				default:
-					console.log(`Unknown save variable: ${k}`);
-			}
+            let pvsaves = processdatatoload.find((pv) => pv.rts == k);
+            if (pvsaves) {
+                filepath = `${process.GagbotSavedFileDirectory}/${pvsaves.textname}`;
+				processvar = pvsaves.processvar;
+            }
 			if (filepath && processvar) {
 				fs.writeFileSync(filepath, JSON.stringify(process[processvar]));
 				console.log(`${(new Date()).toLocaleTimeString()}: Successfully Saved file ${filepath}`);
 			}
+            else {
+                console.log(`Unknown save variable: ${k}`)
+            }
 		});
 		process.readytosave = {};
 	} catch (err) {
@@ -356,8 +261,8 @@ function runTickEvents() {
 		Object.keys(process.headwear).forEach((serverid) => {
             Object.keys(process.headwear[serverid]).forEach((userid) => {
                 getHeadwear(serverid, userid).forEach((h) => {
-                    if (process.eventfunctions.headwear && process.eventfunctions.headwear[h] && process.eventfunctions.headwear[h].tick) {
-                        process.eventfunctions.headwear[h].tick(serverid, userid);
+                    if (process.eventfunctions.headwear && process.eventfunctions.headwear[h] && process.eventfunctions.headwear[h.type].tick) {
+                        process.eventfunctions.headwear[h.type].tick(serverid, userid);
                     }
                 });
             });

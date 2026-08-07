@@ -47,7 +47,9 @@ let dressprotocoltick = async (serverID, userID, heavy) => {
         let blocks = [];
         let tags = getUserTags(serverID, userID);
         let goodtags = getUserTags(serverID, userID, true)
+        let whilemax = 10000; // Try up to 10k times, even though we should never exceed that. 
         for (let i = 0; i < outfitlength; i++) {
+            let whileattempts = 0;
             let randomchoice = Math.floor(Math.random() * 9); // PLZ BE RANDOM
             let arr;
             let choice;
@@ -71,8 +73,10 @@ let dressprotocoltick = async (serverID, userID, heavy) => {
                         }
                     })
                 })
+                arr = arr.map((a) => a[0]);
                 // unique choices only.
-                while (outfitpieceschosen.includes(choice)) {
+                while (outfitpieceschosen.includes(choice) && (whileattempts < whilemax)) {
+                    whileattempts++;
                     choice = arr[Math.floor(arr.length * Math.random())];
                 }
                 outfitpieceschosen.push(choice);
@@ -99,7 +103,8 @@ let dressprotocoltick = async (serverID, userID, heavy) => {
                 })
                 choice = arr[Math.floor(arr.length * Math.random())];
                 // unique choices only.
-                while (outfitpieceschosen.includes(choice.value)) {
+                while (outfitpieceschosen.includes(choice.value) && (whileattempts < whilemax)) {
+                    whileattempts++;
                     choice = arr[Math.floor(arr.length * Math.random())];
                 }
                 outfitpieceschosen.push(choice.value);
@@ -126,7 +131,8 @@ let dressprotocoltick = async (serverID, userID, heavy) => {
                 })
                 choice = arr[Math.floor(arr.length * Math.random())];
                 // unique choices only.
-                while (outfitpieceschosen.includes(choice.value)) {
+                while (outfitpieceschosen.includes(choice.value) && (whileattempts < whilemax)) {
+                    whileattempts++;
                     choice = arr[Math.floor(arr.length * Math.random())];
                 }
                 outfitpieceschosen.push(choice.value);
@@ -156,7 +162,8 @@ let dressprotocoltick = async (serverID, userID, heavy) => {
                 })
                 choice = arr[Math.floor(arr.length * Math.random())];
                 // unique choices only.
-                while (outfitpieceschosen.includes(choice[0])) {
+                while (outfitpieceschosen.includes(choice[0]) && (whileattempts < whilemax)) {
+                    whileattempts++;
                     choice = arr[Math.floor(arr.length * Math.random())];
                 }
                 outfitpieceschosen.push(choice[0]);
@@ -186,7 +193,8 @@ let dressprotocoltick = async (serverID, userID, heavy) => {
                 })
                 choice = arr[Math.floor(arr.length * Math.random())];
                 // unique choices only.
-                while (outfitpieceschosen.includes(choice[0])) {
+                while (outfitpieceschosen.includes(choice[0]) && (whileattempts < whilemax)) {
+                    whileattempts++;
                     choice = arr[Math.floor(arr.length * Math.random())];
                 }
                 outfitpieceschosen.push(choice[0]);
@@ -214,7 +222,8 @@ let dressprotocoltick = async (serverID, userID, heavy) => {
                 })
                 choice = arr[Math.floor(arr.length * Math.random())];
                 // unique choices only.
-                while (outfitpieceschosen.includes(choice.name)) {
+                while (outfitpieceschosen.includes(choice.name) && (whileattempts < whilemax)) {
+                    whileattempts++;
                     choice = arr[Math.floor(arr.length * Math.random())];
                 }
                 outfitpieceschosen.push(choice.name);
@@ -241,7 +250,8 @@ let dressprotocoltick = async (serverID, userID, heavy) => {
                 })
                 choice = arr[Math.floor(arr.length * Math.random())];
                 // unique choices only.
-                while (outfitpieceschosen.includes(choice.name)) {
+                while (outfitpieceschosen.includes(choice.name) && (whileattempts < whilemax)) {
+                    whileattempts++;
                     choice = arr[Math.floor(arr.length * Math.random())];
                 }
                 outfitpieceschosen.push(choice.name);
@@ -270,7 +280,8 @@ let dressprotocoltick = async (serverID, userID, heavy) => {
                 })
                 choice = arr[Math.floor(arr.length * Math.random())];
                 // unique choices only.
-                while (outfitpieceschosen.includes(choice.name)) {
+                while (outfitpieceschosen.includes(choice.name) && (whileattempts < whilemax)) {
+                    whileattempts++;
                     choice = arr[Math.floor(arr.length * Math.random())];
                 }
                 outfitpieceschosen.push(choice.name);
@@ -278,6 +289,18 @@ let dressprotocoltick = async (serverID, userID, heavy) => {
             }
         }
         if (heavyend) { outfitpieces.push(heavyend) }
+
+        // Remove any undefined entries because while loop timed out. 
+        for (let i = 0; i < outfitpieces.length; i++) {
+            if (outfitpieces[i] == undefined) {
+                outfitpieces.splice(i, 1);
+                i = i - 1;
+            }
+        }
+        if (outfitpieces.length < 5) {
+            console.log(`OUTFIT PIECES WAS LESS THAN 5! TRY AGAIN!`);
+            return; // Just start over if the length is 0. Try again. 
+        }
 
         heavy.dressprotocol = {
             dressprotocolname: heavy.displayname,

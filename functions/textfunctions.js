@@ -1711,6 +1711,265 @@ const texts_letgo = {
 	free: [`USER_TAG takes a deep breath and calms USER_THEIR nerves, the hot feelings *slowly* going away...`, `USER_TAG takes some ice and holds it to USER_THEIR crotch. The sensation is unpleasant, but effective in clearing USER_THEIR mind!`, `USER_TAG fans USER_THEMSELF and closes USER_THEIR eyes, taking deep breaths.`, `USER_TAG carefully uncorks a frigid potion and chugs it. It tastes foul, but USER_THEY feelUSER_S a little more coherent now!`],
 };
 
+// region texts_lock
+const texts_lock = {
+    lock: {
+        // region simplepadlock
+        simplepadlock: {
+            // Applying to self
+            "self": {
+                // Locking the lock on self
+                "selflock": [
+                    {
+                        only: (t) => {
+                            return (t.c2 == "chastity");
+                        },
+                        text: `USER_TAG places a Simple Padlock over the locking ring on the front of USER_THEIR VAR_C1, locking it securely before pocketing the key! A dancing finger across USER_THEIR waist reminds USER_THEM of the feeling of chastity...`,
+                    },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "chastitybra");
+                        },
+                        text: `USER_TAG places a Simple Padlock on the locking ring between USER_THEIR breasts, securing USER_THEIR VAR_C1 and locking away any sense of pleasure on USER_THEIR chest! USER_THEY_CAP then tuckUSER_S the key away somewhere.`,
+                    },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "collar");
+                        },
+                        text: `USER_TAG places a Simple Padlock inside the little ring on USER_THEIR VAR_C1's strap! The small lock dangles gently, reminding USER_THEM that it cannot be removed until USER_THEY unlock it with the key USER_THEY USER_ISARE holding.`,
+                    },
+                    // This is a large lock, so this case shouldn't happen, but added text in case. 
+                    {
+                        only: (t) => {
+                            return (t.c2 == "gag");
+                        },
+                        text: `USER_TAG places a Simple Padlock on USER_THEIR VAR_C1 on USER_THEIR face. USER_THEIR_CAP speech will remain firmly locked away until the lock is removed!`,
+                    },
+                    // This is a large lock, so this case shouldn't happen, but added text in case. 
+                    {
+                        only: (t) => {
+                            return (t.c2 == "mask");
+                        },
+                        text: `USER_TAG places a Simple Padlock on USER_THEIR VAR_C1 on USER_THEIR face. USER_THEY_CAP won't be able to take it off USER_THEIR head until USER_THEY unlock it!`,
+                    },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "corset");
+                        },
+                        text: `USER_TAG wriggles slightly as USER_THEY placeUSER_S a Simple Padlock on USER_THEIR VAR_C1, securing it on the ring of USER_THEIR corset! The laces won't loosen until it is removed with USER_THEIR key!`,
+                    },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "heavy");
+                        },
+                        text: `USER_TAG places a Simple Padlock over USER_THEIR VAR_C1 - binding USER_THEMSELF with it until it is removed with the key!`,
+                    },
+                ],
+                "otherlock": [
+                    {
+                        only: (t) => {
+                            return (t.c2 == "chastity");
+                        },
+                        text: `USER_TAG places a Simple Padlock over the locking ring on the front of USER_THEIR VAR_C1, locking it securely before tossing the key to TARGET_TAG! A dancing finger across USER_THEIR waist reminds USER_THEM of the feeling of chastity...`,
+                    },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "chastitybra");
+                        },
+                        text: `USER_TAG places a Simple Padlock on the locking ring between USER_THEIR breasts, securing USER_THEIR VAR_C1 and locking away any sense of pleasure on USER_THEIR chest! USER_THEY_CAP then handUSER_S the key over to TARGET_TAG.`,
+                    },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "collar");
+                        },
+                        text: `USER_TAG places a Simple Padlock inside the little ring on USER_THEIR VAR_C1's strap! The small lock dangles gently, reminding USER_THEM that it cannot be removed until USER_THEY unlock it with the key USER_THEY just handed to TARGET_TAG.`,
+                    },
+                    // This is a large lock, so this case shouldn't happen, but added text in case. 
+                    {
+                        only: (t) => {
+                            return (t.c2 == "gag");
+                        },
+                        text: `USER_TAG places a Simple Padlock on USER_THEIR VAR_C1 on USER_THEIR face. USER_THEIR_CAP speech will remain firmly locked away until the lock is removed! When will TARGET_TAG grant USER_THEM USER_THEIR speech again?`,
+                    },
+                    // This is a large lock, so this case shouldn't happen, but added text in case. 
+                    {
+                        only: (t) => {
+                            return (t.c2 == "mask");
+                        },
+                        text: `USER_TAG places a Simple Padlock on USER_THEIR VAR_C1 on USER_THEIR face. USER_THEY_CAP won't be able to take it off USER_THEIR head until TARGET_TAG unlocks it, since TARGET_THEY now possessTARGET_ES the key!`,
+                    },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "corset");
+                        },
+                        text: `USER_TAG wriggles slightly as USER_THEY placeUSER_S a Simple Padlock on USER_THEIR VAR_C1, securing it on the ring of USER_THEIR corset! The laces won't loosen until it is removed with the key that USER_THEY just gave to TARGET_TAG!`,
+                    },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "heavy");
+                        },
+                        text: `USER_TAG places a Simple Padlock over USER_THEIR VAR_C1 - binding USER_THEMSELF with it until it is removed with the key! USER_THEY_CAP handUSER_S it to TARGET_TAG for safekeeping.`,
+                    },
+                ]
+            },
+            "other": {
+                // Locking the lock on another
+                "selflock": [
+                    {
+                        only: (t) => {
+                            return (t.c2 == "chastity");
+                        },
+                        text: `USER_TAG places a Simple Padlock over the locking ring on the front of TARGET_TAG's VAR_C1, locking it securely before pocketing the key! A dancing finger across TARGET_THEIR waist makes TARGET_THEM shiver in delight!`,
+                    },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "chastitybra");
+                        },
+                        text: `USER_TAG places a Simple Padlock on the locking ring between TARGET_TAG's breasts, securing TARGET_THEIR VAR_C1 and locking away any sense of pleasure on TARGET_THEIR chest! USER_THEY_CAP then tuckUSER_S the key away somewhere.`,
+                    },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "collar");
+                        },
+                        text: `USER_TAG places a Simple Padlock inside the little ring on TARGET_TAG's VAR_C1 strap! The small lock dangles gently, a reminder that TARGET_THEY TARGET_ISARE at USER_THEIR mercy until the lock is removed!`,
+                    },
+                    // This is a large lock, so this case shouldn't happen, but added text in case. 
+                    {
+                        only: (t) => {
+                            return (t.c2 == "gag");
+                        },
+                        text: `USER_TAG places a Simple Padlock on TARGET_TAG's VAR_C1 on TARGET_THEIR face, placing TARGET_THEIR speech under lock and key, that USER_THEY then pocketUSER_S.`,
+                    },
+                    // This is a large lock, so this case shouldn't happen, but added text in case. 
+                    {
+                        only: (t) => {
+                            return (t.c2 == "mask");
+                        },
+                        text: `USER_TAG places a Simple Padlock on TARGET_TAG's VAR_C1 on TARGET_THEIR face. TARGET_THEY_CAP won't be able to take it off TARGET_THEIR head until USER_THEY unlock it!`,
+                    },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "corset");
+                        },
+                        text: `USER_TAG wriggles slightly as USER_THEY place a Simple Padlock on TARGET_TAG's VAR_C1, securing it on the ring of TARGET_THEIR corset! The laces won't loosen until it is removed with USER_THEIR key!`,
+                    },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "heavy");
+                        },
+                        text: `USER_TAG places a Simple Padlock over TARGET_TAG's VAR_C1, preventing anyone from removing it until USER_THEY unlock it with USER_THEIR key!`,
+                    },
+                ],
+                "otherselflock": [
+                    // Locking it on another, but giving THEM the key
+                    {
+                        only: (t) => {
+                            return (t.c2 == "chastity");
+                        },
+                        text: `USER_TAG places a Simple Padlock over the locking ring on the front of TARGET_TAG's VAR_C1, locking it securely before handing the key to TARGET_THEM! A dancing finger across TARGET_THEIR waist reminds TARGET_THEM of the feeling of chastity...`,
+                    },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "chastitybra");
+                        },
+                        text: `USER_TAG places a Simple Padlock on the locking ring between TARGET_TAG's breasts, securing TARGET_THEIR VAR_C1 and locking away any sense of pleasure on TARGET_THEIR chest! USER_THEY_CAP then handUSER_S the key over to TARGET_THEM.`,
+                    },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "collar");
+                        },
+                        text: `USER_TAG places a Simple Padlock inside the little ring on TARGET_TAG's VAR_C1's strap! The small lock dangles gently, reminding TARGET_THEM that it cannot be removed until TARGET_THEY unlock it with the key USER_THEY just handed to TARGET_THEM.`,
+                    },
+                    // This is a large lock, so this case shouldn't happen, but added text in case. 
+                    {
+                        only: (t) => {
+                            return (t.c2 == "gag");
+                        },
+                        text: `USER_TAG places a Simple Padlock on TARGET_TAG's VAR_C1 on TARGET_THEIR face. TARGET_THEIR_CAP speech will remain firmly locked away until the lock is removed! Fortunately, USER_THEY gave TARGET_THEM the key! How thoughtful!`,
+                    },
+                    // This is a large lock, so this case shouldn't happen, but added text in case. 
+                    {
+                        only: (t) => {
+                            return (t.c2 == "mask");
+                        },
+                        text: `USER_TAG places a Simple Padlock on TARGET_TAG's VAR_C1 on TARGET_THEIR face. TARGET_THEIR_CAP won't be able to take it off TARGET_THEIR head until TARGET_THEY unlockTARGET_S it, since TARGET_THEY now possessTARGET_ES the key!`,
+                    },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "corset");
+                        },
+                        text: `USER_TAG wriggles slightly as USER_THEY place a Simple Padlock on TARGET_TAG's VAR_C1, securing it on the ring of TARGET_THEIR corset! The laces won't loosen until it is removed with the key that USER_THEY just gave to TARGET_THEM!`,
+                    },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "heavy");
+                        },
+                        text: `USER_TAG places a Simple Padlock over TARGET_TAG's VAR_C1, preventing it's removal until unlocked with the key that USER_THEY just gave to TARGET_THEM. Hopefully TARGET_THEY can figure out how to remove it!`,
+                    },
+                ],
+                "otherlock": [
+                    // Locking it on another, but giving another person the key
+                    {
+                        only: (t) => {
+                            return (t.c2 == "chastity");
+                        },
+                        text: `USER_TAG places a Simple Padlock over the locking ring on the front of TARGET_TAG's VAR_C1, locking it securely before handing the key to <@VAR_C3>! A dancing finger across TARGET_THEIR waist reminds TARGET_THEM of the feeling of chastity...`,
+                    },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "chastitybra");
+                        },
+                        text: `USER_TAG places a Simple Padlock on the locking ring between TARGET_TAG's breasts, securing TARGET_THEIR VAR_C1 and locking away any sense of pleasure on TARGET_THEIR chest! USER_THEY_CAP then handUSER_S the key over to <@VAR_C3>.`,
+                    },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "collar");
+                        },
+                        text: `USER_TAG places a Simple Padlock inside the little ring on TARGET_TAG's VAR_C1's strap! The small lock dangles gently, reminding TARGET_THEM that it cannot be removed until TARGET_THEY unlock it with the key USER_THEY just handed to <@VAR_C3>.`,
+                    },
+                    // This is a large lock, so this case shouldn't happen, but added text in case. 
+                    {
+                        only: (t) => {
+                            return (t.c2 == "gag");
+                        },
+                        text: `USER_TAG places a Simple Padlock on TARGET_TAG's VAR_C1 on TARGET_THEIR face. TARGET_THEIR_CAP speech will remain firmly locked away until the lock is removed! Unfortunately, USER_THEY gave <@VAR_C3> the key!`,
+                    },
+                    // This is a large lock, so this case shouldn't happen, but added text in case. 
+                    {
+                        only: (t) => {
+                            return (t.c2 == "mask");
+                        },
+                        text: `USER_TAG places a Simple Padlock on TARGET_TAG's VAR_C1 on TARGET_THEIR face. TARGET_THEIR_CAP won't be able to take it off TARGET_THEIR head until TARGET_THEY unlockTARGET_S it. <@VAR_C3> will get to decide that now, as the new owner of the key.`,
+                    },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "corset");
+                        },
+                        text: `USER_TAG wriggles slightly as USER_THEY place a Simple Padlock on TARGET_TAG's VAR_C1, securing it on the ring of TARGET_THEIR corset! The laces won't loosen until it is removed with the key that USER_THEY just gave to <@VAR_C3>!`,
+                    },
+                    {
+                        only: (t) => {
+                            return (t.c2 == "heavy");
+                        },
+                        text: `USER_TAG places a Simple Padlock over TARGET_TAG's VAR_C1, preventing it's removal until unlocked with the key that USER_THEY just gave to <@VAR_C3>.`,
+                    },
+                ]
+            }
+        }
+    },
+    unlock: {
+        simplepadlock: {
+            "self": [
+                `USER_TAG removes the Simple Padlock from USER_THEIR VAR_C1!`
+            ],
+            "other": [
+                `USER_TAG removes the Simple Padlock from TARGET_TAG's VAR_C1!`
+            ]
+        }
+    }
+}
+
+// region texts_mitten
 const texts_mitten = {
 	heavy: [`USER_TAG nuzzles a pair of mittens, but can't pick them up because of USER_THEIR VAR_C1.`],
 	// ephemeral
@@ -2698,10 +2957,10 @@ const texts_touch = {
                 `USER_TAG must nibble, so USER_THEY nomUSER_S on TARGET_TAG! Nom nom!`,
                 `USER_TAG gently noms on TARGET_TAG's arm. It's a cute little bite. Nom!~`,
                 {
-                    // If both parties havent blocked pet tag and the interaction user has targetuser's collar key, this can happen!
+                    // If both parties havent blocked pet tag and the target user has the interactionuser's key, nom because brat
                     required: (t) => {
                         return (!(getUserTags(t.serverID, t.interactionuser.id).includes("pet") && getUserTags(t.serverID, t.targetuser.id).includes("pet")) &&
-                                (getCollar(t.serverID, t.targetuser.id)?.keyholder == t.interactionuser.id) || (getCollar(t.serverID, t.targetuser.id)?.clonedKeyholders && getCollar(t.serverID, t.targetuser.id)?.clonedKeyholders.includes(t.interactionuser.id)));
+                                (getCollar(t.serverID, t.interactionuser.id)?.keyholder == t.targetuser.id) || (getCollar(t.serverID, t.interactionuser.id)?.clonedKeyholders && getCollar(t.serverID, t.interactionuser.id)?.clonedKeyholders.includes(t.targetuser.id)));
                     },
                     text: `USER_TAG decides to nom on USER_THEIR keyholder. Such a bratty pet!`
                 },
@@ -3856,19 +4115,19 @@ const texts_ungag = {
                     failed: [
                         {
                             required: (t) => {
-                                return (t.c3 && getHeadwear(t.serverID, t.targetuser.id).includes(`gagharness_${t.c3}`))
+                                return (t.c3 && getHeadwear(t.serverID, t.targetuser.id)?.some((h) => h.type == `gagharness_${t.c3}`))
                             },
                             text: `USER_TAG tugs at USER_THEIR VAR_C2, but the straps on head harness hold it firmly to USER_THEIR head. USER_THEY_CAP twiddleUSER_S with the little locks on it.`
                         },
                         {
                             required: (t) => {
-                                return (t.c3 && getHeadwear(t.serverID, t.targetuser.id).includes(`gagharness_${t.c3}`))
+                                return (t.c3 && getHeadwear(t.serverID, t.targetuser.id)?.some((h) => h.type == `gagharness_${t.c3}`))
                             },
                             text: `It's not for lack of trying, but the straps circling USER_TAG's vision remind USER_THEM of the futility in trying to remove USER_THEIR locked gag.`
                         },
                         {
                             required: (t) => {
-                                return (t.c3 && getHeadwear(t.serverID, t.targetuser.id).includes(`gagharness_${t.c3}`))
+                                return (t.c3 && getHeadwear(t.serverID, t.targetuser.id)?.some((h) => h.type == `gagharness_${t.c3}`))
                             },
                             text: `USER_TAG paws at the head harness on USER_THEIR head, clearly forgetting that USER_THEY USER_ISARE meant to be gagged until USER_THEIR head harness is unlocked.`
                         },
@@ -3898,13 +4157,13 @@ const texts_ungag = {
                     failed: [
                         {
                             required: (t) => {
-                                return (t.c3 && getHeadwear(t.serverID, t.targetuser.id).includes(`gagharness_${t.c3}`))
+                                return (t.c3 && getHeadwear(t.serverID, t.targetuser.id)?.some((h) => h.type == `gagharness_${t.c3}`))
                             },
                             text: `USER_TAG tugs at the VAR_C2 on TARGET_TAG's face, but fails miserably in removing the head harness holding the gag securely in TARGET_THEIR mouth.`
                         },
                         {
                             required: (t) => {
-                                return (t.c3 && getHeadwear(t.serverID, t.targetuser.id).includes(`gagharness_${t.c3}`))
+                                return (t.c3 && getHeadwear(t.serverID, t.targetuser.id)?.some((h) => h.type == `gagharness_${t.c3}`))
                             },
                             text: `Despite USER_TAG's best efforts, TARGET_TAG's speech remains stolen from TARGET_THEM. A shame. Maybe someone should unlock the harness on TARGET_THEM!`
                         },
@@ -6315,7 +6574,8 @@ const textarrays = {
 	texts_wear: texts_wear,
 	texts_timelock: texts_timelock,
 	texts_eventfunctions: texts_eventfunctions,
-    texts_dressprotocol: texts_dressprotocol
+    texts_dressprotocol: texts_dressprotocol,
+    texts_lock: texts_lock
 };
 
 // Get generic text and spit out a pronoun respecting version YAY

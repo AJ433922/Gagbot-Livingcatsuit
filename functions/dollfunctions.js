@@ -218,7 +218,7 @@ function isValidDoll(serverID, userID) {
     traceFirstParam(arguments[0]);
 	// TODO - Control harness + collar required for dollification?
 
-	return getHeadwear(serverID, userID).find((headwear) => DOLLVISORS.includes(headwear));
+	return getHeadwear(serverID, userID)?.find((headwear) => DOLLVISORS.includes(headwear.type));
 }
 
 /**********************************************
@@ -269,8 +269,7 @@ async function textGarbleDOLL(msg, modifiedmessage, outtextin) {
 	let dollProtocol = !(getOption(msg.guild.id, msg.author.id, "dollforcedprotocol") == "disabled"); // Enabled for any level that isn't disabled
     let dollProtocolLevel = getOption(msg.guild.id, msg.author.id, "dollforcedprotocol");
     let dollPunishThresh = getOption(msg.guild.id, msg.author.id, "dollpunishthresh");
-    let dollmaker = getHeadwear(msg.guild.id, msg.member.id).find((headwear) => headwear === "dollmaker_visor");
-    // This creates a circular, so, access the variable directly. Oh well. 
+    let dollmaker = getHeadwear(msg.guild.id, msg.member.id)?.find((headwear) => headwear.type === "dollmaker_visor");
     let eldritchcorrupted = getGags(msg.guild.id, msg.member.id).find((gag) => gag === "eldritch");
 	let dollProtocolViolations = 0;
 	let dollProtocolVioType = undefined;
@@ -519,8 +518,7 @@ async function textGarbleDOLL(msg, modifiedmessage, outtextin) {
 }
 
 function textGarbleDrone(text, parent, locarr, msg, msgTreeMods) {
-    if (getHeadwear(msg.guild.id, msg.member.id).includes("drone_visor")) {
-        //let supplieddronespeech = (text.startsWith(`${getOption(msg.member.id, "dronevisorname")}`))
+    if (getHeadwear(msg.guild.id, msg.member.id)?.some((h) => h.type == "drone_visor")) {
         let outtext = `${getOption(msg.guild.id, msg.member.id, "dronevisorname")} :: Code ${(msg.type == "19") ? "250" : "050"} :: ${(msg.type == "19") ? "Response" : "Statement"}, ${text}`
         msgTreeMods.modified = true;
         return ("`" + outtext + "`")

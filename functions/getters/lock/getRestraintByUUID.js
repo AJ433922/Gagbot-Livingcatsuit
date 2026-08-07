@@ -20,12 +20,13 @@ const { getWearable } = require("../wearable/getWearable");
  * - restraint: The actual restraint object
  *********/
 function getRestraintByUUID(lockuuid) {
+    let itemreturn;
     // Gags
     Object.keys(process.gags).forEach((server) => {
         Object.keys(process.gags[server]).forEach((user) => {
             getGags(server, user).forEach((g) => {
                 if (g.lock && g.lock.uuid == lockuuid) {
-                    return { serverID: server, userID: user, restraint: g };
+                    itemreturn = { serverID: server, userID: user, restraint: g };
                 }
             }) 
         })
@@ -35,7 +36,7 @@ function getRestraintByUUID(lockuuid) {
         Object.keys(process.toys[server]).forEach((user) => {
             getToys(server, user).forEach((g) => {
                 if (g.lock && g.lock.uuid == lockuuid) {
-                    return { serverID: server, userID: user, restraint: g };
+                    itemreturn = { serverID: server, userID: user, restraint: g };
                 }
             }) 
         })
@@ -45,7 +46,7 @@ function getRestraintByUUID(lockuuid) {
         Object.keys(process.headwear[server]).forEach((user) => {
             getHeadwear(server, user).forEach((g) => {
                 if (g.lock && g.lock.uuid == lockuuid) {
-                    return { serverID: server, userID: user, restraint: g };
+                    itemreturn = { serverID: server, userID: user, restraint: g };
                 }
             }) 
         })
@@ -55,7 +56,7 @@ function getRestraintByUUID(lockuuid) {
         Object.keys(process.wearable[server]).forEach((user) => {
             getWearable(server, user).forEach((g) => {
                 if (g.lock && g.lock.uuid == lockuuid) {
-                    return { serverID: server, userID: user, restraint: g };
+                    itemreturn = { serverID: server, userID: user, restraint: g };
                 }
             }) 
         })
@@ -65,7 +66,7 @@ function getRestraintByUUID(lockuuid) {
         Object.keys(process.heavy[server]).forEach((user) => {
             getHeavyList(server, user).forEach((g) => {
                 if (g.lock && g.lock.uuid == lockuuid) {
-                    return { serverID: server, userID: user, restraint: g };
+                    itemreturn = { serverID: server, userID: user, restraint: g };
                 }
             }) 
         })
@@ -74,7 +75,7 @@ function getRestraintByUUID(lockuuid) {
     Object.keys(process.mitten).forEach((server) => {
         Object.keys(process.mitten[server]).forEach((user) => {
             if (getMitten(server, user)?.lock && (getMitten(server, user)?.lock.uuid == lockuuid)) {
-                return { serverID: server, userID: user, restraint: getMitten(server, user) };
+                itemreturn = { serverID: server, userID: user, restraint: getMitten(server, user) };
             }
         })
     })
@@ -82,7 +83,7 @@ function getRestraintByUUID(lockuuid) {
     Object.keys(process.corset).forEach((server) => {
         Object.keys(process.corset[server]).forEach((user) => {
             if (getCorset(server, user)?.lock && (getCorset(server, user)?.lock.uuid == lockuuid)) {
-                return { serverID: server, userID: user, restraint: getCorset(server, user) };
+                itemreturn = { serverID: server, userID: user, restraint: getCorset(server, user) };
             }
         })
     })
@@ -90,7 +91,7 @@ function getRestraintByUUID(lockuuid) {
     Object.keys(process.chastity).forEach((server) => {
         Object.keys(process.chastity[server]).forEach((user) => {
             if (getChastity(server, user)?.lock && (getChastity(server, user)?.lock.uuid == lockuuid)) {
-                return { serverID: server, userID: user, restraint: getChastity(server, user) };
+                itemreturn = { serverID: server, userID: user, restraint: getChastity(server, user) };
             }
         })
     })
@@ -98,7 +99,7 @@ function getRestraintByUUID(lockuuid) {
     Object.keys(process.chastitybra).forEach((server) => {
         Object.keys(process.chastitybra[server]).forEach((user) => {
             if (getChastityBra(server, user)?.lock && (getChastityBra(server, user)?.lock.uuid == lockuuid)) {
-                return { serverID: server, userID: user, restraint: getChastityBra(server, user) };
+                itemreturn = { serverID: server, userID: user, restraint: getChastityBra(server, user) };
             }
         })
     })
@@ -106,11 +107,11 @@ function getRestraintByUUID(lockuuid) {
     Object.keys(process.collar).forEach((server) => {
         Object.keys(process.collar[server]).forEach((user) => {
             if (getCollar(server, user)?.lock && (getCollar(server, user)?.lock.uuid == lockuuid)) {
-                return { serverID: server, userID: user, restraint: getCollar(server, user) };
+                itemreturn = { serverID: server, userID: user, restraint: getCollar(server, user) };
             }
         })
     })
-    return undefined;
+    return itemreturn;
 }
 
 exports.getRestraintByUUID = getRestraintByUUID;

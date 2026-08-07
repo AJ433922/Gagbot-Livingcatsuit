@@ -7,15 +7,18 @@ exports.setupfunction = (data) => {
     let gags = Object.keys(process.gagtypes)
     let returnheadwear = [];
     gags.forEach((g) => {
-        returnheadwear.push({
+        /*returnheadwear.push({
             type: `gagharness_${g}`,
             name: `Lockable Harness (${process.gagtypes[g].choicename})`,
             lockable: true,
+            hidden: true,
             tags: ["lockableheadwear"],
             // Only show in autocomplete if the user is currently wearing the gag. 
             showfunction: (serverID, targetuser) => { return (process.gags[serverID] && process.gags[serverID][targetuser] && process.gags[serverID][targetuser].find((ga) => ga.gagtype == g)) },
             itemdescription: `**Gag Harnesses** prevent removing the associated gag when worn. Can only be equipped when wearing the gag. Can only be removed by the person who applies the head harness.`
-        })
+        })*/
     })
     return returnheadwear;
 }
+
+// Disabled head harnesses since they're going to be redundant soon. 

@@ -2,7 +2,7 @@ const { markForSave } = require("../../other/markForSave");
 const { traceFirstParam } = require("../../other/TESTS/traceFirstParam");
 
 /**********
- * Adds a locked headwear item on the user.
+ * DEPRECATED (this will cause a crash): Adds a locked headwear item on the user.
  * 
  * - (server id) serverID - The server this is running on
  * - (user id) userID - The person wearing the collar
@@ -12,7 +12,9 @@ const { traceFirstParam } = require("../../other/TESTS/traceFirstParam");
  **********/
 function addLockedHeadgear(serverID, userID, headwear) {
     traceFirstParam(arguments[0]);
-	if (process.headwear == undefined) {
+    console.log("Calling addLockedHeadgear")
+    console.log(new Error);
+	/*if (process.headwear == undefined) {
 		process.headwear = {};
 	}
     if (process.headwear[serverID] == undefined) {
@@ -24,7 +26,7 @@ function addLockedHeadgear(serverID, userID, headwear) {
 		} else {
 			process.headwear[serverID][userID].locked.push(headwear);
 		}
-	}
+	}*/
 	markForSave("headwear");
 };
 

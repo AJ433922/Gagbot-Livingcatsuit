@@ -1,3 +1,5 @@
+const { markForSave } = require("../../other/markForSave");
+
 /***********
  * Given an interaction and a UUID, updates the awaiting lock object with the new interaction, if it exists. 
  * 
@@ -11,6 +13,7 @@ function updateLockInteraction(interaction, uuid) {
     if (process.awaitinglock[uuid]) {
         process.awaitinglock[uuid].interaction = interaction;
     }
+    markForSave("awaitinglock")
 }
 
 exports.updateLockInteraction = updateLockInteraction;

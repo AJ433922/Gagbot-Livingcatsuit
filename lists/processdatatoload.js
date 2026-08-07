@@ -4,6 +4,8 @@
  *******/
 const processdatatoload = [
     { textname: "gaggedusers.txt", processvar: "gags", default: {}, rts: "gags", hasusers: true },
+    { textname: "gaggedusers.txt", processvar: "gags", default: {}, rts: "gag", hasusers: true },
+    { textname: "awaitinglock.txt", processvar: "awaitinglock", default: {}, rts: "awaitinglock" },
     { textname: "mittenedusers.txt", processvar: "mitten", default: {}, rts: "mitten", hasusers: true },
     { textname: "chastityusers.txt", processvar: "chastity", default: {}, rts: "chastity", hasusers: true },
     { textname: "chastitybrausers.txt", processvar: "chastitybra", default: {}, rts: "chastitybra", hasusers: true },
@@ -16,6 +18,7 @@ const processdatatoload = [
     { textname: "corsetusers.txt", processvar: "corset", default: {}, rts: "corset", hasusers: true },
     { textname: "arousal.txt", processvar: "arousal", default: {}, rts: "arousal", hasusers: true },
     { textname: "headwearusers.txt", processvar: "headwear", default: {}, rts: "headwear", hasusers: true },
+    { textname: "headwearusers.txt", processvar: "headwear", default: {}, rts: "mask", hasusers: true },
     { textname: "discardedkeys.txt", processvar: "discardedKeys", rts: "discardedKeys", default: [] },
     { textname: "configs.txt", processvar: "configs", default: {}, rts: "configs", },
     { textname: "outfits.txt", processvar: "outfits", default: {}, rts: "outfits", hasusers:true },

@@ -24,9 +24,9 @@ function getAlternateName(serverID, user) {
     }
 
     // Handle Doll Visor name
-    if (getHeadwear(serverID, user.id).find((headwear) => DOLLVISORS.includes(headwear))) {
+    if (getHeadwear(serverID, user.id)?.find((headwear) => DOLLVISORS.includes(headwear.type))) {
         let dollIDOverride = getOption(serverID, user.id, "dollvisorname");
-        let dollmaker = getHeadwear(serverID, user.id).find((headwear) => headwear === "dollmaker_visor");
+        let dollmaker = getHeadwear(serverID, user.id)?.find((headwear) => headwear.type === "dollmaker_visor");
         // If dollIDOverride is not specified or the override is exactly a string of numbers...
         // Force Dollmaker's Visor wearers to get this generation function
         if (!dollIDOverride || (Number.isFinite(dollIDOverride) && dollIDOverride.length < 6) || dollmaker) {
@@ -44,7 +44,7 @@ function getAlternateName(serverID, user) {
     }
 
     // Handle Drone Visor name
-    if (getHeadwear(serverID, user.id).find((headwear) => DRONEVISORS.includes(headwear))) {
+    if (getHeadwear(serverID, user.id)?.find((headwear) => DRONEVISORS.includes(headwear.type))) {
         outname = `⬡-Drone ${getOption(serverID, user.id, "dronevisorname")}`;
     }
 

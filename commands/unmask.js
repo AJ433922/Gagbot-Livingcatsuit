@@ -23,8 +23,8 @@ module.exports = {
 		if (focusedValue == "") {
             try {
                 // User hasn't entered anything, lets give them a suggested set of 10
-                let itemsworn = getHeadwear(interaction.guildId, chosenuserid);
-                let itemslocked = getLockedHeadgear(interaction.guildId, chosenuserid);
+                let itemsworn = getHeadwear(interaction.guildId, chosenuserid)?.map((h) => h.type) ?? [];
+                let itemslocked = []; //getLockedHeadgear(interaction.guildId, chosenuserid);
 
                 // Remove anything we're already wearing from the list
                 let sorted = process.autocompletes.headtypes.filter((f) => itemsworn.includes(f.value));
@@ -36,8 +36,8 @@ module.exports = {
             }
 		} else {
 			try {
-				let itemsworn = getHeadwear(interaction.guildId, chosenuserid);
-				let itemslocked = getLockedHeadgear(interaction.guildId, chosenuserid);
+				let itemsworn = getHeadwear(interaction.guildId, chosenuserid)?.map((h) => h.type) ?? [];
+				let itemslocked = []; //getLockedHeadgear(interaction.guildId, chosenuserid);
 
 				// Remove anything we're already wearing from the list
 				let sorted = process.headtypes.filter((f) => itemsworn.includes(f.value));
@@ -52,7 +52,7 @@ module.exports = {
 	async execute(interaction) {
 		try {
 			let headwearuser = interaction.options.getUser("user") ?? interaction.user;
-			let headwearchoice = interaction.options.getString("type") ?? (getHeadwear(interaction.guildId, headwearuser.id) && getHeadwear(interaction.guildId, headwearuser.id)[0]);
+			let headwearchoice = interaction.options.getString("type") ?? (getHeadwear(interaction.guildId, headwearuser.id) && getHeadwear(interaction.guildId, headwearuser.id)[0].type);
             // CHECK IF THEY CONSENTED! IF NOT, MAKE THEM CONSENT
 			if (!getConsent(interaction.guildId, headwearuser.id)?.mainconsent) {
 				await handleConsent(interaction, headwearuser.id);
@@ -71,11 +71,11 @@ module.exports = {
 					targetuser: headwearuser,
                     headwearchoice: headwearchoice ?? "none",
 					c1: getHeavy(interaction.guildId, interaction.user.id)?.displayname, // heavy bondage type
-					c2: getHeadwearName(interaction.guildId, headwearuser.id, headwearchoice),
+					c2: getHeadwearName(headwearchoice),
 				},
 			};
 
-            if (getHeadwear(interaction.guildId, headwearuser.id)[0] == undefined) {
+            if (!getHeadwear(interaction.guildId, headwearuser.id)) {
                 data.noneworn = true
                 if (headwearuser.id == interaction.user.id) { 
                     data.self = true 
@@ -102,7 +102,7 @@ module.exports = {
 					if (headwearchoice) {
 						// We're targetting a specific headwear piece.
 						data.single = true;
-						if (getHeadwear(interaction.guildId, headwearuser.id).includes(headwearchoice)) {
+						if (getHeadwear(interaction.guildId, headwearuser.id)?.find((h) => h.type == headwearchoice)) {
 							// Wearing the headgear already
 							data.worn = true;
 							interaction.reply(getText(data));
@@ -114,7 +114,7 @@ module.exports = {
 					} else {
 						// We're removing ALL headwear
 						data.multiple = true;
-						if (getHeadwear(interaction.guildId, headwearuser.id).length > 0) {
+						if (getHeadwear(interaction.guildId, headwearuser.id)) {
 							// Wearing something
 							data.worn = true;
 							interaction.reply(getText(data));
@@ -130,7 +130,7 @@ module.exports = {
 					if (headwearchoice) {
 						// We're targetting a specific headwear piece.
 						data.single = true;
-						if (getHeadwear(interaction.guildId, headwearuser.id).includes(headwearchoice)) {
+						if (getHeadwear(interaction.guildId, headwearuser.id)?.find((h) => h.type == headwearchoice)) {
 							// Wearing the headgear already
 							data.worn = true;
 							interaction.reply(getText(data));
@@ -142,7 +142,7 @@ module.exports = {
 					} else {
 						// We're removing ALL headwear
 						data.multiple = true;
-						if (getHeadwear(interaction.guildId, headwearuser.id).length > 0) {
+						if (getHeadwear(interaction.guildId, headwearuser.id)) {
 							// Wearing something
 							data.worn = true;
 							interaction.reply(getText(data));
@@ -165,7 +165,7 @@ module.exports = {
 						if (headwearchoice) {
 							// We're targetting a specific headwear piece.
 							data.single = true;
-							if (getHeadwear(interaction.guildId, headwearuser.id).includes(headwearchoice)) {
+							if (getHeadwear(interaction.guildId, headwearuser.id)?.find((h) => h.type == headwearchoice)) {
 								// Wearing the headgear already
 								data.worn = true;
 								interaction.reply(getText(data));
@@ -177,7 +177,7 @@ module.exports = {
 						} else {
 							// We're removing ALL headwear
 							data.multiple = true;
-							if (getHeadwear(interaction.guildId, headwearuser.id).length > 0) {
+							if (getHeadwear(interaction.guildId, headwearuser.id)) {
 								// Wearing something
 								data.worn = true;
 								interaction.reply(getText(data));
@@ -193,7 +193,7 @@ module.exports = {
 						if (headwearchoice) {
 							// We're targetting a specific headwear piece.
 							data.single = true;
-							if (getHeadwear(interaction.guildId, headwearuser.id).includes(headwearchoice)) {
+							if (getHeadwear(interaction.guildId, headwearuser.id)?.find((h) => h.type == headwearchoice)) {
 								// Wearing the headgear already
 								data.worn = true;
 								interaction.reply(getText(data));
@@ -205,7 +205,7 @@ module.exports = {
 						} else {
 							// We're removing ALL headwear
 							data.multiple = true;
-							if (getHeadwear(interaction.guildId, headwearuser.id).length > 0) {
+							if (getHeadwear(interaction.guildId, headwearuser.id)) {
 								// Wearing something
 								data.worn = true;
 								interaction.reply(getText(data));
@@ -225,16 +225,17 @@ module.exports = {
 						if (headwearchoice) {
 							// Targetting one specific headgear
 							data.single = true;
-							if (getHeadwear(interaction.guildId, headwearuser.id).includes(headwearchoice)) {
+							if (getHeadwear(interaction.guildId, headwearuser.id)?.find((h) => h.type == headwearchoice)) {
 								// Wearing the headgear already, Ephemeral
-                                if (process.headwear[interaction.guildId][headwearuser.id][headwearchoice]) {
+                                // Note - removing lockable headgear for now until Locks 2.0 is implemented. With headgear overhaul, this requires implementation, too much work. 
+                                /*if (process.headwear[interaction.guildId][headwearuser.id][headwearchoice]) {
                                     if ((process.headwear[interaction.guildId][headwearuser.id][headwearchoice].lockable) && (process.headwear[interaction.guildId][headwearuser.id][headwearchoice].origbinder != interaction.user.id)) {
                                         // Not allowed to unlock headgear someone else put on us. 
                                         data.locked = true;
                                         interaction.reply(getText(data));
                                         return;
                                     }
-                                }
+                                }*/
                                 data.worn = true;
 								interaction.reply(getText(data));
 								deleteHeadwear(interaction.guildId, headwearuser.id, headwearchoice);
@@ -246,7 +247,7 @@ module.exports = {
 						} else {
 							// Targetting all headgear
 							data.multiple = true;
-							if (getHeadwear(interaction.guildId, headwearuser.id).length > 0) {
+							if (getHeadwear(interaction.guildId, headwearuser.id)) {
 								// Wearing the headgear already, Ephemeral
 								data.worn = true;
 								interaction.reply(getText(data));
@@ -263,16 +264,16 @@ module.exports = {
 						if (headwearchoice) {
 							// Targetting one specific headgear
 							data.single = true;
-							if (getHeadwear(interaction.guildId, headwearuser.id).includes(headwearchoice)) {
+							if (getHeadwear(interaction.guildId, headwearuser.id)?.find((h) => h.type == headwearchoice)) {
 								// Wearing the headgear already, Ephemeral
-                                if (process.headwear[interaction.guildId][headwearuser.id][headwearchoice]) {
+                                /* if (process.headwear[interaction.guildId][headwearuser.id][headwearchoice]) {
                                     if ((process.headwear[interaction.guildId][headwearuser.id][headwearchoice].lockable) && (process.headwear[interaction.guildId][headwearuser.id][headwearchoice].origbinder != interaction.user.id)) {
                                         // Not allowed to unlock headgear someone else put on them. 
                                         data.locked = true;
                                         interaction.reply(getText(data));
                                         return;
                                     }
-                                }
+                                }*/
                                 data.worn = true;
 								// Now lets make sure the wearer wants that.
 								if (checkBondageRemoval(interaction.guildId, interaction.user.id, headwearuser.id, "headwear", headwearchoice) == true) {
@@ -303,7 +304,7 @@ module.exports = {
 						} else {
 							// Targetting all headgear
 							data.multiple = true;
-							if (getHeadwear(headwearuser.id).length > 0) {
+							if (getHeadwear(headwearuser.id).length) {
 								// Wearing the headgear already, Ephemeral
 								data.worn = true;
 								// Now lets make sure the wearer wants that.

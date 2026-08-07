@@ -12,6 +12,7 @@ const { getProcessVariable } = require("../config/getProcessVariable");
  * - chastitytype: The type ID of this chastity bra
  * - timestamp: The time this chastity bra was applied to the wearer
  * - stateligible: If the chastity bra is restored from /outfit or other methods, will be **false** and won't be counted for longest chastity worn.
+ * - lock?: If specified, the item is locked and needs to be checked for access
  * ###### Additional properties may be added by other functions
  *********/
 function getChastityBra(serverID, user) {

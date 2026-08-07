@@ -8,6 +8,7 @@ const { getHeadwear } = require("./getters/headwear/getHeadwear");
 const { markForSave } = require("./other/markForSave");
 const { traceFirstParam } = require("./other/TESTS/traceFirstParam");
 const { removeCorset } = require("./setters/corset/removeCorset");
+const { getItemTags } = require("./getters/config/getItemTags");
 
 nlp.extend(nlpSpeech);
 
@@ -273,8 +274,8 @@ function calcBreath(serverID, user) {
             }
         })
 	}
-    let userheadwear = getHeadwear(serverID, user);
-    if (userheadwear.includes("gasmask") || userheadwear.includes("gasmasklinked") || userheadwear.includes("gasmask_hornygas") || userheadwear.includes("gasmask_truthgas")) {
+    let userheadwear = getHeadwear(serverID, user)?.map((h) => h.type) ?? [];
+    if (userheadwear && getItemTags(userheadwear).includes("gasmask")) {
         // It is harder to breathe in a gasmask or share air
         recoveryCoefficient = recoveryCoefficient * 0.7 
     }

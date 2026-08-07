@@ -6,6 +6,8 @@ const { removeLockAwaiting } = require("../functions/setters/lock/removeLockAwai
 const { applyLockAwaiting } = require("../functions/setters/lock/applyLockAwaiting");
 const { getPronouns } = require("../functions/getters/config/getPronouns");
 const { getItemName } = require("../functions/getters/config/getItemName");
+const { sendLockToast } = require("../functions/setters/lock/sendLockToast");
+const { getItemType } = require("../functions/getters/config/getItemType");
 
 /***********
  * This is a basic keyed padlock for large restraints. It allows for permanent locking to a keyholder. 
@@ -62,8 +64,8 @@ exports.canTransfer = (data) => {
 
 // The condition to allow removing the lock
 exports.canUnlock = (data) => {
-    let lock = getRestraintByUUID(data.uuid).lock;
-    if (lock.keyholder == data.userID) {
+    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
+    if (lock.keyholderID == data.keyholderID) {
         return true;
     } 
 }
@@ -251,8 +253,13 @@ exports.lockinteractionresponse = function(interaction) {
         // Engage the lock!
         try {
             let userID = getLockAwaiting(uuid).userID;
+            let keyholderID = getLockAwaiting(uuid).keyholderID
+            let lockrestrainttype = getItemType(getLockAwaiting(uuid).restraintobject)
             let lockrestraint = getLockAwaiting(uuid).restraintname
             let appliedlock = applyLockAwaiting(uuid);
+            let targettype = (userID == interaction.user.id) ? "self" : "other"
+            let further = [(keyholderID == interaction.user.id) ? "selflock" : (keyholderID == userID) ? "otherselflock" : "otherlock"]
+            let extratext = (further[0] == "other") ? [keyholderID] : undefined;
             if (appliedlock == "NoAccess") {
                 interaction.update({ components: [new TextDisplayBuilder().setContent(`You don't have access to apply a Simple Padlock to <@${userID}>'s ${lockrestraint}.`)] })
             }
@@ -261,6 +268,7 @@ exports.lockinteractionresponse = function(interaction) {
             }
             else {
                 interaction.update({ components: [new TextDisplayBuilder().setContent(`Applying lock!`)] })
+                sendLockToast({ serverID: interaction.guildId, userID: userID, actionuser: interaction.user.id, actiontype: "lock", locktype: "simplepadlock", restraintname: lockrestraint, restrainttype: lockrestrainttype, targettype: targettype, extratext: extratext, further: further })
             }
         }
         catch (err) {

@@ -3,4 +3,5 @@ exports.name = "Muzzle (Latex Lockable)";
 
 exports.tags = ["latex", "lockableheadwear"];
 exports.blockgag = true;
-exports.lockable = true;
+//exports.lockable = true;
+exports.hidden = true;
