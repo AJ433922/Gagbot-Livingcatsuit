@@ -1094,7 +1094,7 @@ const texts_heavy = {
                     },
                     {
                         only: (t) => {
-                            return t.c3.includes("Wind-up");
+                            return t.c2.includes("Wind-up");
                         },
                         text: `USER_TAG pulls out an enchanted Wind-Up Key! Reaching carefully behind USER_THEMSELF with it, USER_THEY feels it snap into place, leaving USER_THEM feeling like a clockwork toy~!`,
                     },
@@ -1142,15 +1142,16 @@ const texts_heavy = {
                         },
                         text: `USER_TAG pulls the zip down on a VAR_C2 before slipping USER_THEMSELF inside and pulling the zipper closed behind USER_THEM!`,
                     },                
+                ],
+                furniture: [
+                    `USER_TAG pulls up a VAR_C2, planting USER_THEIR body comfortably on it!`,
+                    `USER_TAG sidles up to a VAR_C2, slipping down to rest USER_THEIR body atop it!`,
                     {
                         only: (t) => {
                             return t.c2.includes("Stable");
                         },
                         text: `USER_TAG opens the stall door of the VAR_C2, stepping through before closing and latching it behind USER_THEMSELF!`,
                     },
-                ],
-                furniture: [
-                    `USER_TAG pulls up a VAR_C2, planting USER_THEIR body comfortably on it!`
                 ]
             },
             nocanwear: {
@@ -1415,19 +1416,20 @@ const texts_heavy = {
                     },
                     {
                         only: (t) => {
-                            return t.c2.includes("Duffel Bag");
+                            return t.c3.includes("Duffel Bag");
                         },
                         text: `USER_TAG pulls the zip down on a VAR_C2 before slipping TARGET_TAG inside and pulling the zipper closed, sealing TARGET_THEM inside!`,
-                    },                
+                    }, 
+                ],
+                furniture: [
+                    `USER_TAG guides TARGET_TAG over to a VAR_C3, before offering TARGET_THEM to make TARGET_THEMSELF comfortable!`,
+                    `USER_TAG leads TARGET_TAG towards a VAR_C3, gently pushing TARGET_THEM down on top of it!`,                                   
                     {
                         only: (t) => {
                             return t.c2.includes("Stable");
                         },
                         text: `USER_TAG opens the stall door of the VAR_C2, leading TARGET_TAG inside before slipping back out and latching it behind USER_THEM!`,
                     },
-                ],
-                furniture: [
-                    `USER_TAG guides TARGET_TAG over to a VAR_C3, before offering TARGET_THEM to make TARGET_THEMSELF comfortable!`
                 ]
             },
             nocanwear: {
@@ -4366,7 +4368,13 @@ const texts_unheavy = {
 			        return t.c1.includes("Sticky Glue");
 			    },
 			    text: `USER_TAG wriggles in the VAR_C1 trap, but it's very hard to escape these without outside help...`,
-			},
+			},             
+            {
+                only: (t) => {
+                    return t.c2.includes("Stable");
+                },
+                text: `USER_TAG tries to escape USER_THEIR stall! Unfortunately USER_THEIR bindings stop USER_THEM from working the latch~!`,
+            },
 		],
 		other: [`USER_TAG brushes up against TARGET_TAG to help TARGET_THEM out of TARGET_THEIR VAR_C2, but being trapped in a VAR_C1, USER_THEY can't really help TARGET_THEM out much.`],
 	},
@@ -4484,7 +4492,7 @@ const texts_unheavy = {
                 },
                 {
                     only: (t) => {
-                        return t.c3.includes("Wind-up");
+                        return t.c2.includes("Wind-up");
                     },
                     text: `USER_TAG reaches for the enchanted Wind-Up Key Behind USER_THEM! As USER_THEY brush against it the key stops turning and drops into USER_THEIR hand!`,
                 },                
@@ -4733,9 +4741,9 @@ const texts_unheavy = {
                 },
                 {
                     only: (t) => {
-                        return t.c3.includes("Wind-up");
+                        return t.c2.includes("Wind-up");
                     },
-                    text: `USER_TAG reaches for the enchanted VAR_C3 attached to TARGET_TAG! As USER_THEY brush against it the key's enchantment fades and it drops into USER_THEIR hand!`,
+                    text: `USER_TAG reaches for the enchanted VAR_C2 attached to TARGET_TAG! As USER_THEY brush against it the key's enchantment fades and it drops into USER_THEIR hand!`,
                 },                
                 {
                     only: (t) => {
