@@ -4379,14 +4379,21 @@ const texts_unheavy = {
                 only: (t) => {
                     return t.c2.includes("Sphere");
                 },
-                text: `USER_TAG tries to escape the Sphere USER_THEY were caught in! however USER_THEIR struggles only make it wiggle~!`,
+                text: `USER_TAG tries to escape the Sphere USER_THEY was caught in! However USER_THEIR struggles only make it wiggle slightly~!`,
             },
-            {
-                required: (t) => {
-                    return t.c2.includes("Mermaid Tank");
-                },
-                text: `USER_TAG goes looking for an escape from the tank! Unfortunately all USER_THEY achieve is showing USER_THEMSELF off to the audience as USER_THEY swim around~!`,
-            },
+            // PURE_CONTAINERS - May be needed once containers can be struggled when seperate bindings are on arms and no longer take priority
+            //{
+            //    required: (t) => {
+            //        return t.c2.includes("Mermaid Tank");
+            //    },
+            //    text: `USER_TAG goes looking for an escape from the tank! Unfortunately all USER_THEY achieve is showing USER_THEMSELF off to the audience as USER_THEY swim around~!`,
+            //},
+            //{
+            //    required: (t) => {
+            //        return t.c2.includes("Leashing Post");
+            //    },
+            //    text: `No matter how hard USER_TAG tugs against it USER_THEIR leash remains securely attached to the post!`,
+            //},
             
 		],
 		other: [`USER_TAG brushes up against TARGET_TAG to help TARGET_THEM out of TARGET_THEIR VAR_C2, but being trapped in a VAR_C1, USER_THEY can't really help TARGET_THEM out much.`],
