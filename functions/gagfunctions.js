@@ -95,7 +95,7 @@ function loadMittenTypes() {
         const mitten = require(`${commandsPath}/${file}`);
         mittentypes[file.replace(".js", "")] = mitten;
         mittentypes[file.replace(".js", "")].value = file.replace(".js", "") // Compatibility with old .value code
-        if (!mittentypes[file.replace(".js", "")].locktypes) { mittentypes[file.replace(".js", "")].locktypes = ["small"] }
+        if (!mittentypes[file.replace(".js", "")].locktypes) { mittentypes[file.replace(".js", "")].locktypes = ["small", "large"] }
         mittentypes[file.replace(".js", "")].removeItem = function (data) { removeMitten(data.serverID, data.userID) }
         if (!mitten.hidden) { mittenautocompletes.push({ name: mitten.name, value: file.replace(".js", "") }) };
     }

@@ -268,6 +268,7 @@ exports.lockinteractionresponse = function(interaction) {
             }
             else {
                 interaction.update({ components: [new TextDisplayBuilder().setContent(`Applying lock!`)] })
+                if (userID == interaction.user.id) { userID = keyholderID }
                 sendLockToast({ serverID: interaction.guildId, userID: userID, actionuser: interaction.user.id, actiontype: "lock", locktype: "simplepadlock", restraintname: lockrestraint, restrainttype: lockrestrainttype, targettype: targettype, extratext: extratext, further: further })
             }
         }
