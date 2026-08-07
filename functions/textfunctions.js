@@ -2921,10 +2921,10 @@ const texts_touch = {
                 `USER_TAG must nibble, so USER_THEY nomUSER_S on TARGET_TAG! Nom nom!`,
                 `USER_TAG gently noms on TARGET_TAG's arm. It's a cute little bite. Nom!~`,
                 {
-                    // If both parties havent blocked pet tag and the interaction user has targetuser's collar key, this can happen!
+                    // If both parties havent blocked pet tag and the target user has the interactionuser's key, nom because brat
                     required: (t) => {
                         return (!(getUserTags(t.serverID, t.interactionuser.id).includes("pet") && getUserTags(t.serverID, t.targetuser.id).includes("pet")) &&
-                                (getCollar(t.serverID, t.targetuser.id)?.keyholder == t.interactionuser.id) || (getCollar(t.serverID, t.targetuser.id)?.clonedKeyholders && getCollar(t.serverID, t.targetuser.id)?.clonedKeyholders.includes(t.interactionuser.id)));
+                                (getCollar(t.serverID, t.interactionuser.id)?.keyholder == t.targetuser.id) || (getCollar(t.serverID, t.interactionuser.id)?.clonedKeyholders && getCollar(t.serverID, t.interactionuser.id)?.clonedKeyholders.includes(t.targetuser.id)));
                     },
                     text: `USER_TAG decides to nom on USER_THEIR keyholder. Such a bratty pet!`
                 },
