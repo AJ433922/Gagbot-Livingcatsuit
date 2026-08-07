@@ -17,6 +17,7 @@ const { getOption } = require("../functions/getters/config/getOption.js");
 const { getTaggedList } = require("../functions/getters/config/getTaggedList.js");
 const { canAccessGag } = require("../functions/getters/gag/canAccessGag.js");
 const { getBaseHeavy } = require("../functions/getters/heavy/getBaseHeavy.js");
+const { canAccessLock } = require("../functions/getters/lock/canAccessLock.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -195,16 +196,31 @@ module.exports = {
 				if (interactionuser.id == gaggeduser.id) {
 					// Gagging ourself
 					data.self = true;
-					if (getGag(interaction.guildId, interaction.guildId, gaggeduser.id)) {
+					if (getGag(interaction.guildId, gaggeduser.id)) {
 						// We are already gagged!
 						data.gag = true;
                         if (canAccessGag(interaction.guildId, interaction.user.id, currentgag)) {
                             data.canaccess = true;
                             if (currentgag) {
-                                // We are already gagged with that kind. Remove and put it at the end of the list!
+                                // We're already wearing that gag, lets check if we have access to modify it. 
                                 data.changetightness = true;
-                                interaction.reply(getText(data));
-                                assignGag(interaction.guildId, gaggeduser.id, gagtype, gagintensity, interactionuser.id);
+                                if (getGag(interaction.guildId, gaggeduser.id, gagtype)?.lock && !canAccessLock(interaction.guildId, gaggeduser.id, interaction.user.id, getGag(interaction.guildId, gaggeduser.id, gagtype).lock.uuid)) {
+                                    // Locked and we do not have access
+                                    data.nolockaccess = true;
+                                    interaction.reply(getText(data));
+                                }
+                                else if (getGag(interaction.guildId, gaggeduser.id, gagtype)?.lock) {
+                                    // Locked and we do have access
+                                    data.lockaccess = true;
+                                    interaction.reply(getText(data));
+                                    assignGag(interaction.guildId, gaggeduser.id, gagtype, gagintensity, interactionuser.id);
+                                }
+                                else {
+                                    // Not locked
+                                    data.nolock = true;
+                                    interaction.reply(getText(data));
+                                    assignGag(interaction.guildId, gaggeduser.id, gagtype, gagintensity, interactionuser.id);
+                                }
                             } else {
                                 // We are NOT gagged with this kind.
                                 data.newgag = true;
@@ -283,28 +299,62 @@ module.exports = {
                         if (canAccessGag(interaction.guildId, gaggeduser.id, currentgag)) {
                             data.canaccess = true;
                             if (currentgag) {
-                                // We are already gagged with that kind. Remove and put it at the end of the list!
+                                // We're already wearing that gag, lets check if we have access to modify it. 
                                 data.changetightness = true;
-                                // Now lets make sure the wearer wants that.
-                                if (checkBondageRemoval(interaction.guildId, interactionuser.id, gaggeduser.id, "gag") == true) {
-                                    // Allowed immediately, lets go
+                                if (getGag(interaction.guildId, gaggeduser.id, gagtype)?.lock && !canAccessLock(interaction.guildId, gaggeduser.id, interaction.user.id, getGag(interaction.guildId, gaggeduser.id, gagtype).lock.uuid)) {
+                                    // Locked and we do not have access
+                                    data.nolockaccess = true;
                                     interaction.reply(getText(data));
-                                    assignGag(interaction.guildId, gaggeduser.id, gagtype, gagintensity, interactionuser.id);
-                                } else {
-                                    // We need to ask first.
-                                    let datatogeneric = Object.assign({}, data.textdata);
-                                    datatogeneric.c1 = "gag";
-                                    interaction.reply({ content: getTextGeneric("changebind", datatogeneric), flags: MessageFlags.Ephemeral });
-                                    let canRemove = await handleBondageRemoval(interaction.guildId, interactionuser, gaggeduser, "gag", true).then(
-                                        async (res) => {
-                                            await interaction.editReply(getTextGeneric("changebind_accept", datatogeneric));
-                                            await interaction.followUp(getText(data));
-                                            assignGag(gaggeduser.id, gagtype, gagintensity, interactionuser.id);
-                                        },
-                                        async (rej) => {
-                                            await interaction.editReply(getTextGeneric("changebind_decline", datatogeneric));
-                                        },
-                                    );
+                                }
+                                else if (getGag(interaction.guildId, gaggeduser.id, gagtype)?.lock) {
+                                    // Locked and we do have access
+                                    data.lockaccess = true;
+                                    // Now lets make sure the wearer wants that.
+                                    if (checkBondageRemoval(interaction.guildId, interactionuser.id, gaggeduser.id, "gag") == true) {
+                                        // Allowed immediately, lets go
+                                        interaction.reply(getText(data));
+                                        assignGag(interaction.guildId, gaggeduser.id, gagtype, gagintensity, interactionuser.id);
+                                    } else {
+                                        // We need to ask first.
+                                        let datatogeneric = Object.assign({}, data.textdata);
+                                        datatogeneric.c1 = "gag";
+                                        interaction.reply({ content: getTextGeneric("changebind", datatogeneric), flags: MessageFlags.Ephemeral });
+                                        let canRemove = await handleBondageRemoval(interaction.guildId, interactionuser, gaggeduser, "gag", true).then(
+                                            async (res) => {
+                                                await interaction.editReply(getTextGeneric("changebind_accept", datatogeneric));
+                                                await interaction.followUp(getText(data));
+                                                assignGag(gaggeduser.id, gagtype, gagintensity, interactionuser.id);
+                                            },
+                                            async (rej) => {
+                                                await interaction.editReply(getTextGeneric("changebind_decline", datatogeneric));
+                                            },
+                                        );
+                                    }
+                                }
+                                else {
+                                    // Not locked
+                                    data.nolock = true;
+                                    // Now lets make sure the wearer wants that.
+                                    if (checkBondageRemoval(interaction.guildId, interactionuser.id, gaggeduser.id, "gag") == true) {
+                                        // Allowed immediately, lets go
+                                        interaction.reply(getText(data));
+                                        assignGag(interaction.guildId, gaggeduser.id, gagtype, gagintensity, interactionuser.id);
+                                    } else {
+                                        // We need to ask first.
+                                        let datatogeneric = Object.assign({}, data.textdata);
+                                        datatogeneric.c1 = "gag";
+                                        interaction.reply({ content: getTextGeneric("changebind", datatogeneric), flags: MessageFlags.Ephemeral });
+                                        let canRemove = await handleBondageRemoval(interaction.guildId, interactionuser, gaggeduser, "gag", true).then(
+                                            async (res) => {
+                                                await interaction.editReply(getTextGeneric("changebind_accept", datatogeneric));
+                                                await interaction.followUp(getText(data));
+                                                assignGag(gaggeduser.id, gagtype, gagintensity, interactionuser.id);
+                                            },
+                                            async (rej) => {
+                                                await interaction.editReply(getTextGeneric("changebind_decline", datatogeneric));
+                                            },
+                                        );
+                                    }
                                 }
                             } else {
                                 // We are NOT gagged with this kind.

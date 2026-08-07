@@ -23,6 +23,7 @@ const { getOption } = require("../functions/getters/config/getOption.js");
 const { getTaggedList } = require("../functions/getters/config/getTaggedList.js");
 const { getBaseLock } = require("../functions/getters/lock/getBaseLock.js");
 const { getBaseItem } = require("../functions/getters/config/getBaseItem.js");
+const { getGags } = require("../functions/getters/gag/getGags.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -40,7 +41,7 @@ module.exports = {
             try {
                 let chosenuserid = interaction.options.get("user")?.value ?? interaction.user.id; // Note we can only retrieve the user ID here!
                 let heavybondage = getHeavy(interaction.guildId, chosenuserid);
-                let gagbondage = getGagLast(interaction.guildId, chosenuserid);
+                let gagbondage = getGags(interaction.guildId, chosenuserid);
                 let mittenbondage = getMitten(interaction.guildId, chosenuserid);
                 let chastitybondage = getChastity(interaction.guildId, chosenuserid);
                 let chastitybrabondage = getChastityBra(interaction.guildId, chosenuserid)
@@ -52,8 +53,10 @@ module.exports = {
                 if (heavybondage) {
                     outopts.push({ name: `Heavy Bondage: ${getHeavy(interaction.guildId, chosenuserid).displayname}`, value: getHeavy(interaction.guildId, chosenuserid).type });
                 }
-                if (gagbondage) {
-                    outopts.push({ name: `Gag: ${convertGagText(getGagLast(interaction.guildId, chosenuserid))}`, value: getGag(interaction.guildId, chosenuserid).gagtype });
+                if (gagbondage && (gagbondage.length > 0)) {
+                    gagbondage.forEach((g) => {
+                        outopts.push({ name: `Gag: ${convertGagText(g.gagtype)}`, value: g.gagtype });
+                    })
                 }
                 if (mittenbondage) {
                     outopts.push({ name: `Mittens${mittenbondage.mittenname ? `: ${getMittenName(interaction.guildId, chosenuserid)}` : ""}`, value: getMitten(interaction.guildId, chosenuserid).mittenname });

@@ -11,6 +11,7 @@ const { getHeavy } = require("../functions/getters/heavy/getHeavy.js");
 const { getMitten } = require("../functions/getters/mitten/getMitten.js");
 const { deleteGag } = require("../functions/setters/gag/removeGag.js");
 const { canAccessGag } = require("../functions/getters/gag/canAccessGag.js");
+const { canRemoveLock } = require("../functions/getters/lock/canRemoveLock.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -148,8 +149,20 @@ module.exports = {
 							data.gag = true;
                             // Now check if we have any gags that are locked on!
                             if (!canAccessGag(interaction.guildId, gaggeduser.id, gagtoremove)) {
+                                // Muzzled
                                 data.failed = true
                                 interaction.reply(getText(data));
+                            }
+                            else if (gagtoremove && getGag(interaction.guildId, gaggeduser.id, gagtoremove)?.lock && !canRemoveLock(interaction.guildId, gaggeduser.id, interaction.user.id, getGag(interaction.guildId, gaggeduser.id, gagtoremove).lock.uuid)) {
+                                // Locked but without access to that specific gag
+                                data.noaccess = true;
+                                interaction.reply(getText(data));
+                            }
+                            else if (gagtoremove && getGag(interaction.guildId, gaggeduser.id, gagtoremove)?.lock) {
+                                // Locked but with access to that specific gag!
+                                data.locked = true;
+                                interaction.reply(getText(data));
+                                deleteGag(interaction.guildId, gaggeduser.id, gagtoremove);
                             }
 							else if (gagtoremove) {
 								data.single = true;
@@ -176,10 +189,21 @@ module.exports = {
                                 interaction.reply(getText(data));
                                 return;
                             }
+                            else if (gagtoremove && getGag(interaction.guildId, gaggeduser.id, gagtoremove)?.lock && !canRemoveLock(interaction.guildId, gaggeduser.id, interaction.user.id, getGag(interaction.guildId, gaggeduser.id, gagtoremove).lock.uuid)) {
+                                // Locked but without access to that specific gag
+                                data.noaccess = true;
+                                interaction.reply(getText(data));
+                            }
 							// Now lets make sure the wearer wants that.
 							if (checkBondageRemoval(interaction.guildId, interaction.user.id, gaggeduser.id, "gag") == true) {
 								// Allowed immediately, lets go
-								if (gagtoremove) {
+                                if (gagtoremove && getGag(interaction.guildId, gaggeduser.id, gagtoremove)?.lock) {
+                                    // Locked but with access to that specific gag!
+                                    data.locked = true;
+                                    interaction.reply(getText(data));
+                                    deleteGag(interaction.guildId, gaggeduser.id, gagtoremove);
+                                }
+								else if (gagtoremove) {
 									data.single = true;
 									interaction.reply(getText(data));
 									deleteGag(interaction.guildId, gaggeduser.id, gagtoremove);
@@ -196,6 +220,12 @@ module.exports = {
 								let canRemove = await handleBondageRemoval(interaction.guildId, interaction.user, gaggeduser, "gag").then(
 									async (res) => {
 										await interaction.editReply(getTextGeneric("unbind_accept", datatogeneric));
+                                        if (gagtoremove && getGag(interaction.guildId, gaggeduser.id, gagtoremove)?.lock) {
+                                            // Locked but with access to that specific gag!
+                                            data.locked = true;
+                                            interaction.reply(getText(data));
+                                            deleteGag(interaction.guildId, gaggeduser.id, gagtoremove);
+                                        }
 										if (gagtoremove) {
 											data.single = true;
 											await interaction.followUp(getText(data));

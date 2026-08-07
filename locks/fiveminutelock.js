@@ -143,6 +143,7 @@ exports.lockinteractionresponse = function(interaction) {
     else if (command == "lockbutton") {
         // Engage the lock!
         try {
+            updateLockAwaiting(uuid, "unlocktime", (Date.now() + 300000));
             let userID = getLockAwaiting(uuid).userID;
             let keyholderID = getLockAwaiting(uuid).keyholderID
             let lockrestrainttype = getItemType(getLockAwaiting(uuid).restraintobject)

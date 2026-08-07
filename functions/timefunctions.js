@@ -2,7 +2,7 @@
 let fs = require("fs");
 let path = require("path");
 let admZip = require("adm-zip");
-const { unlockTimelockChastity, unlockTimelockChastityBra, unlockTimelockCollar, gagbotHeldKeyTime, checkGagbotKeys } = require(`./timelockfunctions.js`);
+const { unlockTimelockChastity, unlockTimelockChastityBra, unlockTimelockCollar, checkGagbotKeys } = require(`./timelockfunctions.js`);
 const { updateArousalValues } = require("./vibefunctions.js");
 const { updateSharedBreath } = require("./vibefunctions.js");
 const { messageSendChannel } = require("./messagefunctions.js");
@@ -23,6 +23,7 @@ const { isWearingCollar } = require("./getters/collar/isWearingCollar.js");
 const { setUserVar } = require("./setters/config/setUserVar.js");
 const { getRecentChannel } = require("./getters/config/getRecentChannel.js");
 const { processdatatoload } = require("../lists/processdatatoload.js");
+const { removeLock } = require("./setters/lock/removeLock.js");
 
 // Takes input string, outputs a date object.
 const parseTime = (text) => {
@@ -208,7 +209,7 @@ function processTimedEvents() {
 
 function processUnlockTimes(client) {
 	let now = Date.now();
-	if (process.chastity) {
+	/*if (process.chastity) {
 		Object.keys(process.chastity).forEach((server) => {
 			Object.keys(process.chastity[server]).forEach((person) => {
                 if (process.chastity[server][person]?.unlockTime < now) {
@@ -234,6 +235,116 @@ function processUnlockTimes(client) {
                 }
             })
 		});
+	}*/
+
+    if (process.gags) {
+		Object.keys(process.gags).forEach((serverid) => {
+			Object.keys(process.gags[serverid]).forEach((userid) => {
+                getGags(serverid, userid).forEach((g) => {
+                    if (g.lock && g.lock.unlocktime && (g.lock.unlocktime < now)) {
+                        removeLock(g.lock.uuid, { id: userid })
+                    }
+                });
+		    });
+        });
+	}
+	// Headwear
+	if (process.headwear) {
+		Object.keys(process.headwear).forEach((serverid) => {
+            Object.keys(process.headwear[serverid]).forEach((userid) => {
+                getHeadwear(serverid, userid).forEach((h) => {
+                    if (h.lock && h.lock.unlocktime && (h.lock.unlocktime < now)) {
+                        removeLock(h.lock.uuid, { id: userid })
+                    }
+                });
+            });
+		});
+	}
+	// Mittens
+	if (process.mitten) {
+		Object.keys(process.mitten).forEach((serverid) => {
+            Object.keys(process.mitten[serverid]).forEach((userid) => {
+                if (getMitten(serverid, userid)) {
+                    if (getMitten(serverid, userid).lock && getMitten(serverid, userid).lock.unlocktime && (getMitten(serverid, userid).lock.unlocktime < now)) {
+                        removeLock(getMitten(serverid, userid).lock.uuid, { id: userid })
+                    }
+                }
+            });
+		});
+	}
+	// Heavy Bondage
+	if (process.heavy) {
+		Object.keys(process.heavy).forEach((serverid) => {
+            Object.keys(process.heavy[serverid]).forEach((userid) => {
+                if (getHeavyList(serverid, userid).length > 0) {
+                    getHeavyList(serverid, userid).forEach((h) => {
+                        if (h.lock && h.lock.unlocktime && (h.lock.unlocktime < now)) {
+                            removeLock(h.lock.uuid, { id: userid })
+                        }
+                    })
+                }
+            });
+        });
+	}
+    // Chastity Belts
+	if (process.chastity) {
+		Object.keys(process.chastity).forEach((serverid) => {
+            Object.keys(process.chastity[serverid]).forEach((userid) => {
+                if (getChastity(serverid, userid)) {
+                    if (getChastity(serverid, userid).lock && getChastity(serverid, userid).lock.unlocktime && (getChastity(serverid, userid).lock.unlocktime < now)) {
+                        removeLock(getChastity(serverid, userid).lock.uuid, { id: userid })
+                    }
+                }
+            });
+        });
+	}
+    // Chastity Bras
+	if (process.chastitybra) {
+		Object.keys(process.chastitybra).forEach((serverid) => {
+            Object.keys(process.chastitybra[serverid]).forEach((userid) => {
+                if (getChastityBra(serverid, userid)) {
+                    if (getChastityBra(serverid, userid).lock && getChastityBra(serverid, userid).lock.unlocktime && (getChastityBra(serverid, userid).lock.unlocktime < now)) {
+                        removeLock(getChastityBra(serverid, userid).lock.uuid, { id: userid })
+                    }
+                }
+            });
+        });
+	}
+	// Wearables
+	/*if (process.wearable) {
+		Object.keys(process.wearable).forEach((serverid) => {
+            Object.keys(process.wearable[serverid]).forEach((userid) => {
+                getWearable(serverid, userid).forEach((h) => {
+                    if (process.eventfunctions.wearable && process.eventfunctions.wearable[h] && process.eventfunctions.wearable[h].tick) {
+                        process.eventfunctions.wearable[h].tick(serverid, userid);
+                    }
+                });
+            });
+        });
+	}*/
+    // Toys
+    if (process.toys) {
+		Object.keys(process.toys).forEach((serverid) => {
+            Object.keys(process.toys[serverid]).forEach((userid) => {
+                getToys(serverid, userid).forEach((h) => {
+                    if (h.lock && h.lock.unlocktime && (h.lock.unlocktime < now)) {
+                        removeLock(h.lock.uuid, { id: userid })
+                    }
+                });
+            });
+        });
+	}
+    // Collars
+    if (process.collar) {
+		Object.keys(process.collar).forEach((serverid) => {
+            Object.keys(process.collar[serverid]).forEach((userid) => {
+                if (getCollar(serverid, userid)) {
+                    if (getCollar(serverid, userid).lock && getCollar(serverid, userid).lock.unlocktime && (getCollar(serverid, userid).lock.unlocktime < now)) {
+                        removeLock(getCollar(serverid, userid).lock.uuid, { id: userid })
+                    }
+                }
+            });
+        });
 	}
 }
 
