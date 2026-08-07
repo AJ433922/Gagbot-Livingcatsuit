@@ -4382,13 +4382,13 @@ const texts_unheavy = {
                 text: `USER_TAG tries to escape the VAR_C1 USER_THEY was caught in! However USER_THEIR struggles only make it wiggle slightly~!`,
             },
             {
-                only: (t) => {
+                required: (t) => {
                     return t.c2.includes("Bed Restraints");
                 },
                 text: `USER_TAG tugs against the bindings holding USER_THEM on the bed! However USER_THEY soon flop back onto the plush bedding, tired out but no closer to escaping~!`,
             },
             {
-                only: (t) => {
+                required: (t) => {
                     return t.c2.includes("Doll Case");
                 },
                 get text() {
@@ -4396,6 +4396,31 @@ const texts_unheavy = {
                         `USER_TAG squirms slightly in USER_THEIR VAR_C1! However the bindings hold firm, leaving USER_THEM fully on display~!`,
                         `USER_TAG wiggles helplessly inside USER_THEIR VAR_C1!`,
                         `USER_TAG strains against the restraints of USER_THEIR VAR_C1, only succeeding in drawing attention to the misbehaving doll~!`
+                    ];
+                    return options[Math.floor(Math.random() * options.length)];
+                }
+            },
+            {
+                required: (t) => {
+                    return t.c2.includes("Delivery Crate");
+                },
+                get text() {
+                    const options = [
+                        `USER_TAG presses against the roof of the VAR_C1! However USER_THEY fail in forcing it open!`,
+                        `USER_TAG whimpers slightly as USER_THEY realise USER_THEY won't be able to escape until someone unpackages USER_THEM!`
+                    ];
+                    return options[Math.floor(Math.random() * options.length)];
+                }
+            },
+            {
+                required: (t) => {
+                    return t.c2.includes("Mimic");
+                },
+                get text() {
+                    const options = [
+                        `USER_TAG tugs against the VAR_C1! However the VAR_C1 is unwilling to release USER_THEM until USER_THEY is fully dressed~!`,
+                        `USER_TAG wiggles helplessly inside the VAR_C1 as the tentacles gently dress USER_THEM in a costume!`,
+                        `USER_TAG strains against the tentacles holding USER_THEM inside the VAR_C1, but this only makes the VAR_C1's tentacles tease USER_THEM more~!`
                     ];
                     return options[Math.floor(Math.random() * options.length)];
                 }
