@@ -15,11 +15,11 @@ const { getItemType } = require("../functions/getters/config/getItemType");
 
 // The condition to allow access to the item this lock is on
 exports.canAccessLock = (data) => { 
-    let lock = getRestraintByUUID(data.uuid).lock;
-    if (lock.keyholder == data.userID) {
+    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
+    if (lock?.keyholderID == data.userID) {
         return true;
     } 
-    else if (lock.clonedKeyholders && lock.clonedKeyholders.includes(data.userID)) {
+    else if (lock?.clonedKeyholders && lock?.clonedKeyholders?.includes(data.userID)) {
         return true;
     }
 

@@ -450,11 +450,25 @@ const texts_collarequip = {
 
 const texts_corset = {
 	heavy: {
-		self: { chastity: [`USER_TAG nudges a VAR_C4 with USER_THEIR knee, but USER_THEIR VAR_C1 prevents USER_THEM from even trying to get the VAR_C4 around USER_THEIR waist, to say nothing of USER_THEIR chastity belt in the way!`], nochastity: [`USER_TAG looks at a VAR_C4, but USER_THEY USER_ISARE is still tightly bound in a VAR_C1 and can't effectively hold the laces!`] },
-		other: { chastity: [`USER_TAG brushes a VAR_C4 with USER_THEIR chin towards TARGET_TAG but USER_THEY can't put it on TARGET_THEM because bound arms and unyielding steel chastity belts make it hard to manipulate corsets!`], nochastity: [`USER_TAG bumps into a VAR_C4 with USER_THEIR hip. Sadly, because hips don't have fingers, TARGET_TAG cannot be corseted! If only USER_THEY USER_WERENT in an unyielding VAR_C1, USER_THEY might be able to bind TARGET_THEM`] },
+		self: { 
+            chastity: [
+                `USER_TAG nudges a VAR_C4 with USER_THEIR knee, but USER_THEIR VAR_C1 prevents USER_THEM from even trying to get the VAR_C4 around USER_THEIR waist, to say nothing of USER_THEIR chastity belt in the way!`
+            ], 
+            nochastity: [
+                `USER_TAG looks at a VAR_C4, but USER_THEY USER_ISARE is still tightly bound in a VAR_C1 and can't effectively hold the laces!`
+            ] 
+        },
+		other: { 
+            chastity: [
+                `USER_TAG brushes a VAR_C4 with USER_THEIR chin towards TARGET_TAG but USER_THEY can't put it on TARGET_THEM because bound arms and unyielding steel chastity belts make it hard to manipulate corsets!`
+            ], 
+            nochastity: [
+                `USER_TAG bumps into a VAR_C4 with USER_THEIR hip. Sadly, because hips don't have fingers, TARGET_TAG cannot be corseted! If only USER_THEY USER_WERENT in an unyielding VAR_C1, USER_THEY might be able to bind TARGET_THEM`
+            ] 
+        },
 	},
 	noheavy: {
-		chastity: {
+		/*chastity: {
 			key: {
 				fumble: {
 					discard: {
@@ -486,16 +500,52 @@ const texts_corset = {
 				},
 			},
 			nokey: { self: { corset: [`USER_TAG tugs at USER_THEIR VAR_C4, but since USER_THEY can't unlock USER_THEIR chastity belt, USER_THEY will have to tolerate the lightheadedness!`], nocorset: [`USER_TAG dances USER_THEIR fingers on USER_THEIR belt while eying a VAR_C4, but USER_THEY won't be able to put it on because USER_THEY can't unlock USER_THEIR chastity belt!`] }, other: [`You do not have the key for TARGET_TAG's chastity belt!`] },
-		},
+		},*/
 		nochastity: {
 			self: {
-				corset: { tighten: [`USER_TAG grabs the strings on USER_THEIR VAR_C4, pulling them even tighter! The length of the strings hanging off of the VAR_C4 is now at VAR_C2! USER_THEIR_CAP breaths become shallower.`], loosen: [`USER_TAG grabs the strings on USER_THEIR VAR_C4, carefully loosening them with a sigh of relief! The length of the strings hanging off of the VAR_C4 is now at VAR_C2!`] },
+                noaccess: [
+                    `USER_TAG prods at the lock on USER_THEIR corset. Unfortunately, USER_THEIR breaths must remain short until USER_THEY can take the lock off of it! Such beautiful curves!`
+                ],
+                locked: {
+                    corset: { 
+                        tighten: [
+                            `USER_TAG grabs the strings on USER_THEIR VAR_C4, pulling them even tighter! The length of the strings hanging off of the VAR_C4 is now at VAR_C2! USER_THEIR_CAP breaths become shallower.`
+                        ], 
+                        loosen: [
+                            `USER_TAG grabs the strings on USER_THEIR VAR_C4, carefully loosening them with a sigh of relief! The length of the strings hanging off of the VAR_C4 is now at VAR_C2!`
+                        ] 
+                    },
+                    newcorset: [
+                        `USER_TAG removes the VAR_C3 around USER_THEIR waist and replaces it with a VAR_C4, pulling the strings taut, and then further, leaving the length of the strings at VAR_C2!`
+                    ]
+                },
+                nolocked: {
+                    corset: { 
+                        tighten: [
+                            `USER_TAG grabs the strings on USER_THEIR VAR_C4, pulling them even tighter! The length of the strings hanging off of the VAR_C4 is now at VAR_C2! USER_THEIR_CAP breaths become shallower.`
+                        ], 
+                        loosen: [
+                            `USER_TAG grabs the strings on USER_THEIR VAR_C4, carefully loosening them with a sigh of relief! The length of the strings hanging off of the VAR_C4 is now at VAR_C2!`
+                        ] 
+                    },
+                    newcorset: [
+                        `USER_TAG removes the VAR_C3 around USER_THEIR waist and replaces it with a VAR_C4, pulling the strings taut, and then further, leaving the length of the strings at VAR_C2!`
+                    ]
+                },
 				nocorset: [`USER_TAG wraps a VAR_C4 around USER_THEIR waist, pulling the strings taut, and then further, leaving the length of the strings at VAR_C2!`],
-				newcorset: [`USER_TAG removes the VAR_C3 around USER_THEIR waist and replaces it with a VAR_C4, pulling the strings taut, and then further, leaving the length of the strings at VAR_C2!`]
 			},
 			other: {
-				corset: { tighten: [`USER_TAG grabs the strings on TARGET_TAG's VAR_C4, bracing with USER_THEIR knee, and pulling them even tighter! The length of the strings hanging off of the VAR_C4 is now at VAR_C2!`], loosen: [`USER_TAG grabs the strings on TARGET_TAG's VAR_C4, tugging on the laces carefully to loosen them a bit! The length of the strings hanging off of the VAR_C4 is now at VAR_C2!`] },
-				nocorset: [`USER_TAG wraps a VAR_C4 around TARGET_TAG's waist, pulling the strings taut, and then further, leaving the length of the strings at VAR_C2!`],
+                noaccess: [
+                    `USER_TAG baps at the dangling lock on TARGET_TAG's corset, but unfortunately has no means with which to grant TARGET_THEM the freedom to breathe. If only TARGET_THEY had the key...`
+                ],
+                locked: {
+                    corset: { tighten: [`USER_TAG grabs the strings on TARGET_TAG's VAR_C4, bracing with USER_THEIR knee, and pulling them even tighter! The length of the strings hanging off of the VAR_C4 is now at VAR_C2!`], loosen: [`USER_TAG grabs the strings on TARGET_TAG's VAR_C4, tugging on the laces carefully to loosen them a bit! The length of the strings hanging off of the VAR_C4 is now at VAR_C2!`] },
+                    nocorset: [`USER_TAG wraps a VAR_C4 around TARGET_TAG's waist, pulling the strings taut, and then further, leaving the length of the strings at VAR_C2!`],
+                },
+                nolocked: {
+                    corset: { tighten: [`USER_TAG grabs the strings on TARGET_TAG's VAR_C4, bracing with USER_THEIR knee, and pulling them even tighter! The length of the strings hanging off of the VAR_C4 is now at VAR_C2!`], loosen: [`USER_TAG grabs the strings on TARGET_TAG's VAR_C4, tugging on the laces carefully to loosen them a bit! The length of the strings hanging off of the VAR_C4 is now at VAR_C2!`] },
+                    nocorset: [`USER_TAG wraps a VAR_C4 around TARGET_TAG's waist, pulling the strings taut, and then further, leaving the length of the strings at VAR_C2!`],
+                },
 				newcorset: [`USER_TAG removes the VAR_C3 around TARGET_TAG's waist and replaces it with a VAR_C4, pulling the strings taut, and then further, leaving the length of the strings at VAR_C2!`],
 			},
 		},
@@ -4034,22 +4084,22 @@ const texts_uncollar = {
 const texts_uncorset = {
 	heavy: {
 		self: {
-			corset: { chastity: [
-				`Since USER_THEY USER_DOESNT have arms, USER_TAG wiggles USER_THEIR torso a little bit, trying to slink off USER_THEIR VAR_C2, but USER_THEIR chastity belt is in the way.`,
-				{
-					only: (t) => {
-						return getChastity(t.serverID, t.interactionuser.id)?.chastitytype && getChastity(t.serverID, t.interactionuser.id)?.chastitytype.includes("seal");
-					},
-					text: `Since USER_THEY USER_DOESNT have arms free, USER_TAG wiggles USER_THEIR torso a little bit, trying to slink off USER_THEIR VAR_C2, but USER_THEIR seal prevents USER_THEM from removing it.`,
-				},
-			], nochastity: [`USER_TAG wriggles in USER_THEIR VAR_C1, but without arms, USER_THEY can't easily undo the laces of USER_THEIR VAR_C2 to take it off!`] },
+			corset: [
+                `USER_TAG wriggles in USER_THEIR VAR_C1, but without arms, USER_THEY can't easily undo the laces of USER_THEIR VAR_C2 to take it off!`
+            ],
 			// Ephemeral
-			nocorset: [`You aren't wearing a corset, but even if you were, you wouldn't be able to take it off!`],
+			nocorset: [
+                `You aren't wearing a corset, but even if you were, you wouldn't be able to take it off!`
+            ],
 		},
 		other: {
-			corset: { chastity: [`USER_TAG tugs against USER_THEIR VAR_C1, but USER_THEY can't really get a good grasp of TARGET_TAG's VAR_C2 strings behind TARGET_THEIR chastity belt!`], nochastity: [`Maybe in another time, USER_TAG might have been able to help TARGET_TAG out of TARGET_THEIR VAR_C2, but having no arms makes it hard.`] },
+			corset: [
+                `Maybe in another time, USER_TAG might have been able to help TARGET_TAG out of TARGET_THEIR VAR_C2, but having no arms makes it hard.`
+            ],
 			// Ephemeral
-			nocorset: [`TARGET_TAG isn't wearing a corset, but you wouldn't be able to remove it anyway!`],
+			nocorset: [
+                `TARGET_TAG isn't wearing a corset, but you wouldn't be able to remove it anyway!`
+            ],
 		},
 	},
 	noheavy: {

@@ -17,6 +17,7 @@ const { assignCorset } = require("../functions/setters/corset/assignCorset.js");
 const { canAccessChastity } = require("../functions/getters/chastity/canAccessChastity.js");
 const { getOption } = require("../functions/getters/config/getOption.js");
 const { getTaggedList } = require("../functions/getters/config/getTaggedList.js");
+const { canAccessLock } = require("../functions/getters/lock/canAccessLock.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -114,249 +115,71 @@ module.exports = {
 				if (corsetuser == interaction.user) {
 					// Doing this to self
 					data.self = true;
-					if (getChastity(interaction.guildId, corsetuser.id)) {
-						data.chastity = true;
-						interaction.reply(getText(data));
-					} else {
-						data.nochastity = true;
-						interaction.reply(getText(data));
-					}
+					interaction.reply(getText(data));
 				} else {
 					// To others
 					data.other = true;
-					if (getChastity(interaction.guildId, corsetuser.id)) {
-						data.chastity = true;
-						interaction.reply(getText(data));
-					} else {
-						data.nochastity = true;
-						interaction.reply(getText(data));
-					}
+					interaction.reply(getText(data));
 				}
-			} else if (getChastity(interaction.guildId, corsetuser.id)) {
-				data.noheavy = true;
-				data.chastity = true;
-				// The target is in a chastity belt
-				if (getBaseChastity(getChastity(interaction.guildId, corsetuser.id).chastitytype ?? "belt_silver").canAccessCorset({ serverID: interaction.guildId, userID: corsetuser.id, keyholderID: interaction.user.id })) {
-					// User tries to modify the corset settings for someone in chastity that they do have the key for
-					data.key = true;
-					const fumbleResult = getBaseChastity(getChastity(interaction.guildId, corsetuser.id).chastitytype ?? "belt_silver").fumble({ serverID: interaction.guildId, userID: corsetuser.id, keyholderID: interaction.user.id });
-					if (fumbleResult > 0) {
-						// User fumbles with the key due to their arousal and frustration
-						data.fumble = true;
-						if ((getOption(interaction.guildId, corsetuser.id, "keyloss") == "enabled") && (fumbleResult > 1)) {
-							data.discard = true;
-							// if they fumble again they can lose the key
-							if (corsetuser == interaction.user) {
-								// User tries to modify their own corset settings while in chastity
-								data.self = true;
-								if (current) {
-									// User already has a corset on
-									data.corset = true;
-									let discardresult = getBaseChastity(getChastity(interaction.guildId, corsetuser.id).chastitytype ?? "belt_silver").discard({ serverID: interaction.guildId, userID: corsetuser.id, keyholderID: interaction.user.id });
-									data[discardresult] = true;
-									interaction.reply(getText(data));
-								} else {
-									// Putting ON a corset!
-									data.nocorset = true;
-									let discardresult = getBaseChastity(getChastity(interaction.guildId, corsetuser.id).chastitytype ?? "belt_silver").discard({ serverID: interaction.guildId, userID: corsetuser.id, keyholderID: interaction.user.id });
-									data[discardresult] = true;
-									interaction.reply(getText(data));
-								}
-							} else {
-								data.other = true;
-								if (current) {
-									// User already has a corset on
-									data.corset = true;
-									let discardresult = getBaseChastity(getChastity(interaction.guildId, corsetuser.id).chastitytype ?? "belt_silver").discard({ serverID: interaction.guildId, userID: corsetuser.id, keyholderID: interaction.user.id });
-									data[discardresult] = true;
-									interaction.reply(getText(data));
-								} else {
-									// Putting ON a corset!
-									data.nocorset = true;
-									let discardresult = getBaseChastity(getChastity(interaction.guildId, corsetuser.id).chastitytype ?? "belt_silver").discard({ serverID: interaction.guildId, userID: corsetuser.id, keyholderID: interaction.user.id });
-									data[discardresult] = true;
-									interaction.reply(getText(data));
-								}
-							}
-						} else {
-							data.nodiscard = true;
-							if (corsetuser == interaction.user) {
-								// User tries to modify their own corset settings while in chastity
-								data.self = true;
-								if (current) {
-									// User already has a corset on
-									data.corset = true;
-									interaction.reply(getText(data));
-								} else {
-									// Putting ON a corset!
-									data.nocorset = true;
-									interaction.reply(getText(data));
-								}
-							} else {
-								// User tries to modify another user's vibe settings
-								data.other = true;
-								if (current) {
-									// User already has a corset on
-									data.corset = true;
-									interaction.reply(getText(data));
-								} else {
-									// Putting ON a corset!
-									data.nocorset = true;
-									interaction.reply(getText(data));
-								}
-							}
-						}
-					} else {
-						data.nofumble = true;
-						if (corsetuser == interaction.user) {
-							data.self = true;
-							// User tries to modify their own corset settings while in chastity
-							if (current) {
-								// User already has a corset on
-								if (type != current.type) {
-									data.newcorset = true;
-									interaction.reply(getText(data));
-									assignCorset(interaction.guildId, corsetuser.id, type, tightness);
-								} else {
-									data.corset = true;
-									if (current.tightness < tightness) {
-										// Tightening the corset!
-										data.tighter = true;
-										interaction.reply(getText(data));
-										assignCorset(interaction.guildId, corsetuser.id, type, tightness);
-									} else {
-										// Loosening the corset!
-										data.looser = true;
-										interaction.reply(getText(data));
-										assignCorset(interaction.guildId, corsetuser.id, type, tightness);
-									}
-								}
-							} else {
-								// Putting ON a corset!
-								data.nocorset = true;
-								interaction.reply(getText(data));
-								assignCorset(interaction.guildId, corsetuser.id, type, tightness);
-							}
-						} else {
-							// User tries to modify another user's vibe settings
-							data.other = true;
-							if (current) {
-								// User already has a corset on
-								if (type != current.type) {
-									data.newcorset = true;
-									// Now lets make sure the wearer wants that.
-									if (checkBondageRemoval(interaction.guildId, interaction.user.id, corsetuser.id, "corset") == true) {
-										// Allowed immediately, lets go
-										interaction.reply(getText(data));
-										assignCorset(interaction.guildId, corsetuser.id, type, tightness, interaction.user.id);
-									} else {
-										// We need to ask first.
-										let datatogeneric = Object.assign({}, data.textdata);
-										datatogeneric.c1 = "corset";
-										interaction.reply({ content: getTextGeneric("changebind", datatogeneric), flags: MessageFlags.Ephemeral });
-										let canRemove = await handleBondageRemoval(interaction.guildId, interaction.user, corsetuser, "corset", true).then(
-											async (res) => {
-												await interaction.editReply(getTextGeneric("changebind_accept", datatogeneric));
-												await interaction.followUp(getText(data));
-												assignCorset(interaction.guildId, corsetuser.id, type, tightness, interaction.user.id);
-											},
-											async (rej) => {
-												await interaction.editReply(getTextGeneric("changebind_decline", datatogeneric));
-											},
-										);
-									}
-									interaction.reply(getText(data));
-									assignCorset(interaction.guildId, corsetuser.id, type, tightness);
-								} else {
-									data.corset = true;
-									if (current.tightness < tightness) {
-										// Tightening the corset!
-										data.tighter = true;
-										// Now lets make sure the wearer wants that.
-										if (checkBondageRemoval(interaction.guildId, interaction.user.id, corsetuser.id, "corset") == true) {
-											// Allowed immediately, lets go
-											interaction.reply(getText(data));
-											assignCorset(corsetuser.id, type, tightness, interaction.user.id);
-										} else {
-											// We need to ask first.
-											let datatogeneric = Object.assign({}, data.textdata);
-											datatogeneric.c1 = "corset";
-											interaction.reply({ content: getTextGeneric("changebind", datatogeneric), flags: MessageFlags.Ephemeral });
-											let canRemove = await handleBondageRemoval(interaction.guildId, interaction.user, corsetuser, "corset", true).then(
-												async (res) => {
-													await interaction.editReply(getTextGeneric("changebind_accept", datatogeneric));
-													await interaction.followUp(getText(data));
-													assignCorset(interaction.guildId, corsetuser.id, type, tightness, interaction.user.id);
-												},
-												async (rej) => {
-													await interaction.editReply(getTextGeneric("changebind_decline", datatogeneric));
-												},
-											);
-										}
-									} else {
-										// Loosening the corset!
-										data.looser = true;
-										interaction.reply(getText(data));
-										assignCorset(interaction.guildId, corsetuser.id, type, tightness);
-									}
-								}
-							} else {
-								// Putting ON a corset!
-								data.nocorset = true;
-								interaction.reply(getText(data));
-								assignCorset(interaction.guildId, corsetuser.id, type, tightness);
-							}
-						}
-					}
-				} else {
-					data.noheavy = true;
-					data.chastity = true;
-					data.nokey = true;
-					// User tries to modify corset settings but does not have the key for the belt
-					if (corsetuser == interaction.user) {
-						// User tries to modify their own corset settings while in chastity
-						data.self = true;
-						if (current) {
-							// User already has a corset on
-							data.corset = true;
-							interaction.reply(getText(data));
-						} else {
-							data.nocorset = true;
-							interaction.reply(getText(data));
-						}
-					} else {
-						// User does not have others' belt key
-						data.other = true;
-						interaction.reply({ content: getText(data), flags: MessageFlags.Ephemeral });
-					}
-				}
-			} else {
-				// Target is NOT in a chastity belt!
+            }
+            else {
 				data.noheavy = true;
 				data.nochastity = true;
 				if (corsetuser == interaction.user) {
 					// User tries to add a corset to themselves
 					data.self = true;
 					if (current) {
-						// User tries to modify their own corset settings while not in chastity.
-						if (type != current.type) {
-							data.newcorset = true;
-							interaction.reply(getText(data));
-							assignCorset(interaction.guildId, corsetuser.id, type, tightness);
-						} else {
-							data.corset = true;
-							if (current.tightness < tightness) {
-								// User is tightening the corset
-								data.tighten = true;
-								interaction.reply(getText(data));
-								assignCorset(interaction.guildId, corsetuser.id, type, tightness);
-							} else {
-								// Loosening the corset
-								data.loosen = true;
-								interaction.reply(getText(data));
-								assignCorset(interaction.guildId, corsetuser.id, type, tightness);
-							}
-						}
+                        if (getCorset(interaction.guildId, corsetuser.id)?.lock && !canAccessLock(interaction.guildId, corsetuser.id, interaction.user.id, getCorset(interaction.guildId, corsetuser.id).lock.uuid)) {
+                            // The corset is locked! 
+                            data.noaccess = true;
+                            interaction.reply(getText(data));
+                        }
+                        else if (getCorset(interaction.guildId, corsetuser.id)?.lock) {
+                            // Corset is locked but they have access to modify it. 
+                            data.locked = true;
+                            // User tries to modify their own corset settings while not in chastity.
+                            if (type != current.type) {
+                                data.newcorset = true;
+                                interaction.reply(getText(data));
+                                assignCorset(interaction.guildId, corsetuser.id, type, tightness);
+                            } else {
+                                data.corset = true;
+                                if (current.tightness < tightness) {
+                                    // User is tightening the corset
+                                    data.tighten = true;
+                                    interaction.reply(getText(data));
+                                    assignCorset(interaction.guildId, corsetuser.id, type, tightness);
+                                } else {
+                                    // Loosening the corset
+                                    data.loosen = true;
+                                    interaction.reply(getText(data));
+                                    assignCorset(interaction.guildId, corsetuser.id, type, tightness);
+                                }
+                            }
+                        }
+                        else {
+                            // Corset does NOT have a lock on it
+                            data.nolocked = true;
+                            // User tries to modify their own corset settings while not in chastity.
+                            if (type != current.type) {
+                                data.newcorset = true;
+                                interaction.reply(getText(data));
+                                assignCorset(interaction.guildId, corsetuser.id, type, tightness);
+                            } else {
+                                data.corset = true;
+                                if (current.tightness < tightness) {
+                                    // User is tightening the corset
+                                    data.tighten = true;
+                                    interaction.reply(getText(data));
+                                    assignCorset(interaction.guildId, corsetuser.id, type, tightness);
+                                } else {
+                                    // Loosening the corset
+                                    data.loosen = true;
+                                    interaction.reply(getText(data));
+                                    assignCorset(interaction.guildId, corsetuser.id, type, tightness);
+                                }
+                            }
+                        }
 					} else {
 						data.nocorset = true;
 						interaction.reply(getText(data));
@@ -366,82 +189,169 @@ module.exports = {
 					data.other = true;
 					// User tries to modify another user's vibe settings
 					if (current) {
-						// User tries to modify their someone else's corset while they're not in chastity
-						if (type != current.type) {
-							data.newcorset = true;
-							// Now lets make sure the wearer wants that.
-							if (checkBondageRemoval(interaction.guildId, interaction.user.id, corsetuser.id, "corset") == true) {
-								// Allowed immediately, lets go
-								interaction.reply(getText(data));
-								assignCorset(interaction.guildId, corsetuser.id, type, tightness, interaction.user.id);
-							} else {
-								// We need to ask first.
-								let datatogeneric = Object.assign({}, data.textdata);
-								datatogeneric.c1 = "corset";
-								interaction.reply({ content: getTextGeneric("changebind", datatogeneric), flags: MessageFlags.Ephemeral });
-								let canRemove = await handleBondageRemoval(interaction.guildId, interaction.user, corsetuser, "corset").then(
-									async (res) => {
-										await interaction.editReply(getTextGeneric("changebind_accept", datatogeneric));
-										await interaction.followUp(getText(data));
-										assignCorset(interaction.guildId, corsetuser.id, type, tightness, interaction.user.id);
-									},
-									async (rej) => {
-										await interaction.editReply(getTextGeneric("changebind_decline", datatogeneric));
-									},
-								);
-							}
-						} else {
-							data.corset = true;
-							if (current.tightness < tightness) {
-								// Tightening
-								data.tighten = true;
-								// Now lets make sure the wearer wants that.
-								if (checkBondageRemoval(interaction.guildId, interaction.user.id, corsetuser.id, "corset") == true) {
-									// Allowed immediately, lets go
-									interaction.reply(getText(data));
-									assignCorset(interaction.guildId, corsetuser.id, type, tightness, interaction.user.id);
-								} else {
-									// We need to ask first.
-									let datatogeneric = Object.assign({}, data.textdata);
-									datatogeneric.c1 = "corset";
-									interaction.reply({ content: getTextGeneric("changebind", datatogeneric), flags: MessageFlags.Ephemeral });
-									let canRemove = await handleBondageRemoval(interaction.guildId, interaction.user, corsetuser, "corset").then(
-										async (res) => {
-											await interaction.editReply(getTextGeneric("changebind_accept", datatogeneric));
-											await interaction.followUp(getText(data));
-											assignCorset(interaction.guildId, corsetuser.id, type, tightness, interaction.user.id);
-										},
-										async (rej) => {
-											await interaction.editReply(getTextGeneric("changebind_decline", datatogeneric));
-										},
-									);
-								}
-							} else {
-								// Loosening
-								data.loosen = true;
-								// Now lets make sure the wearer wants that.
-								if (checkBondageRemoval(interaction.guildId, interaction.user.id, corsetuser.id, "corset") == true) {
-									// Allowed immediately, lets go
-									interaction.reply(getText(data));
-									assignCorset(interaction.guildId, corsetuser.id, type, tightness, interaction.user.id);
-								} else {
-									// We need to ask first.
-									let datatogeneric = Object.assign({}, data.textdata);
-									datatogeneric.c1 = "corset";
-									interaction.reply({ content: getTextGeneric("changebind", datatogeneric), flags: MessageFlags.Ephemeral });
-									let canRemove = await handleBondageRemoval(interaction.guildId, interaction.user, corsetuser, "corset").then(
-										async (res) => {
-											await interaction.editReply(getTextGeneric("changebind_accept", datatogeneric));
-											await interaction.followUp(getText(data));
-											assignCorset(interaction.guildId, corsetuser.id, type, tightness, interaction.user.id);
-										},
-										async (rej) => {
-											await interaction.editReply(getTextGeneric("changebind_decline", datatogeneric));
-										},
-									);
-								}
-							}
-						}
+                        if (getCorset(interaction.guildId, corsetuser.id)?.lock && !canAccessLock(interaction.guildId, corsetuser.id, interaction.user.id, getCorset(interaction.guildId, corsetuser.id).lock.uuid)) {
+                            // The corset is locked! 
+                            data.noaccess = true;
+                            interaction.reply(getText(data));
+                        }
+                        else if (getCorset(interaction.guildId, corsetuser.id)?.lock) {
+                            data.locked = true;
+                            // User tries to modify their someone else's corset while they're not in chastity
+                            if (type != current.type) {
+                                data.newcorset = true;
+                                // Now lets make sure the wearer wants that.
+                                if (checkBondageRemoval(interaction.guildId, interaction.user.id, corsetuser.id, "corset") == true) {
+                                    // Allowed immediately, lets go
+                                    interaction.reply(getText(data));
+                                    assignCorset(interaction.guildId, corsetuser.id, type, tightness, interaction.user.id);
+                                } else {
+                                    // We need to ask first.
+                                    let datatogeneric = Object.assign({}, data.textdata);
+                                    datatogeneric.c1 = "corset";
+                                    interaction.reply({ content: getTextGeneric("changebind", datatogeneric), flags: MessageFlags.Ephemeral });
+                                    let canRemove = await handleBondageRemoval(interaction.guildId, interaction.user, corsetuser, "corset").then(
+                                        async (res) => {
+                                            await interaction.editReply(getTextGeneric("changebind_accept", datatogeneric));
+                                            await interaction.followUp(getText(data));
+                                            assignCorset(interaction.guildId, corsetuser.id, type, tightness, interaction.user.id);
+                                        },
+                                        async (rej) => {
+                                            await interaction.editReply(getTextGeneric("changebind_decline", datatogeneric));
+                                        },
+                                    );
+                                }
+                            } else {
+                                data.corset = true;
+                                if (current.tightness < tightness) {
+                                    // Tightening
+                                    data.tighten = true;
+                                    // Now lets make sure the wearer wants that.
+                                    if (checkBondageRemoval(interaction.guildId, interaction.user.id, corsetuser.id, "corset") == true) {
+                                        // Allowed immediately, lets go
+                                        interaction.reply(getText(data));
+                                        assignCorset(interaction.guildId, corsetuser.id, type, tightness, interaction.user.id);
+                                    } else {
+                                        // We need to ask first.
+                                        let datatogeneric = Object.assign({}, data.textdata);
+                                        datatogeneric.c1 = "corset";
+                                        interaction.reply({ content: getTextGeneric("changebind", datatogeneric), flags: MessageFlags.Ephemeral });
+                                        let canRemove = await handleBondageRemoval(interaction.guildId, interaction.user, corsetuser, "corset").then(
+                                            async (res) => {
+                                                await interaction.editReply(getTextGeneric("changebind_accept", datatogeneric));
+                                                await interaction.followUp(getText(data));
+                                                assignCorset(interaction.guildId, corsetuser.id, type, tightness, interaction.user.id);
+                                            },
+                                            async (rej) => {
+                                                await interaction.editReply(getTextGeneric("changebind_decline", datatogeneric));
+                                            },
+                                        );
+                                    }
+                                } else {
+                                    // Loosening
+                                    data.loosen = true;
+                                    // Now lets make sure the wearer wants that.
+                                    if (checkBondageRemoval(interaction.guildId, interaction.user.id, corsetuser.id, "corset") == true) {
+                                        // Allowed immediately, lets go
+                                        interaction.reply(getText(data));
+                                        assignCorset(interaction.guildId, corsetuser.id, type, tightness, interaction.user.id);
+                                    } else {
+                                        // We need to ask first.
+                                        let datatogeneric = Object.assign({}, data.textdata);
+                                        datatogeneric.c1 = "corset";
+                                        interaction.reply({ content: getTextGeneric("changebind", datatogeneric), flags: MessageFlags.Ephemeral });
+                                        let canRemove = await handleBondageRemoval(interaction.guildId, interaction.user, corsetuser, "corset").then(
+                                            async (res) => {
+                                                await interaction.editReply(getTextGeneric("changebind_accept", datatogeneric));
+                                                await interaction.followUp(getText(data));
+                                                assignCorset(interaction.guildId, corsetuser.id, type, tightness, interaction.user.id);
+                                            },
+                                            async (rej) => {
+                                                await interaction.editReply(getTextGeneric("changebind_decline", datatogeneric));
+                                            },
+                                        );
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            data.nolocked = true;
+                            // User tries to modify their someone else's corset while they're not in chastity
+                            if (type != current.type) {
+                                data.newcorset = true;
+                                // Now lets make sure the wearer wants that.
+                                if (checkBondageRemoval(interaction.guildId, interaction.user.id, corsetuser.id, "corset") == true) {
+                                    // Allowed immediately, lets go
+                                    interaction.reply(getText(data));
+                                    assignCorset(interaction.guildId, corsetuser.id, type, tightness, interaction.user.id);
+                                } else {
+                                    // We need to ask first.
+                                    let datatogeneric = Object.assign({}, data.textdata);
+                                    datatogeneric.c1 = "corset";
+                                    interaction.reply({ content: getTextGeneric("changebind", datatogeneric), flags: MessageFlags.Ephemeral });
+                                    let canRemove = await handleBondageRemoval(interaction.guildId, interaction.user, corsetuser, "corset").then(
+                                        async (res) => {
+                                            await interaction.editReply(getTextGeneric("changebind_accept", datatogeneric));
+                                            await interaction.followUp(getText(data));
+                                            assignCorset(interaction.guildId, corsetuser.id, type, tightness, interaction.user.id);
+                                        },
+                                        async (rej) => {
+                                            await interaction.editReply(getTextGeneric("changebind_decline", datatogeneric));
+                                        },
+                                    );
+                                }
+                            } else {
+                                data.corset = true;
+                                if (current.tightness < tightness) {
+                                    // Tightening
+                                    data.tighten = true;
+                                    // Now lets make sure the wearer wants that.
+                                    if (checkBondageRemoval(interaction.guildId, interaction.user.id, corsetuser.id, "corset") == true) {
+                                        // Allowed immediately, lets go
+                                        interaction.reply(getText(data));
+                                        assignCorset(interaction.guildId, corsetuser.id, type, tightness, interaction.user.id);
+                                    } else {
+                                        // We need to ask first.
+                                        let datatogeneric = Object.assign({}, data.textdata);
+                                        datatogeneric.c1 = "corset";
+                                        interaction.reply({ content: getTextGeneric("changebind", datatogeneric), flags: MessageFlags.Ephemeral });
+                                        let canRemove = await handleBondageRemoval(interaction.guildId, interaction.user, corsetuser, "corset").then(
+                                            async (res) => {
+                                                await interaction.editReply(getTextGeneric("changebind_accept", datatogeneric));
+                                                await interaction.followUp(getText(data));
+                                                assignCorset(interaction.guildId, corsetuser.id, type, tightness, interaction.user.id);
+                                            },
+                                            async (rej) => {
+                                                await interaction.editReply(getTextGeneric("changebind_decline", datatogeneric));
+                                            },
+                                        );
+                                    }
+                                } else {
+                                    // Loosening
+                                    data.loosen = true;
+                                    // Now lets make sure the wearer wants that.
+                                    if (checkBondageRemoval(interaction.guildId, interaction.user.id, corsetuser.id, "corset") == true) {
+                                        // Allowed immediately, lets go
+                                        interaction.reply(getText(data));
+                                        assignCorset(interaction.guildId, corsetuser.id, type, tightness, interaction.user.id);
+                                    } else {
+                                        // We need to ask first.
+                                        let datatogeneric = Object.assign({}, data.textdata);
+                                        datatogeneric.c1 = "corset";
+                                        interaction.reply({ content: getTextGeneric("changebind", datatogeneric), flags: MessageFlags.Ephemeral });
+                                        let canRemove = await handleBondageRemoval(interaction.guildId, interaction.user, corsetuser, "corset").then(
+                                            async (res) => {
+                                                await interaction.editReply(getTextGeneric("changebind_accept", datatogeneric));
+                                                await interaction.followUp(getText(data));
+                                                assignCorset(interaction.guildId, corsetuser.id, type, tightness, interaction.user.id);
+                                            },
+                                            async (rej) => {
+                                                await interaction.editReply(getTextGeneric("changebind_decline", datatogeneric));
+                                            },
+                                        );
+                                    }
+                                }
+                            }
+                        }
 					} else {
 						data.nocorset = true;
 						interaction.reply(getText(data));

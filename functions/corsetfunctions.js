@@ -8,6 +8,7 @@ const { getHeadwear } = require("./getters/headwear/getHeadwear");
 const { markForSave } = require("./other/markForSave");
 const { traceFirstParam } = require("./other/TESTS/traceFirstParam");
 const { removeCorset } = require("./setters/corset/removeCorset");
+const { getItemTags } = require("./getters/config/getItemTags");
 
 nlp.extend(nlpSpeech);
 
