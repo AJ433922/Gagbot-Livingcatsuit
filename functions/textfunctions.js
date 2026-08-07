@@ -1091,7 +1091,13 @@ const texts_heavy = {
                             return t.c2.includes("Lockdown Virus");
                         },
                         text: `USER_TAG taps a few too many pop-ups on USER_THEIR tablet and suddenly finds USER_THEIR joints seizing up! USER_THEIR_CAP OS Daemon processes are locked up from a rogue virus USER_THEY 'accidentally' allowed!`,
-                    }
+                    },
+                    {
+                        only: (t) => {
+                            return t.c3.includes("Wind-up");
+                        },
+                        text: `USER_TAG pulls out an enchanted Wind-Up Key! Reaching carefully behind USER_THEMSELF with it, USER_THEY feels it snap into place, leaving USER_THEM feeling like a clockwork toy~!`,
+                    },
                 ],
                 legs: [
                     `USER_TAG pulls out a VAR_C2 and wraps it over USER_THEIR legs! USER_THEY_CAP will be quite unable to move now!`,
@@ -1338,6 +1344,12 @@ const texts_heavy = {
                             return t.c3.includes("Lockdown Virus");
                         },
                         text: `USER_TAG uses a tablet to upload a malicious zero-day code to TARGET_TAG! TARGET_THEIR_CAP joints seize up instantly as the Daemon takes hold of TARGET_THEIR OS!`,
+                    },
+                    {
+                        only: (t) => {
+                            return t.c3.includes("Wind-up");
+                        },
+                        text: `USER_TAG slips behind TARGET_TAG with an enchanted Wind-Up Key! As it is pressed against TARGET_TAG's back it snaps into place, leaving TARGET_THEM looking like a clockwork toy in need of some winding~!`,
                     },
                 ],
                 legs: [
@@ -4210,7 +4222,19 @@ const texts_unheavy = {
                         return t.c2.includes("Cat in Lap");
                     },
                     text: `USER_TAG gently taps on the cat sitting in USER_THEIR lap. The cat looks up at USER_THEM, offended, before hopping off and running away at breakneck speed!`,
-                }
+                },
+                {
+                    only: (t) => {
+                        return t.c3.includes("Wind-up");
+                    },
+                    text: `USER_TAG reaches for the enchanted Wind-Up Key Behind USER_THEM! As USER_THEY brush against it the key stops turning and drops into USER_THEIR hand!`,
+                },                
+                {
+                    only: (t) => {
+                        return t.c2.includes("Stable");
+                    },
+                    text: `USER_TAG reaches over the stall door of the VAR_C2, releasing the latch and letting USER_THEMSELF out!`,
+                },
             ],
             other: [
                 `USER_TAG helps TARGET_TAG out of TARGET_THEIR VAR_C2! TARGET_THEY_CAP stretchTARGET_ES TARGET_THEIR arms and sighTARGET_S with gratitude!`,
@@ -4447,7 +4471,19 @@ const texts_unheavy = {
                         return t.c2.includes("Cat in Lap");
                     },
                     text: `USER_TAG tries to "pspsps!" to lure the cat away from TARGET_TAG's lap! The cat zooms off and around the corner!`,
-                }
+                },
+                {
+                    only: (t) => {
+                        return t.c3.includes("Wind-up");
+                    },
+                    text: `USER_TAG reaches for the enchanted VAR_C3 attached to TARGET_TAG! As USER_THEY brush against it the key's enchantment fades and it drops into USER_THEIR hand!`,
+                },                
+                {
+                    only: (t) => {
+                        return t.c2.includes("Stable");
+                    },
+                    text: `USER_TAG reaches over the stall door of the VAR_C2, releasing the latch and letting TARGET_TAG escape the confines of the stall!`,
+                },
             ],
         },
 		noheavyequipped: { self: [`You aren't in any kind of heavy bondage!`], other: [`TARGET_TAG is not in any kind of heavy bondage!`] },
