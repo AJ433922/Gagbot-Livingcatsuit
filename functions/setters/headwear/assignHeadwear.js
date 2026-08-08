@@ -21,14 +21,11 @@ function assignHeadwear(serverID, userID, headwear, origbinder) {
     if (process.headwear[serverID] == undefined) {
         process.headwear[serverID] = {};
     }
-    if (process.headwear[serverID][userID]) {
+    if (process.headwear[serverID][userID] == undefined) {
         process.headwear[serverID][userID] = [];
     }
     let existing = process.headwear[serverID][userID]?.find((h) => h.type == headwear)
     if (!existing) {
-        if (!process.headwear[serverID][userID]) {
-            process.headwear[serverID][userID] = [];
-        }
         if (process.headwear[serverID][userID]) {
             process.headwear[serverID][userID].push(
                 {

@@ -63,7 +63,14 @@ function addLockModal(interaction) {
         interaction.editReply({ content: `Please select an item to lock!` })
         return;
     }
-    let locktype = interaction.options.getString("locktype") ?? "simplepadlock";
+    let locktype = interaction.options.getString("locktype");
+    if (itemtolock && !locktype) {
+        // Try to decide the default. Simplepadlock for large, 5 minute timer for any others. If the item just can't be locked, oh well. 
+        locktype = "simplepadlock";
+        if (!getBaseItem(itemtolock).locktypes.includes(getBaseLock(locktype).locktype)) {
+            locktype = "fiveminutelock"
+        }
+    }
     let baselocktype = getBaseLock(locktype);
     // If the user isn't wearing that item or it has a lock or the locker isn't allowed, tell them to leave
     if (!baselocktype) {

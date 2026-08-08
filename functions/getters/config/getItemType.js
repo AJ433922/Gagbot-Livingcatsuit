@@ -76,11 +76,9 @@ function getItemType(itemID) {
         if (itemID.type && getBaseHeavy(itemID.type)) {
             return "heavy"
         }
-        // Headwear
-        /*
-        if (getBaseHeadwear(itemID)) {
+        if (itemID.type && getBaseHeadwear(itemID.type)) {
             return "mask"
-        }*/
+        }
         if (itemID.type && getBaseToy(itemID.type)) {
             return "toy"
         }
