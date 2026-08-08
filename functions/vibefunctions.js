@@ -634,7 +634,7 @@ function calcNextArousal(traits, time, arousal, prev, growthCoefficient, decayCo
 	const noDecay = (arousal ?? 0) + growth;
 	// then reduce it based on decay
     // Decay based on decay coefficient times the average of (arousal + prev), 2% of the total, or 0.05, whichever is the highest. 
-	let decay = tickScale * bounded(traits.minDecay ?? -999999, (traits.timescale ?? 1) * Math.max(decayCoefficient * Math.max(((arousal ?? 0) + prev) / 2, 0.1), 0.05), traits.maxDecay ?? 999999);
+	let decay = tickScale * bounded(traits.minDecay ?? -999999, (traits.timescale ?? 1) * Math.max(decayCoefficient * Math.max(((arousal ?? 0) + prev) / 2, 0.1), 0.005), traits.maxDecay ?? 999999);
     
     // If arousal + growth is higher than 1000, remove an additional 5% per minute, scaling +1% per 50 up to a +50% per minute tax. 
     // 1000 is *far* beyond the original intended reasonable maxima of the system, so making a tax here makes sense. 
