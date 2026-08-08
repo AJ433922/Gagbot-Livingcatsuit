@@ -142,7 +142,6 @@ let outfitslist = {
             { item: "cuffsthigh_bondage", colors: ["Blue"] },
             "mittens_leather",
             "ball",
-            "mask_bunny",
             "belt_seal_fire",
             "armbinder_leather"
         ],
@@ -168,8 +167,8 @@ let outfitslist = {
         outfittags: [],
         outfitsearchtags: ["kitsune", "indigo", "white", "japanese", "mythical"]
     },
-    "librarien": {
-        name: "Librarien",
+    "librarian": {
+        name: "Librarian",
         items: [
             { item: "rope_karada", colors: ["Red"] },
             { item: "thighband_leather", colors: ["Brown"] },
@@ -356,7 +355,7 @@ let outfitslist = {
         uniformcolor: true
     },
     "mer_mermaid": {
-        name: "Mer Mermaid",
+        name: "Mer-Maid",
         items: [
             "legbinder_shadowlatexmermaidtail",
             { item: "bikini", colors: ["Frilly"] },
@@ -444,7 +443,6 @@ let outfitslist = {
             { item: "cuffsthigh_latex", colors: ["red"] },
             "mittens_latex",
             "ball",
-            "mask_bunny",
             "armbinder_latex"
         ],
         outfittags: ["latex"],
@@ -469,8 +467,8 @@ let outfitslist = {
         outfittags: ["latex"],
         outfitsearchtags: ["kitsune", "latex", "indigo", "starry", "shadow", "purple"]
     },
-    "latex_librarien": {
-        name: "Latex Librarien",
+    "latex_librarian": {
+        name: "Latex Librarian",
         items: [
             { item: "rope_karada", colors: ["green"] },
             { item: "pencil_skirt", colors: ["Latex"] },

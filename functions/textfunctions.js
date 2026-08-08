@@ -1092,6 +1092,12 @@ const texts_heavy = {
                         },
                         text: `USER_TAG taps a few too many pop-ups on USER_THEIR tablet and suddenly finds USER_THEIR joints seizing up! USER_THEIR_CAP OS Daemon processes are locked up from a rogue virus USER_THEY 'accidentally' allowed!`,
                     },
+                    {
+                        only: (t) => {
+                            return t.c2.includes("Wind-up");
+                        },
+                        text: `USER_TAG pulls out an enchanted Wind-Up Key! Reaching carefully behind USER_THEMSELF with it, USER_THEY feels it snap into place, leaving USER_THEM feeling like a clockwork toy~!`,
+                    },
                 ],
                 legs: [
                     `USER_TAG pulls out a VAR_C2 and wraps it over USER_THEIR legs! USER_THEY_CAP will be quite unable to move now!`,
@@ -1129,10 +1135,23 @@ const texts_heavy = {
                             return t.c3.includes("Cuddle Puddle");
                         },
                         text: `USER_TAG walks towards the VAR_C2! It envelops USER_THEM in a neverending cascade of cuddles!`,
-                    },
+                    },                
+                    {
+                        only: (t) => {
+                            return t.c2.includes("Duffel Bag");
+                        },
+                        text: `USER_TAG pulls the zip down on a VAR_C2 before slipping USER_THEMSELF inside and pulling the zipper closed behind USER_THEM!`,
+                    },                
                 ],
                 furniture: [
-                    `USER_TAG pulls up a VAR_C2, planting USER_THEIR body comfortably on it!`
+                    `USER_TAG pulls up a VAR_C2, planting USER_THEIR body comfortably on it!`,
+                    `USER_TAG sidles up to a VAR_C2, slipping down to rest USER_THEIR body atop it!`,
+                    {
+                        only: (t) => {
+                            return t.c2.includes("Stable");
+                        },
+                        text: `USER_TAG opens the stall door of the VAR_C2, stepping through before closing and latching it behind USER_THEMSELF!`,
+                    },
                 ]
             },
             nocanwear: {
@@ -1327,6 +1346,12 @@ const texts_heavy = {
                         },
                         text: `USER_TAG uses a tablet to upload a malicious zero-day code to TARGET_TAG! TARGET_THEIR_CAP joints seize up instantly as the Daemon takes hold of TARGET_THEIR OS!`,
                     },
+                    {
+                        only: (t) => {
+                            return t.c3.includes("Wind-up");
+                        },
+                        text: `USER_TAG slips behind TARGET_TAG with an enchanted Wind-Up Key! As it is pressed against TARGET_TAG's back it snaps into place, leaving TARGET_THEM looking like a clockwork toy in need of some winding~!`,
+                    },
                 ],
                 legs: [
                     `USER_TAG grabs TARGET_TAG's legs and wraps a VAR_C3 over them, pulling the restraint tightly around and securing it.`,
@@ -1389,9 +1414,22 @@ const texts_heavy = {
                         },
                         text: `USER_TAG pulls TARGET_TAG into the VAR_C2! It welcomes TARGET_THEM as one of its own!`,
                     },
+                    {
+                        only: (t) => {
+                            return t.c3.includes("Duffel Bag");
+                        },
+                        text: `USER_TAG pulls the zip down on a VAR_C2 before slipping TARGET_TAG inside and pulling the zipper closed, sealing TARGET_THEM inside!`,
+                    }, 
                 ],
                 furniture: [
-                    `USER_TAG guides TARGET_TAG over to a VAR_C3, before offering TARGET_THEM to make TARGET_THEMSELF comfortable!`
+                    `USER_TAG guides TARGET_TAG over to a VAR_C3, before offering TARGET_THEM to make TARGET_THEMSELF comfortable!`,
+                    `USER_TAG leads TARGET_TAG towards a VAR_C3, gently pushing TARGET_THEM down on top of it!`,                                   
+                    {
+                        only: (t) => {
+                            return t.c2.includes("Stable");
+                        },
+                        text: `USER_TAG opens the stall door of the VAR_C2, leading TARGET_TAG inside before slipping back out and latching it behind USER_THEM!`,
+                    },
                 ]
             },
             nocanwear: {
@@ -4330,7 +4368,70 @@ const texts_unheavy = {
 			        return t.c1.includes("Sticky Glue");
 			    },
 			    text: `USER_TAG wriggles in the VAR_C1 trap, but it's very hard to escape these without outside help...`,
-			},
+			},             
+            {
+                only: (t) => {
+                    return t.c2.includes("Stable");
+                },
+                text: `USER_TAG tries to escape USER_THEIR VAR_C1! Unfortunately USER_THEIR bindings stop USER_THEM from working the latch~!`,
+            },
+            {
+                only: (t) => {
+                    return t.c2.includes("Sphere");
+                },
+                text: `USER_TAG tries to escape the VAR_C1 USER_THEY was caught in! However USER_THEIR struggles only make it wiggle slightly~!`,
+            },
+            {
+                required: (t) => {
+                    return t.c2.includes("Bed Restraints");
+                },
+                text: `USER_TAG tugs against the bindings holding USER_THEM on the bed! However USER_THEY soon flop back onto the plush bedding, tired out but no closer to escaping~!`,
+            },
+            {
+                only: (t) => {
+                    return t.c2.includes("Doll Case");
+                },
+                text: [
+                    `USER_TAG squirms slightly in USER_THEIR VAR_C1! However the bindings hold firm, leaving USER_THEM fully on display~!`,
+                    `USER_TAG wiggles helplessly inside USER_THEIR VAR_C1!`,
+                    `USER_TAG strains against the restraints of USER_THEIR VAR_C1, only succeeding in drawing attention to the misbehaving doll~!`
+                ]
+            },
+            {
+                only: (t) => {
+                    return t.c2.includes("Delivery Crate");
+                },
+                text: [
+                    `USER_TAG presses against the roof of the VAR_C1! However USER_THEY fail in forcing it open!`,
+                    `USER_TAG whimpers slightly as USER_THEY realise USER_THEY won't be able to escape until someone unpackages USER_THEM!`
+                ]
+            },
+            {
+                only: (t) => {
+                    return t.c2.includes("Mimic");
+                },
+                text: [
+                    `USER_TAG tugs against the VAR_C1! However the VAR_C1 is unwilling to release USER_THEM until USER_THEY is fully dressed~!`,
+                    `USER_TAG wiggles helplessly inside the VAR_C1 as the tentacles gently dress USER_THEM in a costume!`,
+                    `USER_TAG strains against the tentacles holding USER_THEM inside the VAR_C1, but this only makes the VAR_C1's tentacles tease USER_THEM more~!`
+                ]
+            },
+            
+
+            // PURE_CONTAINERS - May be needed once containers can be struggled when seperate bindings are on arms and no longer take priority
+            //{
+            //    required: (t) => {
+            //        return t.c2.includes("Mermaid Tank");
+            //    },
+            //    text: `USER_TAG goes looking for an escape from the tank! Unfortunately all USER_THEY achieve is showing USER_THEMSELF off to the audience as USER_THEY swim around~!`,
+            //},
+            //{
+            //    required: (t) => {
+            //        return t.c2.includes("Leashing Post");
+            //    },
+            //    text: `No matter how hard USER_TAG tugs against it USER_THEIR leash remains securely attached to the post!`,
+            //},
+            
 		],
 		other: [`USER_TAG brushes up against TARGET_TAG to help TARGET_THEM out of TARGET_THEIR VAR_C2, but being trapped in a VAR_C1, USER_THEY can't really help TARGET_THEM out much.`],
 	},
@@ -4445,7 +4546,19 @@ const texts_unheavy = {
                         return t.c2.includes("Cat in Lap");
                     },
                     text: `USER_TAG gently taps on the cat sitting in USER_THEIR lap. The cat looks up at USER_THEM, offended, before hopping off and running away at breakneck speed!`,
-                }
+                },
+                {
+                    only: (t) => {
+                        return t.c2.includes("Wind-up");
+                    },
+                    text: `USER_TAG reaches for the enchanted Wind-Up Key Behind USER_THEM! As USER_THEY brush against it the key stops turning and drops into USER_THEIR hand!`,
+                },                
+                {
+                    only: (t) => {
+                        return t.c2.includes("Stable");
+                    },
+                    text: `USER_TAG reaches over the stall door of the VAR_C2, releasing the latch and letting USER_THEMSELF out!`,
+                },
             ],
             other: [
                 `USER_TAG helps TARGET_TAG out of TARGET_THEIR VAR_C2! TARGET_THEY_CAP stretchTARGET_ES TARGET_THEIR arms and sighTARGET_S with gratitude!`,
@@ -4682,7 +4795,19 @@ const texts_unheavy = {
                         return t.c2.includes("Cat in Lap");
                     },
                     text: `USER_TAG tries to "pspsps!" to lure the cat away from TARGET_TAG's lap! The cat zooms off and around the corner!`,
-                }
+                },
+                {
+                    only: (t) => {
+                        return t.c2.includes("Wind-up");
+                    },
+                    text: `USER_TAG reaches for the enchanted VAR_C2 attached to TARGET_TAG! As USER_THEY brush against it the key's enchantment fades and it drops into USER_THEIR hand!`,
+                },                
+                {
+                    only: (t) => {
+                        return t.c2.includes("Stable");
+                    },
+                    text: `USER_TAG reaches over the stall door of the VAR_C2, releasing the latch and letting TARGET_TAG escape the confines of the stall!`,
+                },
             ],
         },
 		noheavyequipped: { self: [`You aren't in any kind of heavy bondage!`], other: [`TARGET_TAG is not in any kind of heavy bondage!`] },
@@ -6829,10 +6954,20 @@ function getText(data) {
 					chosenphrases.push(a);
 				} else {
 					if (a.only != undefined && a.only(data_in)) {
-						onlyphrases.push(a.text);
+                        if (Array.isArray(a.text)) {
+                            onlyphrases.push(a.text[Math.floor(Math.random() * a.text.length)]);
+                        }
+                        else {
+                            onlyphrases.push(a.text);
+                        }
 						only = true;
 					} else if (a.required != undefined && a.required(data_in)) {
-						chosenphrases.push(a.text);
+                        if (Array.isArray(a.text)) {
+                            chosenphrases.push(a.text[Math.floor(Math.random() * a.text.length)]);
+                        }
+                        else {
+                            chosenphrases.push(a.text);
+                        }
 					}
 				}
 			});
