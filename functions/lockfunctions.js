@@ -11,6 +11,10 @@ const fs = require("fs");
 const { getItemType } = require("./getters/config/getItemType");
 const { getItemName } = require("./getters/config/getItemName");
 const { removeLock } = require("./setters/lock/removeLock");
+const { canAccessCollar } = require("./getters/collar/canAccessCollar");
+const { getCollar } = require("./getters/collar/getCollar");
+const { traceFirstParam } = require("./other/TESTS/traceFirstParam");
+const { getLockAwaiting } = require("./getters/lock/getLockAwaiting")
 
 // Imports each lock in ./locks and makes them accessible as objects
 // in process.locktypes mapped to their respective ids.
@@ -161,6 +165,172 @@ function handleRemoveLock(interaction) {
     removeLock(locktoremove?.lock?.uuid, interaction.user);
 } 
 
+/*****
+ * DMs the user, if appropriate, for permission to lock the target restraint.
+ * 
+ * - (server id) serverID - The server this is running on
+ * - (user object) user - The user doing the action
+ * - (user object) target - The user receiving the lock
+ * - (string) uuid - The lock uuid to apply. 
+ *****/
+async function handleApplyLock(serverID, user, target, uuid) {
+    traceFirstParam(arguments[0]);
+	return new Promise(async (res, rej) => {
+		let hasOption = "enabled" //getOption(serverID, target.id, `majorrestraint`);
+		if (canAccessCollar(serverID, target.id, user.id).access) {
+            if (getCollar(serverID, target.id) && getCollar(serverID, target.id)?.lock) {
+                // User is able to access the collar of the user *and* it has the permission. 
+                res(true);
+			    return;
+            }
+		} 
+
+        // Always approve ourselves. 
+        if (user.id === target.id) {
+            res(true);
+            return
+        }
+
+		/*if (hasOption == "disabled") {
+			rej("Disabled");
+			return;
+		} // NOPE */
+
+        if (process.recentlypromptedlock && process.recentlypromptedlock[target.id] && process.recentlypromptedlock[target.id] > Date.now()) {
+            rej("Cooldown")
+            return;
+        }
+
+        let lockawaiting = getLockAwaiting(uuid)
+        if (!lockawaiting.restraintobject) {
+            // The restraint was unequipped, since this was passed by reference.
+            rej(true);
+            return;
+        }
+        let locktext = getBaseLock(lockawaiting.locktype).applyPermissionModal && getBaseLock(lockawaiting.locktype).applyPermissionModal(lockawaiting);
+        if (!locktext) {
+            console.log(`Something went wrong with the return of ${lockawaiting.locktype}'s applyPermissionModal.`)
+            rej(true);
+            return;
+        }
+
+		// We need to ASK
+		let prompttext = `## ${user} would like to place a ${getBaseLock(lockawaiting.locktype).name} on your ${getItemName(lockawaiting.restraintobject)}\n\n${locktext}\n\nDo you wish to allow this action?`;
+		let buttons = [
+            new ButtonBuilder()
+                .setCustomId("denyButton")
+                .setLabel("Deny")
+                .setStyle(ButtonStyle.Danger), 
+            new ButtonBuilder()
+                .setCustomId("acceptButton")
+                .setLabel("Allow (Wait...)")
+                .setStyle(ButtonStyle.Success)
+                .setDisabled(true),
+            new ButtonBuilder()
+                .setCustomId("cooldown15")
+                .setLabel("Block Requests for 15m")
+                .setStyle(ButtonStyle.Danger),
+            /*new ButtonBuilder()
+                .setCustomId("cooldown60")
+                .setLabel("Block Requests for 1h")
+                .setStyle(ButtonStyle.Danger),
+            new ButtonBuilder()
+                .setCustomId("cooldown1440")
+                .setLabel("Block Requests for 24h")
+                .setStyle(ButtonStyle.Danger)*/
+        ]
+
+        try {
+            let dmchannel = await target.createDM();
+            await dmchannel
+                .send({ content: `${prompttext}\n-# You must wait 15 seconds for this button to activate...`, components: [new ActionRowBuilder().addComponents(...buttons)] })
+                .then(async (mess) => {
+                    // Create a collector for up to 5 minutes
+                    const collector = mess.createMessageComponentCollector({ componentType: ComponentType.Button, time: 300_000, max: 1 });
+
+                    collector.on("collect", async (i) => {
+                        console.log(i);
+                        if (i.customId == "cooldown15") {
+                            if (process.recentlypromptedlock == undefined) {
+                                process.recentlypromptedlock = {}
+                            }
+                            process.recentlypromptedlock[target.id] = Date.now() + 900000
+                        }
+                        if (i.customId == "cooldown60") {
+                            if (process.recentlypromptedlock == undefined) {
+                                process.recentlypromptedlock = {}
+                            }
+                            process.recentlypromptedlock[target.id] = Date.now() + 3600000
+                        }
+                        if (i.customId == "cooldown1440") {
+                            if (process.recentlypromptedlock == undefined) {
+                                process.recentlypromptedlock = {}
+                            }
+                            process.recentlypromptedlock[target.id] = Date.now() + 86400000
+                        }
+                        if (i.customId == "acceptButton") {
+                            await mess.edit({ content: `Confirmed - ${getItemName(lockawaiting.restraintobject)} will be locked with a ${getBaseLock(lockawaiting.locktype).name}.`, components: [] })
+                            res(true);
+                        } else {
+                            await mess.edit({ content: `Rejected - ${getItemName(lockawaiting.restraintobject)} will NOT be locked.`, components: [] })
+                            rej(true);
+                        }
+                    });
+
+                    collector.on("end", async (collected) => {
+                        // timed out
+                        if (collected.length == 0) {
+                            await mess.edit({ content: `Timed out - ${getItemName(lockawaiting.restraintobject)} will NOT be locked.`, components: [] })
+                            rej(true);
+                        }
+                    });
+
+                    // Wait 15 seconds before editing the message with the new components
+                    await new Promise(resolve => setTimeout(resolve, 15000));
+
+                    let editedbuttons = [
+                        new ButtonBuilder()
+                            .setCustomId("denyButton")
+                            .setLabel("Deny")
+                            .setStyle(ButtonStyle.Danger), 
+                        new ButtonBuilder()
+                            .setCustomId("acceptButton")
+                            .setLabel("Allow")
+                            .setStyle(ButtonStyle.Success),
+                        new ButtonBuilder()
+                            .setCustomId("cooldown15")
+                            .setLabel("Block Requests for 15m")
+                            .setStyle(ButtonStyle.Danger),
+                        /*new ButtonBuilder()
+                            .setCustomId("cooldown60")
+                            .setLabel("Block Requests for 1h")
+                            .setStyle(ButtonStyle.Danger),
+                        new ButtonBuilder()
+                            .setCustomId("cooldown1440")
+                            .setLabel("Block Requests for 24h")
+                            .setStyle(ButtonStyle.Danger)*/
+                    ]
+
+                    try {
+                        mess.edit({ content: prompttext, components: [new ActionRowBuilder().addComponents(...editedbuttons)] })
+                    }
+                    catch (err) {
+                        console.log(err)
+                    }
+                })
+                .catch((err) => {
+                    console.log(`Error sending message to lock ${user}.`);
+                    rej("NoDM");
+                });
+        }
+        catch (err) {
+            console.log(err);
+            rej("NoDM")
+        }
+	});
+}
+
 exports.setUpLocks = setUpLocks;
 exports.addLockModal = addLockModal;
 exports.handleRemoveLock = handleRemoveLock;
+exports.handleApplyLock = handleApplyLock;

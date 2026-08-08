@@ -8,6 +8,8 @@ const { getPronouns } = require("../functions/getters/config/getPronouns");
 const { getItemName } = require("../functions/getters/config/getItemName");
 const { sendLockToast } = require("../functions/setters/lock/sendLockToast");
 const { getItemType } = require("../functions/getters/config/getItemType");
+const { handleApplyLock } = require("../functions/lockfunctions");
+const { checkLockAwaiting } = require("../functions/getters/lock/checkLockAwaiting");
 
 /***********
  * This is a basic keyed padlock for large restraints. It allows for permanent locking to a keyholder. 
@@ -208,7 +210,7 @@ exports.lockinteraction = function (interaction, data, update = false) {
     }
 }
 
-exports.lockinteractionresponse = function(interaction) {
+exports.lockinteractionresponse = async function(interaction) {
     let splits = interaction.customId.split("_")
     if (splits.length < 3) {
         console.error(`Something went wrong processing the interaction for a lock configuration`)
@@ -256,7 +258,7 @@ exports.lockinteractionresponse = function(interaction) {
             let keyholderID = getLockAwaiting(uuid).keyholderID
             let lockrestrainttype = getItemType(getLockAwaiting(uuid).restraintobject)
             let lockrestraint = getLockAwaiting(uuid).restraintname
-            let appliedlock = applyLockAwaiting(uuid);
+            let appliedlock = checkLockAwaiting(uuid);
             let targettype = (userID == interaction.user.id) ? "self" : "other"
             let further = [(keyholderID == interaction.user.id) ? "selflock" : (keyholderID == userID) ? "otherselflock" : "otherlock"]
             let extratext = (further[0] == "other") ? [keyholderID] : undefined;
@@ -267,9 +269,29 @@ exports.lockinteractionresponse = function(interaction) {
                 interaction.update({ components: [new TextDisplayBuilder().setContent(`<@${userID}> is not wearing a ${lockrestraint}!`)] })
             }
             else {
-                interaction.update({ components: [new TextDisplayBuilder().setContent(`Applying lock!`)] })
-                if (userID == interaction.user.id) { userID = keyholderID }
-                sendLockToast({ serverID: interaction.guildId, userID: userID, actionuser: interaction.user.id, actiontype: "lock", locktype: "simplepadlock", restraintname: lockrestraint, restrainttype: lockrestrainttype, targettype: targettype, extratext: extratext, further: further })
+
+                await interaction.update({ components: [new TextDisplayBuilder().setContent(`Attempting to apply lock...`)] })
+                await handleApplyLock(interaction.guildId, interaction.user, await interaction.guild.members.fetch(userID), uuid).then(
+                    async (success) => {
+                        await interaction.followUp({ content: `Applying lock!`, flags: MessageFlags.Ephemeral })
+                        applyLockAwaiting(uuid);
+                        if (userID == interaction.user.id) { userID = keyholderID }
+                        sendLockToast({ serverID: interaction.guildId, userID: userID, actionuser: interaction.user.id, actiontype: "lock", locktype: "simplepadlock", restraintname: lockrestraint, restrainttype: lockrestrainttype, targettype: targettype, extratext: extratext, further: further })
+                    },
+                    async (reject) => {
+                        let nomessage = `${targetuser} rejected the ${convertheavy(heavychoice)}.`;
+                        if (reject == "Disabled") {
+                            nomessage = `Item locking is currently disabled in <@${userID}>'s settings!`;
+                        }
+                        if (reject == "Error") {
+                            nomessage = `Something went wrong - Submit a bug report!`;
+                        }
+                        if (reject == "NoDM") {
+                            nomessage = `Something went wrong sending a DM to ${targetuser}, or ${getPronouns(interaction.guildId, targetuser.id, "subject")} ${getPronouns(interaction.guildId, targetuser.id, "subject") == "they" ? `have` : "has"} DMs from this server disabled. Cannot obtain consent for locking the restraint.`;
+                        }
+                        await interaction.followUp({ content: nomessage, flags: MessageFlags.Ephemeral });
+                    },
+                );
             }
         }
         catch (err) {
