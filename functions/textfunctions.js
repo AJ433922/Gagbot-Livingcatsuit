@@ -1048,7 +1048,7 @@ const texts_heavy = {
                         only: (t) => {
                             return t.c2.includes("Petsuit") || t.c2.includes("Piddlefours");
                         },
-                        text: `USER_TAG slips into a VAR_C2, trapping USER_THEIR arms and legs and forcing them to crawl like a pet!`,
+                        text: `USER_TAG slips into a VAR_C2, trapping USER_THEIR arms and legs and forcing USER_THEM to crawl like a pet!`,
                     },
                     // Stationary
                     {
