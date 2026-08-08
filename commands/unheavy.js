@@ -10,6 +10,7 @@ const { getConsent } = require("../functions/getters/config/getConsent.js");
 const { getHeavy } = require("../functions/getters/heavy/getHeavy.js");
 const { getHeavyBound } = require("../functions/getters/heavy/getHeavyBound.js");
 const { removeHeavy } = require("../functions/setters/heavy/removeHeavy.js");
+const { canRemoveLock } = require("../functions/getters/lock/canRemoveLock.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -95,13 +96,20 @@ module.exports = {
                     else {
                         data.other = true;
                     }
+                    if (getHeavy(interaction.guildId, heavyuser.id, heavytype)?.lock && !canRemoveLock(interaction.guildId, heavyuser.id, interaction.user.id, getHeavy(interaction.guildId, heavyuser.id, heavytype).lock.uuid)) {
+                        // Locked and we do not have access to it!
+                        data.noaccess = true;
+                        interaction.reply(getText(data));
+                    }
 					// Now lets make sure the wearer wants that.
-					if (checkBondageRemoval(interaction.guildId, interaction.user.id, heavyuser.id, "heavy") == true) {
+					else if (checkBondageRemoval(interaction.guildId, interaction.user.id, heavyuser.id, "heavy") == true) {
 						// Allowed immediately, lets go
+                        data.access = true;
 						interaction.reply(getText(data));
 						removeHeavy(interaction.guildId, heavyuser.id, heavytype);
 					} else {
 						// We need to ask first.
+                        data.access = true;
 						let datatogeneric = Object.assign({}, data.textdata);
 						datatogeneric.c1 = "heavy bondage";
 						interaction.reply({ content: getTextGeneric("unbind", datatogeneric), flags: MessageFlags.Ephemeral });
