@@ -550,6 +550,20 @@ function updateArousalValues() {
                 if (process.arousal[server][user] == undefined) { process.arousal[server][user] = { arousal: 0, prev: 0, timestamp: now } }
             }
         }
+        for (const server in process.toys) {
+            for (const user in process.toys[server]) {
+                if (process.arousal == undefined) { process.arousal = {} }
+                if (process.arousal[server] == undefined) { process.arousal[server] = {} };
+                if (process.arousal[server][user] == undefined) { process.arousal[server][user] = { arousal: 0, prev: 0, timestamp: now } }
+            }
+        }
+        for (const server in process.gags) {
+            for (const user in process.gags[server]) {
+                if (process.arousal == undefined) { process.arousal = {} }
+                if (process.arousal[server] == undefined) { process.arousal[server] = {} };
+                if (process.arousal[server][user] == undefined) { process.arousal[server][user] = { arousal: 0, prev: 0, timestamp: now } }
+            }
+        }
 		for (const server in process.arousal) {
             for (const user in process.arousal[server]) {
                 const arousal = process.arousal[server][user];
