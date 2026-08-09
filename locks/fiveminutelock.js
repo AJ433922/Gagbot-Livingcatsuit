@@ -170,3 +170,17 @@ exports.lockinteractionresponse = function(interaction) {
 exports.applyPermissionModal = function (lockawaiting) {
     return getBaseLock(lockawaiting.locktype).desc;
 }
+
+// Display Lock Status
+exports.lockStatus = function (data) {
+    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock
+    let lockemoji = "🔒"
+    return `${lockemoji} Locked until <t:${Math.floor(lock?.unlocktime / 1000)}:f>`
+}
+
+// More verbose lock status info
+exports.extendedLockStatus = function (data) {
+    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock
+    let lockemoji = "🔒"
+    return `${lockemoji} Locked until <t:${Math.floor(lock?.unlocktime / 1000)}:f>`
+}

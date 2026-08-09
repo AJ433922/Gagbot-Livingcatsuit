@@ -145,9 +145,9 @@ module.exports = {
             } else if (subcommand == "revoke") {
                 let choices = [];
                 // Get clones we have access to. Each lock has its own canRemoveCloneKeys function, so this will handle if clone propagation allows for this or not. 
-                getLocksWithAccess(interaction.guildId, interaction.user.id, "RemoveCloneKeys").forEach((la) => {
+                await getLocksWithAccess(interaction.guildId, interaction.user.id, "RemoveCloneKeys").forEach(async (la) => {
                     if (la.restraint && la.type) {
-                        la.restraint.lock.clonedKeyholders.forEach((k) => {
+                        la.restraint.lock.clonedKeyholders.forEach(async (k) => {
                             try {
                                 await interaction.guild.members.fetch(la.userID);
                             }
@@ -167,7 +167,7 @@ module.exports = {
                     }
                 })
                 // Get keys we are the clone of. 
-                getLocksWithAccess(interaction.guildId, interaction.user.id, "RevokeSelfClone").forEach((la) => {
+                await getLocksWithAccess(interaction.guildId, interaction.user.id, "RevokeSelfClone").forEach(async (la) => {
                     if (la.restraint && la.type) {
                         try {
                             await interaction.guild.members.fetch(la.userID);

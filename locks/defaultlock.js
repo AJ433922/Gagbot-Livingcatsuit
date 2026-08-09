@@ -21,6 +21,9 @@ function Lock() {
     // The condition to allow removing clonedKeyholders
     this.canRemoveCloneKeys = (data) => { return false };
 
+    // The condition for removing self from clonedKeyholders
+    this.canRevokeSelfClone = (data) => { return false };
+
     // The condition to allow transferring primary keyholder
     this.canTransfer = (data) => { return false };
 
@@ -89,6 +92,16 @@ function Lock() {
     this.initializeLock = function (data) {
         let lock = getLockAwaiting(data.uuid);
         return true;
+    }
+
+    // Display Lock Status
+    this.lockStatus = function (data) {
+        return `Locked with a ${this.name}`
+    }
+
+    // Extended Lock Status (on restraints page)
+    this.extendedLockStatus = function (data) {
+        return `Locked with a ${this.name}`
     }
 
     // Base Data

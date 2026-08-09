@@ -346,3 +346,41 @@ exports.applyPermissionModal = function (lockawaiting) {
     text = `${text}\n\n${getBaseLock(lockawaiting.locktype).desc}`
     return text;
 }
+
+// Display Lock Status
+exports.lockStatus = function (data) {
+    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock
+    let lockemoji = "🔒"
+    if ((lock.keyholderID == data.userID)) {
+        lockemoji = "🔑"
+    }
+    else if (lock.clonedKeyholders && lock.clonedKeyholders.includes(data.userID)) {
+        lockemoji = process.emojis.keyclone
+    }
+    return `${lockemoji} Locked by <@${lock.keyholderID}>`
+}
+
+// More verbose lock status info
+exports.extendedLockStatus = function (data) {
+    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock
+    let lockemoji = "🔒"
+    if (lock.keyholderID == data.userID) {
+        lockemoji = "🔑"
+    }
+    else if (lock.clonedKeyholders && lock.clonedKeyholders.includes(data.userID)) {
+        lockemoji = process.emojis.keyclone
+    }
+    let textreturn = `${lockemoji} Locked by <@${lock.keyholderID}>`
+    if (lock.clonedKeyholders) {
+        textreturn = `${textreturn}, Cloned Keys held by `
+        for (let i = 0; i < lock.clonedKeyholders.length; i++) {
+            if (i != 0) {
+                textreturn = `${textreturn}, <@${lock.clonedKeyholders[i]}>`
+            }
+            else {
+                textreturn = `${textreturn}<@${lock.clonedKeyholders[i]}>`
+            }
+        }
+    }
+    return textreturn;
+}

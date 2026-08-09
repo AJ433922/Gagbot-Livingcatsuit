@@ -7245,5 +7245,24 @@ function getText(data) {
 	}
 };
 
+/******
+ * Given a string, outputs a string with an abbreviated form. "Cloud of the Sanctuary" -> "CtS"
+ * 
+ * - (string) inputtext - The string to abbrviate
+ * - (integer) minlength - Minimum length of each word to abbreviate. Defaults to 3.
+ * ---
+ * ##### Returns an abbreviation of the input string
+ ******/
+function abbreviate(inputtext, minlength = 3) {
+    let outtext = ""
+    inputtext.split(" ").forEach((textpart) => {
+        if (textpart.length > Math.max(minlength-1, 0)) {
+            outtext = `${outtext}${textpart.slice(0,1)}`
+        }
+    })
+    return outtext
+}
+
 exports.getText = getText;
 exports.getTextGeneric = getTextGeneric;
+exports.abbreviate = abbreviate;
