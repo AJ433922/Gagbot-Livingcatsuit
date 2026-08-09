@@ -11,5 +11,6 @@ const garbleText = (text, parent, locarr, intensity) => {
 exports.garbleText = garbleText;
 exports.breathRecovery = (_user, intensity) => 1 - intensity / 30;
 exports.choicename = "Soap Gag";
+exports.nolock = true;
 
 exports.itemdescription = `While wearing the **Soap Gag** you will be unable to swear! The following swear words are monitored and replaced with 🧼.\n\n**Swear Words:**\n${curses.join(", ")}`

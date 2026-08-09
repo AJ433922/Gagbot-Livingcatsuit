@@ -75,10 +75,10 @@ module.exports = {
                 if (mittenbondage && mittenbondage.mittenname && !getBaseMitten(mittenbondage.mittenname).nolock && !mittenbondage.lock) {
                     outopts.push({ name: `Mittens: ${getBaseMitten(mittenbondage.mittenname).name}`, value: mittenbondage.mittenname });
                 }
-                if (chastitybondage && chastitybondage.chastitytype && !chastitybondage.lock) {
+                if (chastitybondage && chastitybondage.chastitytype && !getBaseChastity(chastitybondage.chastitytype).nolock && !chastitybondage.lock) {
                     outopts.push({ name: `Chastity: ${getBaseChastity(chastitybondage.chastitytype).name}`, value: chastitybondage.chastitytype });
                 }
-                if (chastitybrabondage && chastitybrabondage.chastitytype && !chastitybrabondage.lock) {
+                if (chastitybrabondage && chastitybrabondage.chastitytype && !getBaseChastity(chastitybrabondage.chastitytype).nolock && !chastitybrabondage.lock) {
                     outopts.push({ name: `Chastity Bra: ${getBaseChastity(chastitybrabondage.chastitytype).name}`, value: chastitybrabondage.chastitytype });
                 }
                 if (headbondage && headbondage.length > 0) {
@@ -88,10 +88,10 @@ module.exports = {
                         }
                     })
                 }
-                if (corsetbondage && !corsetbondage.lock) {
+                if (corsetbondage && !corsetbondage.lock && !getBaseCorset(corsetbondage.type).nolock) {
                     outopts.push({ name: `Corset: ${getBaseCorset(corsetbondage.type).name}`, value: corsetbondage.type });
                 }
-                if (collarbondage && !collarbondage.lock) {
+                if (collarbondage && !collarbondage.lock && !getBaseCollar(collarbondage.type).nolock) {
                     outopts.push({ name: `Collar: ${getBaseCollar(collarbondage.collartype).name}`, value: collarbondage.collartype });
                 }
 

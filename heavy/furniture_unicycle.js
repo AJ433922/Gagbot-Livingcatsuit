@@ -6,3 +6,4 @@ exports.denialCoefficient = 1
 
 exports.heavytags = []
 
+exports.nolock = true;

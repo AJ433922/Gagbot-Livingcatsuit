@@ -1568,52 +1568,49 @@ const texts_heavy = {
 
 const texts_key = {
 	clone: {
-		self: {
-			collar: [`USER_TAG waves USER_THEIR fingers a bit and a nearly-perfect replica of USER_THEIR collar key appears! USER_THEY_CAP giveUSER_S it to VAR_C2.`],
-			chastitybelt: [`USER_TAG waves USER_THEIR fingers a bit and a nearly-perfect replica of USER_THEIR chastity belt key appears! USER_THEY_CAP giveUSER_S it to VAR_C2.`],
-			chastitybra: [`USER_TAG waves USER_THEIR fingers a bit and a nearly-perfect replica of USER_THEIR chastity bra key appears! USER_THEY_CAP giveUSER_S it to VAR_C2.`],
-		},
-		other: { 
-            collar: [
-                `USER_TAG subtly puts TARGET_TAG's collar key in a key copying machine and then hands the cloned key to VAR_C2 without TARGET_THEM noticing!`,
-                `USER_TAG takes a file and carefully carves a duplicate of TARGET_TAG's collar key and slips it into VAR_C2's pocket.`,
-                `TARGET_TAG's collar key is wrapped up in some clay and then a duplicate is made! USER_TAG hands it to VAR_C2 before TARGET_THEY can notice!`,
-            ], 
-            chastitybelt: [
-                `USER_TAG subtly puts TARGET_TAG's chastity belt key in a key copying machine and then hands the cloned key to VAR_C2 without TARGET_THEM noticing!`,
-                `USER_TAG takes a file and carefully carves a duplicate of TARGET_TAG's chastity key and slips it into VAR_C2's pocket.`,
-                `TARGET_TAG's chastity key is wrapped up in some clay and then a duplicate is made! USER_TAG hands it to VAR_C2 before TARGET_THEY can notice!`,
-            ], 
-            chastitybra: [
-                `USER_TAG subtly puts TARGET_TAG's chastity bra key in a key copying machine and then hands the cloned key to VAR_C2 without TARGET_THEM noticing!`,
-                `USER_TAG takes a file and carefully carves a duplicate of TARGET_TAG's chastity bra key and slips it into VAR_C2's pocket.`,
-                `TARGET_TAG's chastity bra key is wrapped up in some clay and then a duplicate is made! USER_TAG hands it to VAR_C2 before TARGET_THEY can notice!`,
-            ] 
-        },
+		self: [
+            `USER_TAG waves USER_THEIR fingers a bit and a nearly-perfect replica of USER_THEIR collar key appears! USER_THEY_CAP giveUSER_S it to VAR_C2.`,
+            `USER_TAG takes a file and carefully carves a duplicate of USER_THEIR VAR_C1 key and offers it to VAR_C2!`,
+        ],
+		other: [ 
+            `USER_TAG subtly puts TARGET_TAG's VAR_C1 key in a key copying machine and then hands the cloned key to VAR_C2 without TARGET_THEM noticing!`,
+            `USER_TAG takes a file and carefully carves a duplicate of TARGET_TAG's VAR_C1 key and slips it into VAR_C2's pocket.`,
+            `TARGET_TAG's VAR_C1 key is wrapped up in some clay and then a duplicate is made! USER_TAG hands it to VAR_C2 before TARGET_THEY can notice!`,
+        ],
 	},
 	give: {
-		self: { 
-            collar: [
-                `USER_TAG gives USER_THEIR collar key to VAR_C2.`
-            ], 
-            chastitybelt: [
-                `USER_TAG gives USER_THEIR chastity belt key to VAR_C2.`
-            ], 
-            chastitybra: [
-                `USER_TAG gives USER_THEIR chastity bra key to VAR_C2.`
-            ] 
-        },
-		other: { 
-            collar: [
-                `USER_TAG subtly gives TARGET_TAG's collar key to VAR_C2 without TARGET_THEM noticing!`
-            ], 
-            chastitybelt: [
-                `USER_TAG subtly gives TARGET_TAG's chastity belt key to VAR_C2 without TARGET_THEM noticing!`
-            ], chastitybra: [`USER_TAG subtly gives TARGET_TAG's chastity bra key to VAR_C2 without TARGET_THEM noticing!`] },
+		self: [
+            `USER_TAG gives USER_THEIR VAR_C1 key to VAR_C2.`,
+            `With a small flourish, USER_TAG offers USER_THEIR VAR_C1 key to VAR_C2!`,
+            `USER_TAG holds up USER_THEIR key to USER_THEIR VAR_C1 in USER_THEIR palm, ready for VAR_C2 to take! Such a good USER_PRAISEOBJECT!`
+        ], 
+		other: [
+            `USER_TAG subtly gives TARGET_TAG's VAR_C1 key to VAR_C2 without TARGET_THEM noticing!`,
+            `With a deft motion, USER_TAG hands TARGET_TAG's VAR_C1 key over to VAR_C2. Maybe TARGET_THEY didn't notice!`,
+            `USER_TAG gives TARGET_TAG's precious VAR_C1 key to VAR_C2. Even if TARGET_THEY complained, not like TARGET_THEY can do anything about it!`
+        ], 
 	},
 	revoke: {
-		isclone: { collar: ["USER_TAG magically destroys the cloned key for TARGET_TAG's collar that USER_THEY USER_WERE holding!"], chastitybelt: ["USER_TAG magically destroys the cloned key for TARGET_TAG's chastity belt that USER_THEY USER_WERE holding!"], chastitybra: ["USER_TAG magically destroys the cloned key for TARGET_TAG's chastity bra that USER_THEY USER_WERE holding!"] },
-		isprimary: { collar: ["USER_TAG has magically broken the cloned key for TARGET_TAG's collar that VAR_C2 was holding!"], chastitybelt: ["USER_TAG has magically broken the cloned key for TARGET_TAG's chastity belt that VAR_C2 was holding!"], chastitybra: ["USER_TAG has magically broken the cloned key for TARGET_TAG's chastity bra that VAR_C2 was holding!"] },
+		isclone: {
+            self: [
+                "USER_TAG has magically broken the cloned key for USER_THEIR VAR_C1 that USER_THEY USER_WERE holding!",
+                `With a snap of USER_THEIR fingers, USER_TAG's key to USER_THEIR VAR_C1 vanishes!`
+            ],
+            other: [
+                "USER_TAG has magically broken the cloned key for TARGET_TAG's VAR_C1 that USER_THEY USER_WERE holding!",
+                `With a snap of USER_THEIR fingers, USER_TAG's key to TARGET_TAG's VAR_C1 vanishes!`
+            ]
+        },
+		isprimary: {
+            self: [
+                "USER_TAG has magically broken the cloned key for USER_THEIR VAR_C1 that VAR_C2 was holding!",
+                `With a snap of USER_TAG's fingers, VAR_C2's key to USER_THEIR VAR_C1 vanishes!`
+            ],
+            other: [
+                "USER_TAG has magically broken the cloned key for TARGET_TAG's VAR_C1 that VAR_C2 was holding!",
+                `With a snap of USER_TAG's fingers, VAR_C2's key to TARGET_TAG's VAR_C1 vanishes!`
+            ],
+        },
 	},
 	swapitem: {
 		self: {
@@ -2166,6 +2163,108 @@ const texts_lock = {
                     text: `USER_TAG grabs TARGET_TAG's wrists and then threads little 5 Minute Locks onto the straps before pressing the engage button on them! TARGET_THEY_CAP will have no fingers for the next little bit!`,
                 },
             ]
+        },
+        selflock: {
+            "self": [
+                {
+                    only: (t) => {
+                        return (t.c2 == "chastity");
+                    },
+                    text: `USER_TAG puts a little biometric lock on USER_THEIR VAR_C1, preventing others from touching until USER_THEY removeUSER_S the lock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "chastitybra");
+                    },
+                    text: `USER_TAG puts a little biometric lock on USER_THEIR VAR_C1, preventing others from touching until USER_THEY removeUSER_S the lock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "collar");
+                    },
+                    text: `USER_TAG puts a little biometric lock on USER_THEIR VAR_C1, preventing others from touching until USER_THEY removeUSER_S the lock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "gag");
+                    },
+                    text: `USER_TAG puts a little biometric lock on USER_THEIR VAR_C1, preventing others from touching until USER_THEY removeUSER_S the lock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "mask");
+                    },
+                    text: `USER_TAG puts a little biometric lock on USER_THEIR VAR_C1, preventing others from touching until USER_THEY removeUSER_S the lock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "corset");
+                    },
+                    text: `USER_TAG puts a little biometric lock on USER_THEIR VAR_C1, preventing others from touching until USER_THEY removeUSER_S the lock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "heavy");
+                    },
+                    text: `USER_TAG puts a little biometric lock on USER_THEIR VAR_C1, preventing others from touching until USER_THEY removeUSER_S the lock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "mitten");
+                    },
+                    text: `USER_TAG puts a little biometric lock on USER_THEIR VAR_C1, preventing others from touching until USER_THEY removeUSER_S the lock!`,
+                },
+            ],
+            "other": [
+                {
+                    only: (t) => {
+                        return (t.c2 == "chastity");
+                    },
+                    text: `USER_TAG puts a little biometric lock on TARGET_TAG's VAR_C1, preventing USER_THEM from touching until TARGET_THEY removeTARGET_S the lock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "chastitybra");
+                    },
+                    text: `USER_TAG puts a little biometric lock on TARGET_TAG's VAR_C1, preventing USER_THEM from doing anything else with it until TARGET_THEY removeTARGET_S the lock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "collar");
+                    },
+                    text: `USER_TAG puts a little biometric lock on TARGET_TAG's VAR_C1, preventing USER_THEM from doing anything else with it until TARGET_THEY removeTARGET_S the lock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "gag");
+                    },
+                    text: `USER_TAG puts a little biometric lock on TARGET_TAG's VAR_C1, preventing USER_THEM from doing anything else with it until TARGET_THEY removeTARGET_S the lock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "mask");
+                    },
+                    text: `USER_TAG puts a little biometric lock on TARGET_TAG's VAR_C1, preventing USER_THEM from doing anything else with it until TARGET_THEY removeTARGET_S the lock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "corset");
+                    },
+                    text: `USER_TAG puts a little biometric lock on TARGET_TAG's VAR_C1, preventing USER_THEM from doing anything else with it until TARGET_THEY removeTARGET_S the lock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "heavy");
+                    },
+                    text: `USER_TAG puts a little biometric lock on TARGET_TAG's VAR_C1, preventing USER_THEM from doing anything else with it until TARGET_THEY removeTARGET_S the lock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "mitten");
+                    },
+                    text: `USER_TAG puts a little biometric lock on TARGET_TAG's VAR_C1, preventing USER_THEM from doing anything else with it until TARGET_THEY removeTARGET_S the lock!`,
+                },
+            ]
         }
     },
     unlock: {
@@ -2186,6 +2285,15 @@ const texts_lock = {
             // This should never happen
             "other": [
                 `Something went wrong with the five minute timer, because somehow USER_TAG removes TARGET_TAG's lock on TARGET_THEIR VAR_C1!`
+            ]
+        },
+        selflock: {
+            "self": [
+                `USER_TAG removes the biometric Self Lock from USER_THEIR VAR_C1!`
+            ],
+            // This should never happen
+            "other": [
+                `USER_TAG removes the Self Lock from TARGET_TAG's VAR_C1! This should never happen, so please report it!`
             ]
         },
         defaultlock: {

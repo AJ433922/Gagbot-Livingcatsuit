@@ -71,6 +71,9 @@ exports.canUnlock = (data) => {
     if (lock.keyholderID == data.keyholderID) {
         return true;
     } 
+    if (lock.clonedKeyholders && lock.clonedKeyholders.includes(data.keyholderID)) {
+        return true;
+    } 
 }
 
 // The condition for removing self from clonedKeyholders

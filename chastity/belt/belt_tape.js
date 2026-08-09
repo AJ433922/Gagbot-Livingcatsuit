@@ -3,3 +3,5 @@
 exports.name = "Tape Chastity Belt"
 
 exports.tags = ["chastity"]
+
+exports.nolock = true;

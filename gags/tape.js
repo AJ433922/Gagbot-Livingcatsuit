@@ -136,6 +136,7 @@ const garbleText = (text, parent, locarr, intensity) => {
 exports.garbleText = garbleText;
 exports.breathRecovery = (_user, intensity) => 1 - intensity / 15;
 exports.choicename = "Tape Gag";
+exports.nolock = true;
 
 // Unit Tests
 

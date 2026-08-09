@@ -137,6 +137,7 @@ exports.garbleText = garbleText;
 exports.breathRecovery = (_user, intensity) => 1 - intensity / 15;
 exports.choicename = "Latex OTN Gag";
 exports.tags = ["latex"];
+exports.nolock = true;
 
 // Unit Tests
 

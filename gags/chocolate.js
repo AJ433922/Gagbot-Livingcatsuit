@@ -85,6 +85,7 @@ const garbleText = (text, parent, locarr, intensity) => {
 exports.garbleText = garbleText;
 exports.breathRecovery = (_user, intensity) => 1 - intensity / 20;
 exports.choicename = "Chocolate Gag";
+exports.nolock = true;
 
 exports.itemdescription = `The **Chocolate Gag** functions like a regular ball gag, but will shrink every 2 minutes, lowering in intensity until it hits 0 and the gag is removed.`
 

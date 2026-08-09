@@ -425,7 +425,7 @@ module.exports = {
 								cloneaccept = "clone_accept";
 								data.other = true;
 							}
-							data[restrainttoclone] = true;
+							//data[restrainttoclone] = true;
                             if (getBaseLock(getRestraintByUUID(chosenrestrainttoclone.split("_")[1]).restraint.lock.locktype)?.modifyClones) {
                                 getBaseLock(getRestraintByUUID(chosenrestrainttoclone.split("_")[1]).restraint.lock.locktype)?.modifyClones({ uuid: chosenrestrainttoclone.split("_")[1], keyholderID: clonedkeyholder.id, add: true })
                                 await confirmation.update({ content: getTextGeneric(cloneaccept, data.textdata), components: [] });
@@ -452,7 +452,7 @@ module.exports = {
                                     };
                                     data.clone = true;
                                     data.other = true;
-                                    data[restrainttoclone] = true;
+                                    //data[restrainttoclone] = true;
                                     if (getBaseLock(getRestraintByUUID(chosenrestrainttoclone.split("_")[1]).restraint.lock.locktype)?.modifyClones) {
                                         getBaseLock(getRestraintByUUID(chosenrestrainttoclone.split("_")[1]).restraint.lock.locktype)?.modifyClones({ uuid: chosenrestrainttoclone.split("_")[1], keyholderID: clonedkeyholder.id, add: true })
                                         await confirmation.editReply({ content: getTextGeneric("clone_accept", data.textdata), components: [] });
@@ -561,7 +561,13 @@ module.exports = {
 						} else {
 							data.isprimary = true;
 						}
-						data[typeofrestraint] = true;
+                        if (wearer.id == interaction.user.id) {
+                            data.self = true;
+                        }
+                        else {
+                            data.other = true;
+                        }
+						//data[typeofrestraint] = true;
                         getBaseLock(getRestraintByUUID(uuid)?.restraint?.lock?.locktype).modifyClones({ uuid: uuid, keyholderID: clonedkeyholder.id, add: false });
 						await confirmation.update({ content: getTextGeneric("revoke_accept", data.textdata), components: [] });
 						await confirmation.followUp(getText(data));
@@ -647,7 +653,7 @@ module.exports = {
 							} else {
 								data.other = true;
 							}
-							data[typeofrestraint] = true;
+							//data[typeofrestraint] = true;
 							await confirmation.update({ content: getTextGeneric("give_accept_self", data.textdata), components: [] });
 							await confirmation.followUp(getText(data));
                             getBaseLock(getRestraintByUUID(uuid)?.restraint.lock.locktype).modifyKeyholder({ uuid: uuid, keyholderID: newKeyholder.id })
@@ -668,7 +674,7 @@ module.exports = {
                                     };
                                     data.give = true;
                                     data.other = true;
-                                    data[typeofrestraint] = true;
+                                    //data[typeofrestraint] = true;
                                     await confirmation.editReply(getTextGeneric("give_accept", data.textdata));
                                     await confirmation.followUp(getText(data));
                                     transferCollarKey(interaction.guildId, wearer.id, newKeyholder.id);
