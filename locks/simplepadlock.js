@@ -31,7 +31,7 @@ exports.canAccessLock = (data) => {
 
 // The condition to allow adding clonedKeyholders
 exports.canCloneKeys = (data) => {
-    let lock = getRestraintByUUID(data.uuid).lock;
+    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
     if (lock.keyholderID == data.userID) {
         return true;
     } 
@@ -45,7 +45,7 @@ exports.canCloneKeys = (data) => {
 
 // The condition to allow removing clonedKeyholders
 exports.canRemoveCloneKeys = (data) => {
-    let lock = getRestraintByUUID(data.uuid).lock;
+    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
     if (lock.keyholderID == data.userID) {
         return true;
     } 
@@ -59,7 +59,7 @@ exports.canRemoveCloneKeys = (data) => {
 
 // The condition to allow transferring primary keyholder
 exports.canTransfer = (data) => {
-    let lock = getRestraintByUUID(data.uuid).lock;
+    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
     if (lock.keyholderID == data.userID) {
         return true;
     } 
@@ -104,13 +104,13 @@ exports.modifyKeyholder = function(data) {
 // Modify the cloned keyholder
 // { uuid: uuid, keyholderID: user id, add: boolean }
 exports.modifyClones = function(data) {
-    let lock = getRestraintByUUID(data.uuid).lock;
-    let currclones = lock.clonedKeyholders;
-    if (data.add && !lock.clonedKeyholders.includes(data.keyholderID)) {
+    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
+    let currclones = lock.clonedKeyholders ?? [];
+    if (data.add && !currclones.includes(data.keyholderID)) {
         this.modifyLock({ uuid: data.uuid, param: "clonedKeyholders", value: [...currclones, data.keyholderID] })
     }
-    else if (lock.clonedKeyholders.includes(data.keyholderID)) {
-        currclones.splice(lock.clonedKeyholders.indexOf(data.keyholderID), 1);
+    else if (lock?.clonedKeyholders?.includes(data.keyholderID)) {
+        currclones.splice(lock?.clonedKeyholders?.indexOf(data.keyholderID), 1);
         this.modifyLock({ uuid: data.uuid, param: "clonedKeyholders", value: currclones });
     }
 }

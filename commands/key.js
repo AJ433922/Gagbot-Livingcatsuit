@@ -146,7 +146,7 @@ module.exports = {
                 let choices = [];
                 // Get clones we have access to. Each lock has its own canRemoveCloneKeys function, so this will handle if clone propagation allows for this or not. 
                 await getLocksWithAccess(interaction.guildId, interaction.user.id, "RemoveCloneKeys").forEach(async (la) => {
-                    if (la.restraint && la.type) {
+                    if (la.restraint && la.type && la.restraint.lock.clonedKeyholders) {
                         la.restraint.lock.clonedKeyholders.forEach(async (k) => {
                             try {
                                 await interaction.guild.members.fetch(la.userID);
@@ -161,7 +161,7 @@ module.exports = {
                                 console.log("Unknown member when fetching " + k)
                             }
                             if (k != interaction.user.id) {
-                                choices.push({ name: `${interaction.guild.members.cache.get(k)?.displayName}'s key to ${interaction.guild.members.cache.get(la.userID)?.displayName}'s ${la.type}`, value: `${subcommand}_${la.restraint.lock.uuid}_${k}` })
+                                choices.push({ name: `${interaction.guild.members.cache.get(k)?.displayName}'s key to ${interaction.guild.members.cache.get(la.userID)?.displayName}'s ${getItemName(la.restraint)}`, value: `${subcommand}_${la.restraint.lock.uuid}_${k}` })
                             }
                         })
                     }
@@ -361,7 +361,7 @@ module.exports = {
                 choiceemoji = `${process.emojis[getItemType(getRestraintByUUID(chosenrestrainttoclone.split("_")[1])?.restraint)]}`
 
 				// Check if the interaction user has access to clone the target restraint. If the restraint doesnt exist or they dont have access, go away. 
-                if (!getRestraintByUUID(chosenrestrainttoclone.split("_")[1]) || !getBaseLock(getRestraintByUUID(chosenrestrainttoclone.split("_")[1]).restraint.lock.uuid).canCloneKeys({ uuid: chosenrestrainttoclone.split("_")[1], userID: interaction.user.id})) {
+                if (!getRestraintByUUID(chosenrestrainttoclone.split("_")[1]) || !getBaseLock(getRestraintByUUID(chosenrestrainttoclone.split("_")[1]).restraint.lock.locktype).canCloneKeys({ uuid: chosenrestrainttoclone.split("_")[1], userID: interaction.user.id})) {
                     interaction.reply({ content: `You don't have access to clone keys for ${wearertoclone}'s ${restrainttoclone}.`, flags: MessageFlags.Ephemeral });
 					return;
                 }
@@ -491,7 +491,7 @@ module.exports = {
                 let uuid = cloneresponse.split("_")[1]
                 let lock = getRestraintByUUID(uuid)?.restraint?.lock;
                 let wearer = await interaction.guild.members.fetch(lock.userID)
-                choiceemoji = `${process.emojis[getItemType(getRestraintByUUID(chosenrestrainttoclone.split("_")[1])?.restraint)]}`
+                choiceemoji = `${process.emojis[getItemType(getRestraintByUUID(cloneresponse.split("_")[1])?.restraint)]}`
                 if (!lock || !getBaseLock(lock.locktype)) {
                     interaction.reply({ content: `Something went wrong. The lock or restraint is missing.`, flags: MessageFlags.Ephemeral });
 					return;

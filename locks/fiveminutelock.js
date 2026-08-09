@@ -43,10 +43,12 @@ exports.checkTimelock = function (data) {
     let restraintobject = getRestraintByUUID(data.uuid).restraint
     if (!restraintobject || (typeof restraintobject.timelock != "number")) {
         // The timelock somehow broke, get out of here. 
+        markForSave(getItemType(getRestraintByUUID(data.uuid)?.restraint))
         this.removeLock(data.uuid, { id: restraintobject.lock.keyholderID });
     }
     if (Date.now() > restraintobject.timelock) {
         // End of the timelock!
+        markForSave(getItemType(getRestraintByUUID(data.uuid)?.restraint))
         this.removeLock(data.uuid, { id: restraintobject.lock.keyholderID });
     };
 }

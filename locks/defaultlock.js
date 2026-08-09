@@ -2,6 +2,9 @@ const { ButtonStyle, ButtonBuilder, ActionRowBuilder, TextDisplayBuilder, Messag
 const { getLockAwaiting } = require("../functions/getters/lock/getLockAwaiting");
 const { removeLockAwaiting } = require("../functions/setters/lock/removeLockAwaiting");
 const { removeLock } = require("../functions/setters/lock/removeLock");
+const { getRestraintByUUID } = require("../functions/getters/lock/getRestraintByUUID");
+const { markForSave } = require("../functions/other/markForSave");
+const { getItemType } = require("../functions/getters/config/getItemType");
 
 // This is the base definition for a lock that is affixed to a restraint. Any new functionality that references a property
 // should have that reference here to ensure all locks are constructed with a default. 
@@ -51,6 +54,7 @@ function Lock() {
 
     // Remove this lock
     this.removeLock = (data) => {
+        markForSave(getItemType(getRestraintByUUID(data.uuid)?.restraint))
         removeLock(data.uuid, { id: data.keyholderID });
     }
 
@@ -61,6 +65,7 @@ function Lock() {
         if (data.param && data.value) {
             lock[data.param] = data.value;
         }
+        markForSave(getItemType(getRestraintByUUID(data.uuid)?.restraint))
     }
 
     // Modify Host Restraint - This generally should NOT be needed.
@@ -70,6 +75,7 @@ function Lock() {
         if (data.param && data.value) {
             lock[data.param] = data.value;
         }
+        markForSave(getItemType(getRestraintByUUID(data.uuid)?.restraint))
     }
 
     // Engage the awaiting lock
@@ -86,6 +92,7 @@ function Lock() {
         }
         // Clear the awaiting object whether we were able to use it or not
         removeLockAwaiting(data.uuid);
+        markForSave(getItemType(getRestraintByUUID(data.uuid)?.restraint))
     }
 
     // Initialize lock

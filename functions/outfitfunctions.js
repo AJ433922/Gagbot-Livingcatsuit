@@ -721,7 +721,7 @@ async function inspectModal(serverID, userID, inspectuserIDin, menu, page) {
     }
     else if (menu == "restraints") {
         let headwearrestrictions = getHeadwearRestrictions(serverID, userID);
-        let wearingtext = `## Regular Worn Restraints:`;
+        let wearingtext = `## Worn Restraints:`;
         // Gags
         if (getGag(serverID, inspectuserID)) {
             wearingtext = `${wearingtext}\n${process.emojis.gag} Gags: **${getGags(serverID, inspectuserID).map((g) => { return `${convertGagText(g.gagtype)} (${g.intensity})`}).join(", ")}**`
@@ -917,15 +917,14 @@ async function inspectModal(serverID, userID, inspectuserIDin, menu, page) {
         let keysheldtext = "";
         let heldkeys = getLocksWithAccess(serverID, inspectuserID);
         heldkeys.forEach((hk) => {
-
             if (hk.restraint.lock.keyholderID == inspectuserID) {
-                keysheldtext = `${keysheldtext}, ${process.emojis[hk.type.toLowerCase().replace(" ", "")]}<@${hk.userID}>`
+                keysheldtext = `${keysheldtext}, ${process.emojis[hk.type.toLowerCase().replace(" ", "")]}<@${hk.userID}>${(["Heavy","Gag","Toy","Mask"].includes(hk.type) ? ` **(${abbreviate(getItemName(hk.restraint))})**` : "")}`
             }
             else if (hk.restraint.lock.clonedKeyholders && hk.restraint.lock.clonedKeyholders.includes(inspectuserID)) {
-                keysheldtext = `${keysheldtext}, ${process.emojis[hk.type.toLowerCase().replace(" ", "")]}<@${hk.userID}>`
+                keysheldtext = `${keysheldtext}, ${process.emojis[hk.type.toLowerCase().replace(" ", "")]}<@${hk.userID}>${(["Heavy","Gag","Toy","Mask"].includes(hk.type) ? ` **(${abbreviate(getItemName(hk.restraint))})**` : "")}`
             }
         })
-        heldkeys = heldkeys.slice(2);
+        keysheldtext = keysheldtext.slice(2);
 
         if (keysheldtext.length > 0) {
             keysheldtext = `## Keys Held\n${keysheldtext}`
