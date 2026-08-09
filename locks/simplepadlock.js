@@ -371,7 +371,7 @@ exports.extendedLockStatus = function (data) {
         lockemoji = process.emojis.keyclone
     }
     let textreturn = `${lockemoji} Locked by <@${lock.keyholderID}>`
-    if (lock.clonedKeyholders) {
+    if (lock.clonedKeyholders && (lock.clonedKeyholders.length > 0)) {
         textreturn = `${textreturn}, Cloned Keys held by `
         for (let i = 0; i < lock.clonedKeyholders.length; i++) {
             if (i != 0) {

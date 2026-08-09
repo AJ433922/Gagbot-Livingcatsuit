@@ -496,7 +496,7 @@ module.exports = {
                     interaction.reply({ content: `Something went wrong. The lock or restraint is missing.`, flags: MessageFlags.Ephemeral });
 					return;
                 }
-                let typeofrestraint = getItemType(getRestraintByUUID(chosenrestrainttoclone.split("_")[1])?.restraint);
+                let typeofrestraint = getItemType(getRestraintByUUID(cloneresponse.split("_")[1])?.restraint);
                 if (typeofrestraint == "chastity") { typeofrestraint = "chastitybelt" }
 
                 // If the clonedkeyholder is someone else, check canRemoveCloneKeys, else check canRevokeSelfClone
@@ -562,7 +562,7 @@ module.exports = {
 							data.isprimary = true;
 						}
 						data[typeofrestraint] = true;
-                        getBaseLock(uuid).modifyClones({ uuid: uuid, keyholderID: clonedkeyholder.id, add: false });
+                        getBaseLock(getRestraintByUUID(uuid)?.restraint?.lock?.locktype).modifyClones({ uuid: uuid, keyholderID: clonedkeyholder.id, add: false });
 						await confirmation.update({ content: getTextGeneric("revoke_accept", data.textdata), components: [] });
 						await confirmation.followUp(getText(data));
 					} else if (confirmation.customId === "cancel") {
@@ -586,14 +586,14 @@ module.exports = {
 					return;
 				}
 
-                let uuid = cloneresponse.split("_")[1]
+                let uuid = restraint.split("_")[1]
                 let lock = getRestraintByUUID(uuid)?.restraint?.lock;
-                choiceemoji = `${process.emojis[getItemType(getRestraintByUUID(chosenrestrainttoclone.split("_")[1])?.restraint)]}`
+                choiceemoji = `${process.emojis[getItemType(getRestraintByUUID(restraint.split("_")[1])?.restraint)]}`
                 if (!lock || !getBaseLock(lock.locktype)) {
                     interaction.reply({ content: `Something went wrong. The lock or restraint is missing.`, flags: MessageFlags.Ephemeral });
 					return;
                 }
-                let typeofrestraint = getItemType(getRestraintByUUID(chosenrestrainttoclone.split("_")[1])?.restraint);
+                let typeofrestraint = getItemType(getRestraintByUUID(restraint.split("_")[1])?.restraint);
                 if (typeofrestraint == "chastity") { typeofrestraint = "chastitybelt" }
 
 				// We can't give to ourselves lol
