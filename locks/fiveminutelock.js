@@ -166,3 +166,7 @@ exports.lockinteractionresponse = function(interaction) {
         }
     }
 }
+
+exports.applyPermissionModal = function (lockawaiting) {
+    return getBaseLock(lockawaiting.locktype).desc;
+}

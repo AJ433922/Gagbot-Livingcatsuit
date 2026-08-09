@@ -13,19 +13,19 @@ function Lock() {
     this.canAddLock = (data) => { return true };
 
     // The condition to allow access to the item this lock is on
-    this.canAccessLock = (data) => { return true };
+    this.canAccessLock = (data) => { return false };
 
     // The condition to allow adding clonedKeyholders
-    this.canCloneKeys = (data) => { return true };
+    this.canCloneKeys = (data) => { return false };
 
     // The condition to allow removing clonedKeyholders
-    this.canRemoveCloneKeys = (data) => { return true };
+    this.canRemoveCloneKeys = (data) => { return false };
 
     // The condition to allow transferring primary keyholder
-    this.canTransfer = (data) => { return true };
+    this.canTransfer = (data) => { return false };
 
     // The condition to allow unlocking this lock
-    this.canUnlock = (data) => { return true };
+    this.canUnlock = (data) => { return false };
 
     // Events
     // Called immediately after applying the lock
@@ -168,6 +168,15 @@ function Lock() {
         if (menuinteraction) {
             this.lockinteraction(menuinteraction, { uuid: uuid });
         }
+    }
+
+    /********
+     * When prompting for permission, this is supplied in the DM message to the target. Should include all relevant info about the lock. 
+     * 
+     ********/
+    this.applyPermissionModal = function (lockawaiting) {
+        console.log(`Accessing the applyPermissionModal for ${lockawaiting.locktype} but none was specified!`)
+        return "";
     }
 }
 

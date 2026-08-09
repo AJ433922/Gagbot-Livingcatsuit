@@ -2,7 +2,7 @@ const { canPlaceLock } = require("../functions/getters/lock/canPlaceLock");
 const { canRemoveLock } = require("../functions/getters/lock/canRemoveLock");
 const { userIsWearingItem } = require("../functions/getters/config/userIsWearingItem");
 const { createLockAwaiting } = require("../functions/setters/lock/createLockAwaiting");
-const { MessageFlags } = require("discord.js");
+const { MessageFlags, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require("discord.js");
 const { getBaseLock } = require("./getters/lock/getBaseLock");
 const { getBaseItem } = require("./getters/config/getBaseItem");
 const { getUserWornRestraint } = require("./getters/config/getUserWornRestraint");
@@ -14,7 +14,8 @@ const { removeLock } = require("./setters/lock/removeLock");
 const { canAccessCollar } = require("./getters/collar/canAccessCollar");
 const { getCollar } = require("./getters/collar/getCollar");
 const { traceFirstParam } = require("./other/TESTS/traceFirstParam");
-const { getLockAwaiting } = require("./getters/lock/getLockAwaiting")
+const { getLockAwaiting } = require("./getters/lock/getLockAwaiting");
+const { getRestraintByUUID } = require("./getters/lock/getRestraintByUUID");
 
 // Imports each lock in ./locks and makes them accessible as objects
 // in process.locktypes mapped to their respective ids.
@@ -330,7 +331,111 @@ async function handleApplyLock(serverID, user, target, uuid) {
 	});
 }
 
+/**********
+ * Called when trying to clone a key, sends a DM to the target to verify it is okay to clone their key. 
+ * 
+ * - (server id) serverID - The server this is running on
+ * - (user object) user - The user performing the action
+ * - (user object) target - The person whose lock we're cloning a key for
+ * - (user object) clonekeyholder - The person who will receive the new key
+ * - (string) uuid - The uuid of the lock
+ **********/
+async function promptCloneKey(serverID, user, target, clonekeyholder, uuid) {
+    traceFirstParam(arguments[0]);
+	return new Promise(async (res, rej) => {
+        try {
+            let buttons = [new ButtonBuilder().setCustomId("denyButton").setLabel("Deny").setStyle(ButtonStyle.Danger), new ButtonBuilder().setCustomId("acceptButton").setLabel("Allow").setStyle(ButtonStyle.Success)];
+            let dmchannel = await target.createDM();
+            await dmchannel.send({ content: `${user} would like to give ${clonekeyholder} a copy of your **${getItemName(getRestraintByUUID(uuid)?.restraint)}**'s key. Do you want to allow this?`, components: [new ActionRowBuilder().addComponents(...buttons)] }).then((mess) => {
+                // Create a collector for up to 5 minutes
+                const collector = mess.createMessageComponentCollector({ componentType: ComponentType.Button, time: 300_000, max: 1 });
+
+                collector.on("collect", async (i) => {
+                    console.log(i);
+                    if (i.customId == "acceptButton") {
+                        await mess.delete().then(() => {
+                            i.reply(`Confirmed - ${clonekeyholder} will receive a copied key for your ${getItemName(getRestraintByUUID(uuid)?.restraint)}!`);
+                        });
+                        res(true);
+                    } else {
+                        await mess.delete().then(() => {
+                            i.reply(`Rejected - ${clonekeyholder} will NOT receive a copied key for your ${getItemName(getRestraintByUUID(uuid)?.restraint)}!`);
+                        });
+                        rej(true);
+                    }
+                });
+
+                collector.on("end", async (collected) => {
+                    // timed out
+                    if (collected.length == 0) {
+                        await mess.delete().then(() => {
+                            i.reply(`Timed Out - ${clonekeyholder} will NOT receive a copied key for your ${getItemName(getRestraintByUUID(uuid)?.restraint)}!`);
+                        });
+                        rej(true);
+                    }
+                });
+            });
+        }
+		catch (err) {
+            console.log(err);
+        }
+	});
+}
+
+/**********
+ * Called when trying to transfer a key, sends a DM to the target to verify it is okay to transfer their key. 
+ * 
+ * - (server id) serverID - The server this is running on
+ * - (user object) user - The user performing the action
+ * - (user object) target - The person whose lock we're cloning a key for
+ * - (user object) newKeyholder - The person who will receive the primary key
+ * - (string) uuid - The uuid of the lock
+ **********/
+async function promptTransferKey(serverID, user, target, newKeyholder, uuid) {
+    traceFirstParam(arguments[0]);
+	return new Promise(async (res, rej) => {
+		try {
+			let buttons = [new ButtonBuilder().setCustomId("denyButton").setLabel("Deny").setStyle(ButtonStyle.Danger), new ButtonBuilder().setCustomId("acceptButton").setLabel("Allow").setStyle(ButtonStyle.Success)];
+			let dmchannel = await target.createDM();
+			await dmchannel.send({ content: `${user} would like to give ${newKeyholder} the keys to your **${getItemName(getRestraintByUUID(uuid)?.restraint)}**. Do you want to allow this?`, components: [new ActionRowBuilder().addComponents(...buttons)] }).then((mess) => {
+				// Create a collector for up to 5 minutes
+				const collector = mess.createMessageComponentCollector({ componentType: ComponentType.Button, time: 300_000, max: 1 });
+
+				collector.on("collect", async (i) => {
+					console.log(i);
+					if (i.customId == "acceptButton") {
+						await mess.delete().then(() => {
+							i.reply(`Confirmed - ${newKeyholder} will receive the key for your **${getItemName(getRestraintByUUID(uuid)?.restraint)}**!`);
+						});
+						res(true);
+					} else {
+						await mess.delete().then(() => {
+							i.reply(`Rejected - ${newKeyholder} will NOT receive the key for your **${getItemName(getRestraintByUUID(uuid)?.restraint)}**!`);
+						});
+						rej(true);
+					}
+				});
+
+				collector.on("end", async (collected) => {
+					// timed out
+					if (collected.length == 0) {
+						await mess.delete().then(() => {
+							i.reply(`Timed Out - ${newKeyholder} will NOT receive the key for your **${getItemName(getRestraintByUUID(uuid)?.restraint)}**!`);
+						});
+						rej(true);
+					}
+				});
+			});
+		} catch (err) {
+			console.log(`No DMs available for ${target}`);
+			rej("NoDM");
+		}
+	});
+}
+
 exports.setUpLocks = setUpLocks;
 exports.addLockModal = addLockModal;
 exports.handleRemoveLock = handleRemoveLock;
 exports.handleApplyLock = handleApplyLock;
+exports.promptCloneKey = promptCloneKey;
+exports.promptTransferKey = promptTransferKey;

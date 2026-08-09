@@ -10,6 +10,7 @@ const { sendLockToast } = require("../functions/setters/lock/sendLockToast");
 const { getItemType } = require("../functions/getters/config/getItemType");
 const { handleApplyLock } = require("../functions/lockfunctions");
 const { checkLockAwaiting } = require("../functions/getters/lock/checkLockAwaiting");
+const { getBaseLock } = require("../functions/getters/lock/getBaseLock");
 
 /***********
  * This is a basic keyed padlock for large restraints. It allows for permanent locking to a keyholder. 
@@ -31,7 +32,7 @@ exports.canAccessLock = (data) => {
 // The condition to allow adding clonedKeyholders
 exports.canCloneKeys = (data) => {
     let lock = getRestraintByUUID(data.uuid).lock;
-    if (lock.keyholder == data.userID) {
+    if (lock.keyholderID == data.userID) {
         return true;
     } 
     // If permitted by the lock configuration at the beginning, allow a clone to propagate.
@@ -45,7 +46,7 @@ exports.canCloneKeys = (data) => {
 // The condition to allow removing clonedKeyholders
 exports.canRemoveCloneKeys = (data) => {
     let lock = getRestraintByUUID(data.uuid).lock;
-    if (lock.keyholder == data.userID) {
+    if (lock.keyholderID == data.userID) {
         return true;
     } 
     // If permitted by the lock configuration at the beginning, allow a clone to propagate.
@@ -59,7 +60,7 @@ exports.canRemoveCloneKeys = (data) => {
 // The condition to allow transferring primary keyholder
 exports.canTransfer = (data) => {
     let lock = getRestraintByUUID(data.uuid).lock;
-    if (lock.keyholder == data.userID) {
+    if (lock.keyholderID == data.userID) {
         return true;
     } 
 }
@@ -72,15 +73,32 @@ exports.canUnlock = (data) => {
     } 
 }
 
-// Called when changing primary keyholders
+// The condition for removing self from clonedKeyholders
+exports.canRevokeSelfClone = (data) => { 
+    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
+    if (lock.clonedKeyholders && lock.clonedKeyholders.includes(data.userID)) {
+        return true;
+    } 
+};
+
+// Called when changing primary keyholders // Not currently being used lol
 exports.onTransfer = function (data) {
-    this.modifyLock({ uuid: data.uuid, param: "clonedKeyholder", value: [] })
+    this.modifyLock({ uuid: data.uuid, param: "clonedKeyholders", value: [] })
 }
 
 // Modify the keyholder
 // { uuid: uuid, keyholderID: user id }
 exports.modifyKeyholder = function(data) {
-    this.modifyLock({ uuid: data.uuid, param: "keyholder", value: data.keyholderID })
+    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
+    this.modifyLock({ uuid: data.uuid, param: "keyholderID", value: data.keyholderID })
+    if (!lock.preserveclone) {
+        this.modifyLock({ uuid: data.uuid, param: "clonedKeyholders", value: [] })
+    }
+    if (lock.clonedKeyholders && lock.clonedKeyholders.includes(data.keyholderID)) {
+        let currclones = lock.clonedKeyholders;
+        currclones.splice(lock.clonedKeyholders.indexOf(data.keyholderID), 1);
+        this.modifyLock({ uuid: data.uuid, param: "clonedKeyholders", value: currclones });
+    }
 }
 
 // Modify the cloned keyholder
@@ -89,11 +107,11 @@ exports.modifyClones = function(data) {
     let lock = getRestraintByUUID(data.uuid).lock;
     let currclones = lock.clonedKeyholders;
     if (data.add && !lock.clonedKeyholders.includes(data.keyholderID)) {
-        this.modifyLock({ uuid: data.uuid, param: "clonedKeyholder", value: [...currclones, data.keyholderID] })
+        this.modifyLock({ uuid: data.uuid, param: "clonedKeyholders", value: [...currclones, data.keyholderID] })
     }
     else if (lock.clonedKeyholders.includes(data.keyholderID)) {
         currclones.splice(lock.clonedKeyholders.indexOf(data.keyholderID), 1);
-        this.modifyLock({ uuid: data.uuid, param: "clonedKeyholder", value: currclones });
+        this.modifyLock({ uuid: data.uuid, param: "clonedKeyholders", value: currclones });
     }
 }
 
@@ -181,6 +199,18 @@ exports.lockinteraction = function (interaction, data, update = false) {
         );
     pagecomponents.push(propagatesection)
 
+    // Preserve Clones when transferring
+    let preservesection = new SectionBuilder()
+        .addTextDisplayComponents((text) => text.setContent(`**Preserve cloned keyholders when transferring primary keys?**`))
+        .setButtonAccessory((button) =>
+            button
+                .setCustomId(`lockconfig_${data.uuid}_preserveclone`)
+                .setLabel(getLockAwaiting(data.uuid)?.preserveclone ? "Enabled" : "Disabled")
+                .setStyle(getLockAwaiting(data.uuid)?.preserveclone ? ButtonStyle.Success : ButtonStyle.Danger)
+                .setDisabled(false)
+        );
+    pagecomponents.push(preservesection)
+
     // Ending description text
     let textaboutlock = new TextDisplayBuilder().setContent(`${this.desc}`);
     pagecomponents.push(textaboutlock)
@@ -231,6 +261,11 @@ exports.lockinteractionresponse = async function(interaction) {
     else if (command == "setpropagation") {
         // Flip the bit, if it exists. 
         updateLockAwaiting(uuid, "allowclonetoclone", !getLockAwaiting(uuid)?.allowclonetoclone);
+        this.lockinteraction(interaction, { uuid: uuid }, true);
+    }
+    else if (command == "preserveclone") {
+        // Flip the bit, if it exists. 
+        updateLockAwaiting(uuid, "preserveclone", !getLockAwaiting(uuid)?.preserveclone);
         this.lockinteraction(interaction, { uuid: uuid }, true);
     }
     else if (command == "leavebutton") {
@@ -298,4 +333,16 @@ exports.lockinteractionresponse = async function(interaction) {
             console.log(err);
         }
     }
+}
+
+exports.applyPermissionModal = function (lockawaiting) {
+    let text = `🔑 **Keyholder:** Your **keyholder** will be <@${lockawaiting.keyholderID}>. Only ${getPronouns(lockawaiting.serverID, lockawaiting.keyholderID, "subject")} will be able to unlock your restraint.`
+    if (lockawaiting.allowclonetoclone) {
+        text = `${text}\n🤝 **Propagation:** If your **primary key** is cloned, cloned keyholders will be allowed to attempt to make additional clones.`
+    }
+    if (lockawaiting.preserveclone) {
+        text = `${text}\n💾 **Preserve:** If your **primary key** is transferred, cloned keys will not be destroyed on transfer.`
+    }
+    text = `${text}\n\n${getBaseLock(lockawaiting.locktype).desc}`
+    return text;
 }
