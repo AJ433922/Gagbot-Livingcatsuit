@@ -23,7 +23,7 @@ function removeChastityBra(serverID, user, keyholder, force = false) {
     }
     let chastitybase = getBaseChastity(getChastityBra(serverID, user)?.chastitytype ?? "bra_silver")
 
-	if ((chastitybase && !chastitybase.canUnequip({ serverID: serverID, userID: user, keyholderID: keyholder })) && !force) return false;
+	//if ((chastitybase && !chastitybase.canUnequip({ serverID: serverID, userID: user, keyholderID: keyholder })) && !force) return false;
 
 	chastitybase.onUnequip({ serverID: serverID, userID: user });
 
