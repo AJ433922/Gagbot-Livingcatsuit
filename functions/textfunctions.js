@@ -2164,6 +2164,7 @@ const texts_lock = {
                 },
             ]
         },
+        // region selflock
         selflock: {
             "self": [
                 {
@@ -2265,6 +2266,113 @@ const texts_lock = {
                     text: `USER_TAG puts a little biometric lock on TARGET_TAG's VAR_C1, preventing USER_THEM from doing anything else with it until TARGET_THEY removeTARGET_S the lock!`,
                 },
             ]
+        },
+        // region timerlock
+        timerlock: {
+            "self": [
+                {
+                    only: (t) => {
+                        return (t.c2 == "chastity");
+                    },
+                    text: `USER_TAG puts a timer lock on USER_THEIR VAR_C1, sealing away USER_THEIR chastity! USER_THEY_CAP won't be able to touch VAR_C3!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "chastitybra");
+                    },
+                    text: `USER_TAG puts a timer lock on USER_THEIR VAR_C1, sealing away USER_THEIR breasts! USER_THEY_CAP won't be able to touch them VAR_C3!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "collar");
+                    },
+                    text: `USER_TAG puts a timer lock on USER_THEIR VAR_C1, keeping USER_THEIR neck adorned VAR_C3! It will be impossible to hide now...`,
+                },
+                // Should not happen
+                {
+                    only: (t) => {
+                        return (t.c2 == "gag");
+                    },
+                    text: `USER_TAG somehow puts a timer lock on USER_THEIR VAR_C1, sealing USER_THEIR words VAR_C3!`,
+                },
+                // Should not happen
+                {
+                    only: (t) => {
+                        return (t.c2 == "mask");
+                    },
+                    text: `USER_TAG somehow puts a timer lock on USER_THEIR VAR_C1, hiding USER_THEIR face VAR_C3!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "corset");
+                    },
+                    text: `USER_TAG puts a timer lock on the laces of USER_THEIR VAR_C1! Really, who needs to breathe VAR_C3 anyway?`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "heavy");
+                    },
+                    text: `USER_TAG manages to slip a timer lock on USER_THEIR VAR_C1, keeping it firmly locked away VAR_C3!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "mitten");
+                    },
+                    text: `USER_TAG manages to slip a little timer locks on USER_THEIR VAR_C1, rendering USER_THEIR hands completely useless VAR_C3!`,
+                },
+            ],
+            "other": [
+                {
+                    only: (t) => {
+                        return (t.c2 == "chastity");
+                    },
+                    text: `USER_TAG puts a timer lock on TARGET_TAG's VAR_C1, sealing away TARGET_THEIR chastity! TARGET_THEY_CAP will just have to be a good TARGET_PRAISEOBJECT VAR_C3!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "chastitybra");
+                    },
+                    text: `USER_TAG puts a timer lock on TARGET_TAG's VAR_C1, sealing away TARGET_THEIR breasts! TARGET_THEY_CAP will just have to be a good TARGET_PRAISEOBJECT VAR_C3!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "collar");
+                    },
+                    text: `USER_TAG puts a timer lock on TARGET_TAG's VAR_C1, keeping TARGET_THEIR neck adorned with a reminder of TARGET_THEIR submission! TARGET_THEY_CAP will have to wear it VAR_C3!`,
+                },
+                // Should not happen
+                {
+                    only: (t) => {
+                        return (t.c2 == "gag");
+                    },
+                    text: `USER_TAG puts a timer lock on TARGET_TAG's VAR_C1! TARGET_THEY_CAP will not speak VAR_C3!`,
+                },
+                // Should not happen
+                {
+                    only: (t) => {
+                        return (t.c2 == "mask");
+                    },
+                    text: `USER_TAG puts a timer lock on TARGET_TAG's VAR_C1! TARGET_THEY_CAP will not remove TARGET_THEIR headgear VAR_C3!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "corset");
+                    },
+                    text: `USER_TAG puts a timer lock on TARGET_TAG's VAR_C1, stealing TARGET_THEIR breath away VAR_C3!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "heavy");
+                    },
+                    text: `USER_TAG puts a timer lock on TARGET_TAG's VAR_C1, locking TARGET_THEM up VAR_C3!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "mitten");
+                    },
+                    text: `USER_TAG puts a timer lock on each of TARGET_TAG's VAR_C1, keeping TARGET_THEIR hands completely helpless VAR_C3!`,
+                },
+            ]
         }
     },
     unlock: {
@@ -2294,6 +2402,15 @@ const texts_lock = {
             // This should never happen
             "other": [
                 `USER_TAG removes the Self Lock from TARGET_TAG's VAR_C1! This should never happen, so please report it!`
+            ]
+        },
+        timerlock: {
+            "self": [
+                `The timer lock finally falls off of USER_TAG's VAR_C1!`
+            ],
+            // This should never happen
+            "other": [
+                `After USER_TAG's intervention, the timer lock finally falls off of TARGET_TAG's VAR_C1! This should never happen, so please report it!`
             ]
         },
         defaultlock: {

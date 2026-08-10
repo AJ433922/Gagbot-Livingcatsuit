@@ -19,6 +19,7 @@ function applyLockAwaiting(uuid) {
     if (process.awaitinglock && process.awaitinglock[uuid]) {
         markForSave("awaitinglock")
         let lock = process.awaitinglock[uuid];
+        lock.awaitingcreated = undefined;
         if (!lock.restraintobject) {
             // The restraint was removed at some point...
             removeLockAwaiting(uuid)

@@ -1,5 +1,7 @@
-const { canAccessChastityBra } = require("../../functions/getters/chastity/canAccessChastityBra")
-const { getOption } = require("../../functions/getters/config/getOption")
+const { canAccessChastityBra } = require("../../functions/getters/chastity/canAccessChastityBra");
+const { getChastityBra } = require("../../functions/getters/chastity/getChastityBra");
+const { getOption } = require("../../functions/getters/config/getOption");
+const { getBaseLock } = require("../../functions/getters/lock/getBaseLock");
 const { rollKeyFumble, discardKey } = require("../../functions/keyfindingfunctions")
 const { removeChastityBra } = require("../../functions/setters/chastity/removeChastityBra");
 
@@ -33,7 +35,7 @@ exports.discard = (data) => {
 
 exports.canUnequip = (data) => { return canAccessChastityBra(data.serverID, data.userID, data.keyholderID, true).access }
 
-exports.canAccessToys = (data) => { return (canAccessChastityBra(data.serverID, data.userID, data.keyholderID).access) }
+exports.canAccessToys = (data) => { return (getChastityBra(data.serverID, data.userID).lock ? getBaseLock(getChastityBra(data.serverID, data.userID).lock.locktype).canAccessLock({ uuid: getChastityBra(data.serverID, data.userID).lock.uuid, userID: data.keyholderID }) : (data.userID == data.keyholderID) )}
 
 // Add a remover function that can be called on the item itself!
 exports.removeItem = function (data) { removeChastityBra(data.serverID, data.userID, data.keyholderID, data.forceremove) }

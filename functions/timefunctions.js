@@ -209,33 +209,6 @@ function processTimedEvents() {
 
 function processUnlockTimes(client) {
 	let now = Date.now();
-	/*if (process.chastity) {
-		Object.keys(process.chastity).forEach((server) => {
-			Object.keys(process.chastity[server]).forEach((person) => {
-                if (process.chastity[server][person]?.unlockTime < now) {
-                    unlockTimelockChastity(server, client, person);
-                }
-            })
-		});
-	}
-	if (process.chastitybra) {
-		Object.keys(process.chastitybra).forEach((server) => {
-			Object.keys(process.chastitybra[server]).forEach((person) => {
-                if (process.chastitybra[server][person]?.unlockTime < now) {
-                    unlockTimelockChastityBra(server, client, person);
-                }
-            })
-		});
-	}
-	if (process.collar) {
-		Object.keys(process.collar).forEach((server) => {
-            Object.keys(process.collar[server]).forEach((person) => {
-                if (process.collar[server][person]?.unlockTime < now) {
-                    unlockTimelockCollar(server, client, person);
-                }
-            })
-		});
-	}*/
 
     if (process.gags) {
 		Object.keys(process.gags).forEach((serverid) => {
@@ -608,6 +581,17 @@ async function removeOldMessages() {
     })
 }
 
+// Cull any awaiting lock older than a day. 
+async function removeOldLockAwaiting() {
+    Object.keys(process.awaitinglock).forEach((k) => {
+        if ((process.awaitinglock && process.awaitinglock[k] && ((process.awaitinglock[k].awaitingcreated + 86400000) < Date.now())) || !process.awaitinglock[k]?.awaitingcreated) {
+            console.log(`Deleting awaiting lock with ID ${k}`)
+            delete process.awaitinglock[k];
+            markForSave("awaitinglock")
+        } 
+    })
+}
+
 exports.parseTime = parseTime;
 exports.parseDuration = parseDuration;
 exports.calculateTimeout = calculateTimeout;
@@ -620,3 +604,4 @@ exports.scavengeUsers = scavengeUsers;
 exports.processUnlockTimes = processUnlockTimes;
 exports.processTimedEvents = processTimedEvents;
 exports.removeOldMessages = removeOldMessages;
+exports.removeOldLockAwaiting = removeOldLockAwaiting;
