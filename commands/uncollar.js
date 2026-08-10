@@ -7,6 +7,7 @@ const { getCollar } = require("../functions/getters/collar/getCollar.js");
 const { getHeavyBound } = require("../functions/getters/heavy/getHeavyBound.js");
 const { canAccessCollar } = require("../functions/getters/collar/canAccessCollar.js");
 const { removeCollar } = require("../functions/setters/collar/removeCollar.js");
+const { canRemoveLock } = require("../functions/getters/lock/canRemoveLock.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
