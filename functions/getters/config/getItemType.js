@@ -55,33 +55,31 @@ function getItemType(itemID) {
         /*
         */
         // Chastity
-        if (itemID.chastitytype && getBaseChastity(itemID.chastitytype) && (getBaseChastity(itemID.chastitytype).category == "Chastity Belt")) {
+        if (itemID && itemID.chastitytype && getBaseChastity(itemID.chastitytype) && (getBaseChastity(itemID.chastitytype).category == "Chastity Belt")) {
             return "chastity"
         }
-        if (itemID.chastitytype && getBaseChastity(itemID.chastitytype) && (getBaseChastity(itemID.chastitytype).category == "Chastity Bra")) {
+        if (itemID && itemID.chastitytype && getBaseChastity(itemID.chastitytype) && (getBaseChastity(itemID.chastitytype).category == "Chastity Bra")) {
             return "chastitybra"
         }
-        if (itemID.collartype && getBaseCollar(itemID.collartype)) {
+        if (itemID && itemID.collartype && getBaseCollar(itemID.collartype)) {
             return "collar"
         }
-        if (itemID.gagtype && getBaseGag(itemID.gagtype)) {
+        if (itemID && itemID.gagtype && getBaseGag(itemID.gagtype)) {
             return "gag"
         }
-        if (itemID.mittenname && getBaseMitten(itemID.mittenname)) {
+        if (itemID && itemID.mittenname && getBaseMitten(itemID.mittenname)) {
             return "mitten"
         }
-        if (itemID.type && getBaseCorset(itemID.type)) {
+        if (itemID && itemID.type && getBaseCorset(itemID.type)) {
             return "corset"
         }
-        if (itemID.type && getBaseHeavy(itemID.type)) {
+        if (itemID && itemID.type && getBaseHeavy(itemID.type)) {
             return "heavy"
         }
-        // Headwear
-        /*
-        if (getBaseHeadwear(itemID)) {
+        if (itemID && itemID.type && getBaseHeadwear(itemID.type)) {
             return "mask"
-        }*/
-        if (itemID.type && getBaseToy(itemID.type)) {
+        }
+        if (itemID && itemID.type && getBaseToy(itemID.type)) {
             return "toy"
         }
     }

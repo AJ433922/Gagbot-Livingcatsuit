@@ -39,8 +39,8 @@ function sendLockToast(data_in) {
     }
     // Any further textkeys that need to be appended 
     if (Array.isArray(data_in.extratext)) {
-        for (let i = 0; i < (data_in.extratex.length); i++) {
-            data.textdata[`c${i + 3}`] = data_in.extratex[i];
+        for (let i = 0; i < (data_in.extratext.length); i++) {
+            data.textdata[`c${i + 3}`] = data_in.extratext[i];
         }
     }
     messageSendChannel(getText(data), getRecentChannel(data_in.serverID, data_in.actionuser ?? data_in.userID).interactionchannelid);

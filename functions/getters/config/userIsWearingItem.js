@@ -12,6 +12,7 @@ const { getHeadwear } = require("../headwear/getHeadwear");
 const { getSpecificHeadwear } = require("../headwear/getSpecificHeadwear");
 const { getBaseHeavy } = require("../heavy/getBaseHeavy");
 const { getHeavy } = require("../heavy/getHeavy");
+const { getHeavyList } = require("../heavy/getHeavyList");
 const { getBaseMitten } = require("../mitten/getBaseMitten");
 const { getMitten } = require("../mitten/getMitten");
 const { getBaseToy } = require("../toy/getBaseToy");
@@ -52,7 +53,7 @@ function userIsWearingItem(serverID, userID, itemID) {
         return (getCorset(serverID, userID)?.type == itemID)
     }
     if (getBaseHeavy(itemID)) {
-        return (getHeavy(serverID, userID)?.type == itemID)
+        return (getHeavyList(serverID, userID)?.find((h) => h.type == itemID))
     }
     if (getBaseHeadwear(itemID)) {
         return (getSpecificHeadwear(serverID, userID, itemID));

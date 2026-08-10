@@ -85,6 +85,7 @@ const garbleText = (text, parent, locarr, intensity) => {
 exports.garbleText = garbleText;
 exports.breathRecovery = (_user, intensity) => 1 - intensity / 20;
 exports.choicename = "Gummy Gag";
+exports.nolock = true;
 
 exports.itemdescription = `The **Gummy Gag** functions like a regular ball gag, but will shrink every 5 minutes, lowering in intensity until it hits 0 and the gag is removed.`
 

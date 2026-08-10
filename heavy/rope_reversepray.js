@@ -4,3 +4,4 @@ exports.denialCoefficient = 3.5
 
 exports.heavytags = ["arms"]
 
+exports.nolock = true;

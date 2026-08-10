@@ -9,6 +9,7 @@ const { getConsent } = require("../functions/getters/config/getConsent.js");
 const { getHeavyBound } = require("../functions/getters/heavy/getHeavyBound.js");
 const { getGag } = require("../functions/getters/gag/getGag.js");
 const { deleteMitten } = require("../functions/setters/mitten/removeMitten.js");
+const { canRemoveLock } = require("../functions/getters/lock/canRemoveLock.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -46,6 +47,12 @@ module.exports = {
 				data.noheavy = true;
 				if (mitteneduser != interaction.user) {
 					data.other = true;
+                    if (getMitten(interaction.guildId, mitteneduser.id)?.lock && !canRemoveLock(interaction.guildId, mitteneduser.id, interaction.user.id, getMitten(interaction.guildId, mitteneduser.id).lock.uuid)) {
+                        // This item is locked and we *cannot* remove the lock on it, therefore we can't remove the mittens. 
+                        data.noaccess = true;
+                        interaction.reply(getText(data));
+                        return;
+                    }
 					if (getGag(interaction.guildId, mitteneduser.id)) {
 						data.gag = true;
 						// Now lets make sure the wearer wants that.

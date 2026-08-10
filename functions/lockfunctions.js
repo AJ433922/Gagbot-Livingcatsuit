@@ -2,7 +2,7 @@ const { canPlaceLock } = require("../functions/getters/lock/canPlaceLock");
 const { canRemoveLock } = require("../functions/getters/lock/canRemoveLock");
 const { userIsWearingItem } = require("../functions/getters/config/userIsWearingItem");
 const { createLockAwaiting } = require("../functions/setters/lock/createLockAwaiting");
-const { MessageFlags } = require("discord.js");
+const { MessageFlags, ButtonBuilder, ButtonStyle, ActionRowBuilder, ComponentType } = require("discord.js");
 const { getBaseLock } = require("./getters/lock/getBaseLock");
 const { getBaseItem } = require("./getters/config/getBaseItem");
 const { getUserWornRestraint } = require("./getters/config/getUserWornRestraint");
@@ -11,6 +11,11 @@ const fs = require("fs");
 const { getItemType } = require("./getters/config/getItemType");
 const { getItemName } = require("./getters/config/getItemName");
 const { removeLock } = require("./setters/lock/removeLock");
+const { canAccessCollar } = require("./getters/collar/canAccessCollar");
+const { getCollar } = require("./getters/collar/getCollar");
+const { traceFirstParam } = require("./other/TESTS/traceFirstParam");
+const { getLockAwaiting } = require("./getters/lock/getLockAwaiting");
+const { getRestraintByUUID } = require("./getters/lock/getRestraintByUUID");
 
 // Imports each lock in ./locks and makes them accessible as objects
 // in process.locktypes mapped to their respective ids.
@@ -57,13 +62,20 @@ function setUpLocks() {
  * ##### Returns an interaction end state
  *****/
 function addLockModal(interaction) {
-    let locktarget = interaction.options.getUser("user") ?? interaction.user;
+    let locktarget = interaction.options.getUser("wearer") ?? interaction.user;
     let itemtolock = interaction.options.getString("restraint");
     if (itemtolock == null) {
         interaction.editReply({ content: `Please select an item to lock!` })
         return;
     }
-    let locktype = interaction.options.getString("locktype") ?? "simplepadlock";
+    let locktype = interaction.options.getString("locktype");
+    if (itemtolock && !locktype) {
+        // Try to decide the default. Simplepadlock for large, 5 minute timer for any others. If the item just can't be locked, oh well. 
+        locktype = "simplepadlock";
+        if (!getBaseItem(itemtolock).locktypes.includes(getBaseLock(locktype).locktype)) {
+            locktype = "fiveminutelock"
+        }
+    }
     let baselocktype = getBaseLock(locktype);
     // If the user isn't wearing that item or it has a lock or the locker isn't allowed, tell them to leave
     if (!baselocktype) {
@@ -113,15 +125,15 @@ function addLockModal(interaction) {
  * ---
  * ##### Returns an interaction end state
  *****/
-function handleRemoveLock(interaction) {
+async function handleRemoveLock(interaction) {
     let locktarget = interaction.options.getUser("user") ?? interaction.user;
     let itemtolock = interaction.options.getString("restraint");
     if (itemtolock == null) {
-        interaction.editReply({ content: `Please select an item to remove!` })
+        await interaction.editReply({ content: `Please select an item to remove!` })
         return;
     }
+    await interaction.editReply({ content: `Attempting to remove lock!`, flags: MessageFlags.Ephemeral })
     let locktoremove = getUserWornRestraint(interaction.guildId, locktarget.id, getItemType(itemtolock), itemtolock)
-    console.log(locktoremove);
     // If the user isn't wearing that item or it has a lock or the locker isn't allowed, tell them to leave
     if (!locktoremove) {
         if (locktarget.id == interaction.user.id) {
@@ -151,9 +163,281 @@ function handleRemoveLock(interaction) {
         return;
     }
 
+    await interaction.editReply({ content: `Removing Lock!`, flags: MessageFlags.Ephemeral })
     removeLock(locktoremove?.lock?.uuid, interaction.user);
 } 
+
+/*****
+ * DMs the user, if appropriate, for permission to lock the target restraint.
+ * 
+ * - (server id) serverID - The server this is running on
+ * - (user object) user - The user doing the action
+ * - (user object) target - The user receiving the lock
+ * - (string) uuid - The lock uuid to apply. 
+ *****/
+async function handleApplyLock(serverID, user, target, uuid) {
+    traceFirstParam(arguments[0]);
+	return new Promise(async (res, rej) => {
+		let hasOption = "enabled" //getOption(serverID, target.id, `majorrestraint`);
+		if (canAccessCollar(serverID, target.id, user.id).access) {
+            if (getCollar(serverID, target.id) && getCollar(serverID, target.id)?.lock) {
+                // User is able to access the collar of the user *and* it has the permission. 
+                res(true);
+			    return;
+            }
+		} 
+
+        // Always approve ourselves. 
+        if (user.id === target.id) {
+            res(true);
+            return
+        }
+
+		/*if (hasOption == "disabled") {
+			rej("Disabled");
+			return;
+		} // NOPE */
+
+        if (process.recentlypromptedlock && process.recentlypromptedlock[target.id] && process.recentlypromptedlock[target.id] > Date.now()) {
+            rej("Cooldown")
+            return;
+        }
+
+        let lockawaiting = getLockAwaiting(uuid)
+        if (!lockawaiting.restraintobject) {
+            // The restraint was unequipped, since this was passed by reference.
+            rej(true);
+            return;
+        }
+        let locktext = getBaseLock(lockawaiting.locktype).applyPermissionModal && getBaseLock(lockawaiting.locktype).applyPermissionModal(lockawaiting);
+        if (!locktext) {
+            console.log(`Something went wrong with the return of ${lockawaiting.locktype}'s applyPermissionModal.`)
+            rej(true);
+            return;
+        }
+
+		// We need to ASK
+		let prompttext = `## ${user} would like to place a ${getBaseLock(lockawaiting.locktype).name} on your ${getItemName(lockawaiting.restraintobject)}\n\n${locktext}\n\nDo you wish to allow this action?`;
+		let buttons = [
+            new ButtonBuilder()
+                .setCustomId("denyButton")
+                .setLabel("Deny")
+                .setStyle(ButtonStyle.Danger), 
+            new ButtonBuilder()
+                .setCustomId("acceptButton")
+                .setLabel("Allow (Wait...)")
+                .setStyle(ButtonStyle.Success)
+                .setDisabled(true),
+            new ButtonBuilder()
+                .setCustomId("cooldown15")
+                .setLabel("Block Requests for 15m")
+                .setStyle(ButtonStyle.Danger),
+            /*new ButtonBuilder()
+                .setCustomId("cooldown60")
+                .setLabel("Block Requests for 1h")
+                .setStyle(ButtonStyle.Danger),
+            new ButtonBuilder()
+                .setCustomId("cooldown1440")
+                .setLabel("Block Requests for 24h")
+                .setStyle(ButtonStyle.Danger)*/
+        ]
+
+        try {
+            let dmchannel = await target.createDM();
+            await dmchannel
+                .send({ content: `${prompttext}\n-# You must wait 15 seconds for this button to activate...`, components: [new ActionRowBuilder().addComponents(...buttons)] })
+                .then(async (mess) => {
+                    // Create a collector for up to 5 minutes
+                    const collector = mess.createMessageComponentCollector({ componentType: ComponentType.Button, time: 300_000, max: 1 });
+
+                    collector.on("collect", async (i) => {
+                        console.log(i);
+                        if (i.customId == "cooldown15") {
+                            if (process.recentlypromptedlock == undefined) {
+                                process.recentlypromptedlock = {}
+                            }
+                            process.recentlypromptedlock[target.id] = Date.now() + 900000
+                        }
+                        if (i.customId == "cooldown60") {
+                            if (process.recentlypromptedlock == undefined) {
+                                process.recentlypromptedlock = {}
+                            }
+                            process.recentlypromptedlock[target.id] = Date.now() + 3600000
+                        }
+                        if (i.customId == "cooldown1440") {
+                            if (process.recentlypromptedlock == undefined) {
+                                process.recentlypromptedlock = {}
+                            }
+                            process.recentlypromptedlock[target.id] = Date.now() + 86400000
+                        }
+                        if (i.customId == "acceptButton") {
+                            await mess.edit({ content: `Confirmed - ${getItemName(lockawaiting.restraintobject)} will be locked with a ${getBaseLock(lockawaiting.locktype).name}.`, components: [] })
+                            res(true);
+                        } else {
+                            await mess.edit({ content: `Rejected - ${getItemName(lockawaiting.restraintobject)} will NOT be locked.`, components: [] })
+                            rej(true);
+                        }
+                    });
+
+                    collector.on("end", async (collected) => {
+                        // timed out
+                        if (collected.length == 0) {
+                            await mess.edit({ content: `Timed out - ${getItemName(lockawaiting.restraintobject)} will NOT be locked.`, components: [] })
+                            rej(true);
+                        }
+                    });
+
+                    // Wait 15 seconds before editing the message with the new components
+                    await new Promise(resolve => setTimeout(resolve, 15000));
+
+                    let editedbuttons = [
+                        new ButtonBuilder()
+                            .setCustomId("denyButton")
+                            .setLabel("Deny")
+                            .setStyle(ButtonStyle.Danger), 
+                        new ButtonBuilder()
+                            .setCustomId("acceptButton")
+                            .setLabel("Allow")
+                            .setStyle(ButtonStyle.Success),
+                        new ButtonBuilder()
+                            .setCustomId("cooldown15")
+                            .setLabel("Block Requests for 15m")
+                            .setStyle(ButtonStyle.Danger),
+                        /*new ButtonBuilder()
+                            .setCustomId("cooldown60")
+                            .setLabel("Block Requests for 1h")
+                            .setStyle(ButtonStyle.Danger),
+                        new ButtonBuilder()
+                            .setCustomId("cooldown1440")
+                            .setLabel("Block Requests for 24h")
+                            .setStyle(ButtonStyle.Danger)*/
+                    ]
+
+                    try {
+                        mess.edit({ content: prompttext, components: [new ActionRowBuilder().addComponents(...editedbuttons)] })
+                    }
+                    catch (err) {
+                        console.log(err)
+                    }
+                })
+                .catch((err) => {
+                    console.log(`Error sending message to lock ${user}.`);
+                    console.log(err);
+                    rej("NoDM");
+                });
+        }
+        catch (err) {
+            console.log(err);
+            rej("NoDM")
+        }
+	});
+}
+
+/**********
+ * Called when trying to clone a key, sends a DM to the target to verify it is okay to clone their key. 
+ * 
+ * - (server id) serverID - The server this is running on
+ * - (user object) user - The user performing the action
+ * - (user object) target - The person whose lock we're cloning a key for
+ * - (user object) clonekeyholder - The person who will receive the new key
+ * - (string) uuid - The uuid of the lock
+ **********/
+async function promptCloneKey(serverID, user, target, clonekeyholder, uuid) {
+    traceFirstParam(arguments[0]);
+	return new Promise(async (res, rej) => {
+        try {
+            let buttons = [new ButtonBuilder().setCustomId("denyButton").setLabel("Deny").setStyle(ButtonStyle.Danger), new ButtonBuilder().setCustomId("acceptButton").setLabel("Allow").setStyle(ButtonStyle.Success)];
+            let dmchannel = await target.createDM();
+            await dmchannel.send({ content: `${user} would like to give ${clonekeyholder} a copy of your **${getItemName(getRestraintByUUID(uuid)?.restraint)}**'s key. Do you want to allow this?`, components: [new ActionRowBuilder().addComponents(...buttons)] }).then((mess) => {
+                // Create a collector for up to 5 minutes
+                const collector = mess.createMessageComponentCollector({ componentType: ComponentType.Button, time: 300_000, max: 1 });
+
+                collector.on("collect", async (i) => {
+                    console.log(i);
+                    if (i.customId == "acceptButton") {
+                        await mess.delete().then(() => {
+                            i.reply(`Confirmed - ${clonekeyholder} will receive a copied key for your ${getItemName(getRestraintByUUID(uuid)?.restraint)}!`);
+                        });
+                        res(true);
+                    } else {
+                        await mess.delete().then(() => {
+                            i.reply(`Rejected - ${clonekeyholder} will NOT receive a copied key for your ${getItemName(getRestraintByUUID(uuid)?.restraint)}!`);
+                        });
+                        rej(true);
+                    }
+                });
+
+                collector.on("end", async (collected) => {
+                    // timed out
+                    if (collected.length == 0) {
+                        await mess.delete().then(() => {
+                            i.reply(`Timed Out - ${clonekeyholder} will NOT receive a copied key for your ${getItemName(getRestraintByUUID(uuid)?.restraint)}!`);
+                        });
+                        rej(true);
+                    }
+                });
+            });
+        }
+		catch (err) {
+            console.log(err);
+        }
+	});
+}
+
+/**********
+ * Called when trying to transfer a key, sends a DM to the target to verify it is okay to transfer their key. 
+ * 
+ * - (server id) serverID - The server this is running on
+ * - (user object) user - The user performing the action
+ * - (user object) target - The person whose lock we're cloning a key for
+ * - (user object) newKeyholder - The person who will receive the primary key
+ * - (string) uuid - The uuid of the lock
+ **********/
+async function promptTransferKey(serverID, user, target, newKeyholder, uuid) {
+    traceFirstParam(arguments[0]);
+	return new Promise(async (res, rej) => {
+		try {
+			let buttons = [new ButtonBuilder().setCustomId("denyButton").setLabel("Deny").setStyle(ButtonStyle.Danger), new ButtonBuilder().setCustomId("acceptButton").setLabel("Allow").setStyle(ButtonStyle.Success)];
+			let dmchannel = await target.createDM();
+			await dmchannel.send({ content: `${user} would like to give ${newKeyholder} the keys to your **${getItemName(getRestraintByUUID(uuid)?.restraint)}**. Do you want to allow this?`, components: [new ActionRowBuilder().addComponents(...buttons)] }).then((mess) => {
+				// Create a collector for up to 5 minutes
+				const collector = mess.createMessageComponentCollector({ componentType: ComponentType.Button, time: 300_000, max: 1 });
+
+				collector.on("collect", async (i) => {
+					console.log(i);
+					if (i.customId == "acceptButton") {
+						await mess.delete().then(() => {
+							i.reply(`Confirmed - ${newKeyholder} will receive the key for your **${getItemName(getRestraintByUUID(uuid)?.restraint)}**!`);
+						});
+						res(true);
+					} else {
+						await mess.delete().then(() => {
+							i.reply(`Rejected - ${newKeyholder} will NOT receive the key for your **${getItemName(getRestraintByUUID(uuid)?.restraint)}**!`);
+						});
+						rej(true);
+					}
+				});
+
+				collector.on("end", async (collected) => {
+					// timed out
+					if (collected.length == 0) {
+						await mess.delete().then(() => {
+							i.reply(`Timed Out - ${newKeyholder} will NOT receive the key for your **${getItemName(getRestraintByUUID(uuid)?.restraint)}**!`);
+						});
+						rej(true);
+					}
+				});
+			});
+		} catch (err) {
+			console.log(`No DMs available for ${target}`);
+			rej("NoDM");
+		}
+	});
+}
 
 exports.setUpLocks = setUpLocks;
 exports.addLockModal = addLockModal;
 exports.handleRemoveLock = handleRemoveLock;
+exports.handleApplyLock = handleApplyLock;
+exports.promptCloneKey = promptCloneKey;
+exports.promptTransferKey = promptTransferKey;

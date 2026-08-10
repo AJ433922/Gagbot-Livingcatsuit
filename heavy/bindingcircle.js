@@ -6,3 +6,4 @@ exports.denialCoefficient = 1
 
 exports.heavytags = ["container"]
 
+exports.nolock = true;

@@ -23,12 +23,21 @@ const { getOption } = require("../functions/getters/config/getOption.js");
 const { getTaggedList } = require("../functions/getters/config/getTaggedList.js");
 const { getBaseLock } = require("../functions/getters/lock/getBaseLock.js");
 const { getBaseItem } = require("../functions/getters/config/getBaseItem.js");
+const { getGags } = require("../functions/getters/gag/getGags.js");
+const { getBaseHeadwear } = require("../functions/getters/headwear/getBaseHeadwear.js");
+const { getHeavyList } = require("../functions/getters/heavy/getHeavyList.js");
+const { getBaseHeavy } = require("../functions/getters/heavy/getBaseHeavy.js");
+const { getBaseGag } = require("../functions/getters/gag/getBaseGag.js");
+const { getBaseMitten } = require("../functions/getters/mitten/getBaseMitten.js");
+const { getBaseChastity } = require("../functions/getters/chastity/getBaseChastity.js");
+const { getBaseCorset } = require("../functions/getters/corset/getBaseCorset.js");
+const { getBaseCollar } = require("../functions/getters/collar/getBaseCollar.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName("lock")
 		.setDescription("Put a lock on a restraint...")
-        .addUserOption((opt) => opt.setName("user").setDescription("The person wearing the restraint to lock"))
+        .addUserOption((opt) => opt.setName("wearer").setDescription("The person wearing the restraint to lock"))
         .addStringOption((opt) => opt.setName("restraint").setDescription("Which restraint to lock?").setAutocomplete(true))
         .addStringOption((opt) => opt.setName("locktype").setDescription("Which kind of lock to put on?").setAutocomplete(true))
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages), // Temporary measure to ensure this isn't leaked yet!
@@ -38,9 +47,9 @@ module.exports = {
         // Choosing the restraint we're focused on. 
         if (focusedValue.name == "restraint") {
             try {
-                let chosenuserid = interaction.options.get("user")?.value ?? interaction.user.id; // Note we can only retrieve the user ID here!
-                let heavybondage = getHeavy(interaction.guildId, chosenuserid);
-                let gagbondage = getGagLast(interaction.guildId, chosenuserid);
+                let chosenuserid = interaction.options.get("wearer")?.value ?? interaction.user.id; // Note we can only retrieve the user ID here!
+                let heavybondage = getHeavyList(interaction.guildId, chosenuserid);
+                let gagbondage = getGags(interaction.guildId, chosenuserid);
                 let mittenbondage = getMitten(interaction.guildId, chosenuserid);
                 let chastitybondage = getChastity(interaction.guildId, chosenuserid);
                 let chastitybrabondage = getChastityBra(interaction.guildId, chosenuserid)
@@ -49,29 +58,41 @@ module.exports = {
                 let collarbondage = getCollar(interaction.guildId, chosenuserid);
 
                 let outopts = [];
-                if (heavybondage) {
-                    outopts.push({ name: `Heavy Bondage: ${getHeavy(interaction.guildId, chosenuserid).displayname}`, value: getHeavy(interaction.guildId, chosenuserid).type });
+                if (heavybondage && heavybondage.length > 0) {
+                    heavybondage.forEach((h) => {
+                        if ((getBaseHeavy(h.type).heavytags?.length > 0) && !getBaseHeavy(h.type).nolock && !h.lock) {
+                            outopts.push({ name: `Heavy Bondage: ${h.displayname}`, value: h.type });
+                        }
+                    })
                 }
-                if (gagbondage) {
-                    outopts.push({ name: `Gag: ${convertGagText(getGagLast(interaction.guildId, chosenuserid))}`, value: getGag(interaction.guildId, chosenuserid).gagtype });
+                if (gagbondage && (gagbondage.length > 0)) {
+                    gagbondage.forEach((g) => {
+                        if (!getBaseGag(g.gagtype).nolock && !g.lock) {
+                            outopts.push({ name: `Gag: ${convertGagText(g.gagtype)}`, value: g.gagtype });
+                        }
+                    })
                 }
-                if (mittenbondage) {
-                    outopts.push({ name: `Mittens${mittenbondage.mittenname ? `: ${getMittenName(interaction.guildId, chosenuserid)}` : ""}`, value: getMitten(interaction.guildId, chosenuserid).mittenname });
+                if (mittenbondage && mittenbondage.mittenname && !getBaseMitten(mittenbondage.mittenname).nolock && !mittenbondage.lock) {
+                    outopts.push({ name: `Mittens: ${getBaseMitten(mittenbondage.mittenname).name}`, value: mittenbondage.mittenname });
                 }
-                if (chastitybondage) {
-                    outopts.push({ name: `Chastity${chastitybondage.chastitytype ? `: ${getChastityName(interaction.guildId, chosenuserid)}` : " Belt"}`, value: getChastity(interaction.guildId, chosenuserid).chastitytype });
+                if (chastitybondage && chastitybondage.chastitytype && !getBaseChastity(chastitybondage.chastitytype).nolock && !chastitybondage.lock) {
+                    outopts.push({ name: `Chastity: ${getBaseChastity(chastitybondage.chastitytype).name}`, value: chastitybondage.chastitytype });
                 }
-                if (chastitybrabondage) {
-                    outopts.push({ name: `Chastity Bra${chastitybrabondage.chastitytype ? `: ${getChastityBraName(interaction.guildId, chosenuserid)}` : " Bra"}`, value: getChastityBra(interaction.guildId, chosenuserid).chastitytype });
+                if (chastitybrabondage && chastitybrabondage.chastitytype && !getBaseChastity(chastitybrabondage.chastitytype).nolock && !chastitybrabondage.lock) {
+                    outopts.push({ name: `Chastity Bra: ${getBaseChastity(chastitybrabondage.chastitytype).name}`, value: chastitybrabondage.chastitytype });
                 }
                 if (headbondage && headbondage.length > 0) {
-                    outopts.push({ name: `Head Restraints`, value: getHeadwear(interaction.guildId, chosenuserid)[0] });
+                    headbondage.forEach((h) => {
+                        if (!getBaseHeadwear(h.type).nolock && !h.lock) {
+                            outopts.push({ name: `Head Restraints: ${getBaseHeadwear(h.type).name}`, value: h.type });
+                        }
+                    })
                 }
-                if (corsetbondage) {
-                    outopts.push({ name: `Corset`, value: getCorset(interaction.guildId, chosenuserid).type });
+                if (corsetbondage && !corsetbondage.lock && corsetbondage.type && !getBaseCorset(corsetbondage.type).nolock) {
+                    outopts.push({ name: `Corset: ${getBaseCorset(corsetbondage.type).name}`, value: corsetbondage.type });
                 }
-                if (collarbondage) {
-                    outopts.push({ name: `Collar${collarbondage.collartype ? `: ${getCollarName(interaction.guildId, chosenuserid)}` : ""}`, value: getCollar(interaction.guildId, chosenuserid).collartype });
+                if (collarbondage && !collarbondage.lock && collarbondage.collartype && !getBaseCollar(collarbondage.collartype).nolock) {
+                    outopts.push({ name: `Collar: ${getBaseCollar(collarbondage.collartype).name}`, value: collarbondage.collartype });
                 }
 
                 if (outopts.length == 0) {
@@ -87,7 +108,7 @@ module.exports = {
         // Choosing the type of lock we want to add
         else if (focusedValue.name == "locktype") {
             try {
-                let chosenuserid = interaction.options.get("user")?.value ?? interaction.user.id; // Note we can only retrieve the user ID here!
+                let chosenuserid = interaction.options.get("wearer")?.value ?? interaction.user.id; // Note we can only retrieve the user ID here!
                 let locktarget = interaction.options.get("restraint")?.value;
                 let autocompletes = process.autocompletes.lock;
                 // If locktarget is specified, filter out all locks to just what is eligible for that restraint target

@@ -10,6 +10,7 @@ const { getHeadwearName } = require("../functions/getters/headwear/getHeadwearNa
 const { getHeavyBound } = require("../functions/getters/heavy/getHeavyBound.js");
 const { getMitten } = require("../functions/getters/mitten/getMitten.js");
 const { deleteHeadwear } = require("../functions/setters/headwear/removeHeadwear.js");
+const { canRemoveLock } = require("../functions/getters/lock/canRemoveLock.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -226,19 +227,21 @@ module.exports = {
 							// Targetting one specific headgear
 							data.single = true;
 							if (getHeadwear(interaction.guildId, headwearuser.id)?.find((h) => h.type == headwearchoice)) {
-								// Wearing the headgear already, Ephemeral
-                                // Note - removing lockable headgear for now until Locks 2.0 is implemented. With headgear overhaul, this requires implementation, too much work. 
-                                /*if (process.headwear[interaction.guildId][headwearuser.id][headwearchoice]) {
-                                    if ((process.headwear[interaction.guildId][headwearuser.id][headwearchoice].lockable) && (process.headwear[interaction.guildId][headwearuser.id][headwearchoice].origbinder != interaction.user.id)) {
-                                        // Not allowed to unlock headgear someone else put on us. 
-                                        data.locked = true;
-                                        interaction.reply(getText(data));
-                                        return;
-                                    }
-                                }*/
-                                data.worn = true;
-								interaction.reply(getText(data));
-								deleteHeadwear(interaction.guildId, headwearuser.id, headwearchoice);
+								if (getHeadwear(interaction.guildId, headwearuser.id)?.find((h) => h.type == headwearchoice)?.lock && !canRemoveLock(interaction.guildId, headwearuser.id, interaction.user.id, getHeadwear(interaction.guildId, headwearuser.id)?.find((h) => h.type == headwearchoice).lock.uuid)) {
+                                    // Locked and we can't remove it!
+                                    data.noaccess = true
+                                    interaction.reply(getText(data));
+                                }
+                                else if (getHeadwear(interaction.guildId, headwearuser.id)?.find((h) => h.type == headwearchoice)?.lock) {
+                                    data.locked = true
+                                    interaction.reply(getText(data));
+								    deleteHeadwear(interaction.guildId, headwearuser.id, headwearchoice);
+                                }
+                                else {
+                                    data.worn = true;
+								    interaction.reply(getText(data));
+								    deleteHeadwear(interaction.guildId, headwearuser.id, headwearchoice);
+                                }
 							} else {
 								// Not wearing it!
 								data.noworn = true;
@@ -265,37 +268,61 @@ module.exports = {
 							// Targetting one specific headgear
 							data.single = true;
 							if (getHeadwear(interaction.guildId, headwearuser.id)?.find((h) => h.type == headwearchoice)) {
-								// Wearing the headgear already, Ephemeral
-                                /* if (process.headwear[interaction.guildId][headwearuser.id][headwearchoice]) {
-                                    if ((process.headwear[interaction.guildId][headwearuser.id][headwearchoice].lockable) && (process.headwear[interaction.guildId][headwearuser.id][headwearchoice].origbinder != interaction.user.id)) {
-                                        // Not allowed to unlock headgear someone else put on them. 
-                                        data.locked = true;
+								if (getHeadwear(interaction.guildId, headwearuser.id)?.find((h) => h.type == headwearchoice)?.lock && !canRemoveLock(interaction.guildId, headwearuser.id, interaction.user.id, getHeadwear(interaction.guildId, headwearuser.id)?.find((h) => h.type == headwearchoice).lock.uuid)) {
+                                    // Locked and we can't remove it!
+                                    data.noaccess = true
+                                    interaction.reply(getText(data));
+                                }
+                                else if (getHeadwear(interaction.guildId, headwearuser.id)?.find((h) => h.type == headwearchoice)?.lock) {
+                                    data.locked = true
+                                    interaction.reply(getText(data));
+								    // Now lets make sure the wearer wants that.
+                                    if (checkBondageRemoval(interaction.guildId, interaction.user.id, headwearuser.id, "headwear", headwearchoice) == true) {
+                                        // Allowed immediately, lets go
                                         interaction.reply(getText(data));
-                                        return;
+                                        deleteHeadwear(interaction.guildId, headwearuser.id, headwearchoice);
+                                    } else {
+                                        // We need to ask first.
+                                        let datatogeneric = Object.assign({}, data.textdata);
+                                        datatogeneric.c1 = "head restraints";
+                                        interaction.reply({ content: getTextGeneric("unbind", datatogeneric), flags: MessageFlags.Ephemeral });
+                                        let canRemove = await handleBondageRemoval(interaction.guildId, interaction.user, headwearuser, "head restraints").then(
+                                            async (res) => {
+                                                await interaction.editReply(getTextGeneric("unbind_accept", datatogeneric));
+                                                await interaction.followUp(getText(data));
+                                                deleteHeadwear(interaction.guildId, headwearuser.id, headwearchoice);
+                                            },
+                                            async (rej) => {
+                                                await interaction.editReply(getTextGeneric("unbind_decline", datatogeneric));
+                                            },
+                                        );
                                     }
-                                }*/
-                                data.worn = true;
-								// Now lets make sure the wearer wants that.
-								if (checkBondageRemoval(interaction.guildId, interaction.user.id, headwearuser.id, "headwear", headwearchoice) == true) {
-									// Allowed immediately, lets go
-									interaction.reply(getText(data));
-									deleteHeadwear(interaction.guildId, headwearuser.id, headwearchoice);
-								} else {
-									// We need to ask first.
-									let datatogeneric = Object.assign({}, data.textdata);
-									datatogeneric.c1 = "head restraints";
-									interaction.reply({ content: getTextGeneric("unbind", datatogeneric), flags: MessageFlags.Ephemeral });
-									let canRemove = await handleBondageRemoval(interaction.guildId, interaction.user, headwearuser, "head restraints").then(
-										async (res) => {
-											await interaction.editReply(getTextGeneric("unbind_accept", datatogeneric));
-											await interaction.followUp(getText(data));
-											deleteHeadwear(interaction.guildId, headwearuser.id, headwearchoice);
-										},
-										async (rej) => {
-											await interaction.editReply(getTextGeneric("unbind_decline", datatogeneric));
-										},
-									);
-								}
+                                }
+                                else {
+                                    data.worn = true;
+								    interaction.reply(getText(data));
+								    // Now lets make sure the wearer wants that.
+                                    if (checkBondageRemoval(interaction.guildId, interaction.user.id, headwearuser.id, "headwear", headwearchoice) == true) {
+                                        // Allowed immediately, lets go
+                                        interaction.reply(getText(data));
+                                        deleteHeadwear(interaction.guildId, headwearuser.id, headwearchoice);
+                                    } else {
+                                        // We need to ask first.
+                                        let datatogeneric = Object.assign({}, data.textdata);
+                                        datatogeneric.c1 = "head restraints";
+                                        interaction.reply({ content: getTextGeneric("unbind", datatogeneric), flags: MessageFlags.Ephemeral });
+                                        let canRemove = await handleBondageRemoval(interaction.guildId, interaction.user, headwearuser, "head restraints").then(
+                                            async (res) => {
+                                                await interaction.editReply(getTextGeneric("unbind_accept", datatogeneric));
+                                                await interaction.followUp(getText(data));
+                                                deleteHeadwear(interaction.guildId, headwearuser.id, headwearchoice);
+                                            },
+                                            async (rej) => {
+                                                await interaction.editReply(getTextGeneric("unbind_decline", datatogeneric));
+                                            },
+                                        );
+                                    }
+                                }
 							} else {
 								// Not wearing it!
 								data.noworn = true;

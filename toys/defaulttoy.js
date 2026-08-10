@@ -53,6 +53,9 @@ function Toy() {
     // Name for the toy
     this.toyname = "Default Toy"
 
+    // Toys aren't lockable by default.
+    this.nolock = true;
+
     // Category for the toy
     this.category = "default"
 }

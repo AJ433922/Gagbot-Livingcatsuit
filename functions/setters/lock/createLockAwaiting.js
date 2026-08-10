@@ -19,7 +19,8 @@ function createLockAwaiting(serverID, userID, keyholderID, locktype, restraintob
         userID: userID,
         keyholderID: keyholderID,
         locktype: locktype,
-        restraintobject: restraintobject
+        restraintobject: restraintobject,
+        awaitingcreated: Date.now()
     }
     let uuid = crypto.randomUUID()
 

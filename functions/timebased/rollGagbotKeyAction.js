@@ -33,6 +33,7 @@ const { getItemTags } = require("../getters/config/getItemTags");
 const { setProcessVariable } = require("../setters/config/setProcessVariable");
 const { getItemType } = require("../getters/config/getItemType");
 const { getProcessVariable } = require("../getters/config/getProcessVariable");
+const { getRestraintByUUID } = require("../getters/lock/getRestraintByUUID");
 
 /************
  * Attempts to perform an action on a user, if they are eligible. Actions are on a per restraint basis with a randomized cooldown based on config. 
@@ -40,17 +41,22 @@ const { getProcessVariable } = require("../getters/config/getProcessVariable");
  * - (server id) serverID - The server this is running on
  * - (user id) userID - The user whose keys are held by Gagbot
  ************/
-async function rollGagbotKeyAction(serverID, userID, type) {
+async function rollGagbotKeyAction(serverID, userID, uuid) {
     traceFirstParam(arguments[0]);
     try {
         let heldkeys = process.heldkeytimers ?? {};
-        if (type == "chastity" && !getChastity(serverID, userID)) {
+        let restrainttype = getItemType(getRestraintByUUID(uuid)?.restraint)
+        if (!restrainttype) {
+            console.log(`Invalid uuid: ${uuid}`)
             return;
         }
-        if (type == "chastitybra" && !getChastityBra(serverID, userID)) {
+        if (restrainttype == "chastity" && !getChastity(serverID, userID)) {
             return;
         }
-        if (type == "collar" && !getCollar(serverID, userID)) {
+        if (restrainttype == "chastitybra" && !getChastityBra(serverID, userID)) {
+            return;
+        }
+        if (restrainttype == "collar" && !getCollar(serverID, userID)) {
             return;
         }
         if (getOption(serverID, userID, "gagbotheldkeyaction") == "disabled") { 
@@ -61,23 +67,23 @@ async function rollGagbotKeyAction(serverID, userID, type) {
             // This user has not spoken recently. Ignore them for now. 
             return;
         }
-        if (heldkeys[`${serverID}_${userID}_${type}`] == undefined) {
+        if (heldkeys[`${serverID}_${userID}_${uuid}`] == undefined) {
             return;
         }
-        if (heldkeys[`${serverID}_${userID}_${type}`].lastaction == undefined) {
+        if (heldkeys[`${serverID}_${userID}_${uuid}`].lastaction == undefined) {
             // No timer to start with, so lets add some random time up to 5 minutes to the held key timer. 
-            heldkeys[`${serverID}_${userID}_${type}`].lastaction = (Date.now() + Math.floor(Math.random() * 300000))
+            heldkeys[`${serverID}_${userID}_${uuid}`].lastaction = (Date.now() + Math.floor(Math.random() * 300000))
             return;
         }
         if ((process.recentgagbotaction ?? 0) > (Date.now())) {
             // Only allowed to perform up to one action per 15 seconds, globally
             return;
         }
-        if (heldkeys[`${serverID}_${userID}_${type}`] && ((heldkeys[`${serverID}_${userID}_${type}`].lastaction ?? 0) < Date.now())) {
+        if (heldkeys[`${serverID}_${userID}_${uuid}`] && ((heldkeys[`${serverID}_${userID}_${uuid}`].lastaction ?? 0) < Date.now())) {
             let guild = process.client.guilds.cache.get(serverID);
             let interactionuser = await guild.members.me
             let targetuser = await guild.members.fetch(userID)
-            if (type == "collar" && getCollar(serverID, userID)) {
+            if (restrainttype == "collar" && getCollar(serverID, userID)) {
                 // Gagbot can choose to do either a chastity device, mittens, heavy bondage, or a mask
                 let eligibletypes = [];
                 ["mitten", "chastity", "heavy", "mask"].forEach((f) => {
@@ -114,7 +120,7 @@ async function rollGagbotKeyAction(serverID, userID, type) {
                         }
                         messageSendChannel(getText(data), getRecentChannel(serverID, userID).messagechannelid)
                         removeMitten(serverID, userID);
-                        heldkeys[`${serverID}_${userID}_${type}`].lastaction = (Date.now() + (Math.floor(getOption(serverID, userID, "gagbotheldkeyaction") * (0.5 + Math.random() * 0.5))))
+                        heldkeys[`${serverID}_${userID}_${uuid}`].lastaction = (Date.now() + (Math.floor(getOption(serverID, userID, "gagbotheldkeyaction") * (0.5 + Math.random() * 0.5))))
                     }
                     else {
                         // Add some mittens!
@@ -138,7 +144,7 @@ async function rollGagbotKeyAction(serverID, userID, type) {
                         if (getAllowedExtreme(serverID, interactionuser, targetuser, "mittens", chosenmitten) && !userHasTags(serverID, userID, getItemTags(chosenmitten, true))) {
                             messageSendChannel(getText(data), getRecentChannel(serverID, userID).messagechannelid)
                             assignMitten(serverID, userID, chosenmitten, interactionuser.id);
-                            heldkeys[`${serverID}_${userID}_${type}`].lastaction = (Date.now() + (Math.floor(getOption(serverID, userID, "gagbotheldkeyaction") * (0.5 + Math.random() * 0.5))))
+                            heldkeys[`${serverID}_${userID}_${uuid}`].lastaction = (Date.now() + (Math.floor(getOption(serverID, userID, "gagbotheldkeyaction") * (0.5 + Math.random() * 0.5))))
                             markForSave("heldkeytimers");
                             process.recentgagbotaction = (Date.now() + 15000)
                             setProcessVariable(serverID, userID, "recentgagbotactionitem", chosenmitten)
@@ -166,7 +172,7 @@ async function rollGagbotKeyAction(serverID, userID, type) {
                         if (getAllowedExtreme(serverID, interactionuser, targetuser, "chastity", chosenchastity) && !userHasTags(serverID, userID, getItemTags(chosenchastity, true))) {
                             messageSendChannel(getText(data), getRecentChannel(serverID, userID).messagechannelid)
                             assignChastity(serverID, userID, interactionuser.id, chosenchastity);
-                            heldkeys[`${serverID}_${userID}_${type}`].lastaction = (Date.now() + (Math.floor(getOption(serverID, userID, "gagbotheldkeyaction") * (0.5 + Math.random() * 0.5))))
+                            heldkeys[`${serverID}_${userID}_${uuid}`].lastaction = (Date.now() + (Math.floor(getOption(serverID, userID, "gagbotheldkeyaction") * (0.5 + Math.random() * 0.5))))
                             markForSave("heldkeytimers");
                             process.recentgagbotaction = (Date.now() + 15000)
                             setProcessVariable(serverID, userID, "recentgagbotactionitem", chosenchastity)
@@ -191,7 +197,7 @@ async function rollGagbotKeyAction(serverID, userID, type) {
                         if (getAllowedExtreme(serverID, interactionuser, targetuser, "chastity", chosenchastity) && !userHasTags(serverID, userID, getItemTags(chosenchastity, true))) {
                             messageSendChannel(getText(data), getRecentChannel(serverID, userID).messagechannelid)
                             assignChastityBra(serverID, userID, interactionuser.id, chosenchastity);
-                            heldkeys[`${serverID}_${userID}_${type}`].lastaction = (Date.now() + (Math.floor(getOption(serverID, userID, "gagbotheldkeyaction") * (0.5 + Math.random() * 0.5))))
+                            heldkeys[`${serverID}_${userID}_${uuid}`].lastaction = (Date.now() + (Math.floor(getOption(serverID, userID, "gagbotheldkeyaction") * (0.5 + Math.random() * 0.5))))
                             markForSave("heldkeytimers");
                             process.recentgagbotaction = (Date.now() + 15000)
                             setProcessVariable(serverID, userID, "recentgagbotactionitem", chosenchastity)
@@ -231,7 +237,7 @@ async function rollGagbotKeyAction(serverID, userID, type) {
                     if (getAllowedExtreme(serverID, interactionuser, targetuser, "heavy", chosenheavy) && !getHeavy(serverID, userID, chosenheavy) && !userHasTags(serverID, userID, getItemTags(chosenheavy, true))) {
                         messageSendChannel(getText(data), getRecentChannel(serverID, userID).messagechannelid)
                         assignHeavy(serverID, userID, chosenheavy, interactionuser.id, data.textdata.c3);
-                        heldkeys[`${serverID}_${userID}_${type}`].lastaction = (Date.now() + (Math.floor(getOption(serverID, userID, "gagbotheldkeyaction") * (0.5 + Math.random() * 0.5))))
+                        heldkeys[`${serverID}_${userID}_${uuid}`].lastaction = (Date.now() + (Math.floor(getOption(serverID, userID, "gagbotheldkeyaction") * (0.5 + Math.random() * 0.5))))
                         markForSave("heldkeytimers");
                         process.recentgagbotaction = (Date.now() + 15000)
                         setProcessVariable(serverID, userID, "recentgagbotactionitem", chosenheavy)
@@ -263,7 +269,7 @@ async function rollGagbotKeyAction(serverID, userID, type) {
                     }
                 }
             }
-            else if ((type == "chastity") || (type == "chastitybra")) {
+            else if ((restrainttype == "chastity") || (restrainttype == "chastitybra")) {
                 let coinflip = (Math.floor(Math.random() * 100) % 4); // 25% chance for removing, 75% adding
                 let intensity = Math.min(1 + Math.floor(20 - (20 * (Math.random() * Math.random()))), 20) // 1-20, weighted higher towards higher numbers. 
 
@@ -307,7 +313,7 @@ async function rollGagbotKeyAction(serverID, userID, type) {
                     }
                     messageSendChannel(getText(data), getRecentChannel(serverID, userID).messagechannelid)
                     assignToy(serverID, userID, interactionuser.id, intensity, chosentoy, interactionuser.id);
-                    heldkeys[`${serverID}_${userID}_${type}`].lastaction = (Date.now() + (Math.floor(getOption(serverID, userID, "gagbotheldkeyaction") * (0.5 + Math.random() * 0.5))))
+                    heldkeys[`${serverID}_${userID}_${uuid}`].lastaction = (Date.now() + (Math.floor(getOption(serverID, userID, "gagbotheldkeyaction") * (0.5 + Math.random() * 0.5))))
                     markForSave("heldkeytimers");
                     process.recentgagbotaction = (Date.now() + 15000)
                     setProcessVariable(serverID, userID, "recentgagbotactionitem", chosentoy)
@@ -341,7 +347,7 @@ async function rollGagbotKeyAction(serverID, userID, type) {
                     }
                     messageSendChannel(getText(data), getRecentChannel(serverID, userID).messagechannelid)
                     removeToy(serverID, userID, interactionuser.id, chosentoy);
-                    heldkeys[`${serverID}_${userID}_${type}`].lastaction = (Date.now() + (Math.floor(getOption(serverID, userID, "gagbotheldkeyaction") * (0.5 + Math.random() * 0.5))))
+                    heldkeys[`${serverID}_${userID}_${uuid}`].lastaction = (Date.now() + (Math.floor(getOption(serverID, userID, "gagbotheldkeyaction") * (0.5 + Math.random() * 0.5))))
                     markForSave("heldkeytimers");
                     process.recentgagbotaction = (Date.now() + 15000)
                     setProcessVariable(serverID, userID, "recentgagbotactionitem", chosentoy)

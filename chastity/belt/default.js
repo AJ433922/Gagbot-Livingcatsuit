@@ -1,5 +1,7 @@
-const { canAccessChastity } = require("../../functions/getters/chastity/canAccessChastity")
-const { getOption } = require("../../functions/getters/config/getOption")
+const { canAccessChastity } = require("../../functions/getters/chastity/canAccessChastity");
+const { getChastity } = require("../../functions/getters/chastity/getChastity");
+const { getOption } = require("../../functions/getters/config/getOption");
+const { getBaseLock } = require("../../functions/getters/lock/getBaseLock");
 const { rollKeyFumble, discardKey } = require("../../functions/keyfindingfunctions")
 const { removeChastity } = require("../../functions/setters/chastity/removeChastity");
 
@@ -33,7 +35,7 @@ exports.discard = (data) => {
 
 exports.canUnequip = (data) => { return canAccessChastity(data.serverID, data.userID, data.keyholderID, true).access }
 
-exports.canAccessToys = (data) => { return (canAccessChastity(data.serverID, data.userID, data.keyholderID).access) }
+exports.canAccessToys = (data) => { return (getChastity(data.serverID, data.userID).lock ? getBaseLock(getChastity(data.serverID, data.userID).lock.locktype).canAccessLock({ uuid: getChastity(data.serverID, data.userID).lock.uuid, userID: data.keyholderID }) : (data.userID == data.keyholderID) ) }
 
 exports.canAccessCorset = (data) => { return (canAccessChastity(data.serverID, data.userID, data.keyholderID).access) }
 

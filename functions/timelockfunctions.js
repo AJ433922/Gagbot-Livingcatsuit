@@ -19,6 +19,14 @@ const { getCollar } = require("./getters/collar/getCollar.js");
 const { getRecentChannel } = require("./getters/config/getRecentChannel.js");
 const { rollGagbotKeyAction } = require("./timebased/rollGagbotKeyAction.js");
 const { deleteHeldKeyTimers } = require("./setters/config/deleteHeldKeyTimers.js");
+const { getRestraintByUUID } = require("./getters/lock/getRestraintByUUID.js");
+const { getItemType } = require("./getters/config/getItemType.js");
+const { getGags } = require("./getters/gag/getGags.js");
+const { getHeadwear } = require("./getters/headwear/getHeadwear.js");
+const { getMitten } = require("./getters/mitten/getMitten.js");
+const { getHeavyList } = require("./getters/heavy/getHeavyList.js");
+const { getToys } = require("./getters/toy/getToys.js");
+const { getCorset } = require("./getters/corset/getCorset.js");
 
 // returns whether the locking was successful
 function timelockChastity(serverID, client, wearer, keyholder, unlockTime, access, keyholderAfter, webhookchannel) {
@@ -204,23 +212,127 @@ async function sendTimelockCollarUnlockMessage(serverID, client, wearer, keyhold
 }
 
 function checkGagbotKeys() {
-    Object.keys(process.collar).forEach((server) => {
-        getCollarKeys(server, process.client.user.id).forEach((k) => {
-            gagbotHeldKeyTime(server, k, "collar");
-        })
-    })
-    
-    Object.keys(process.chastity).forEach((server) => {
-        getChastityKeys(server, process.client.user.id).forEach((k) => {
-            gagbotHeldKeyTime(server, k, "chastity");
-        })
-    })
-    
-    Object.keys(process.chastitybra).forEach((server) => {
-        getChastityBraKeys(server, process.client.user.id).forEach((k) => {
-            gagbotHeldKeyTime(server, k, "chastitybra");
-        })
-    })
+    if (process.gags) {
+		Object.keys(process.gags).forEach((serverid) => {
+			Object.keys(process.gags[serverid]).forEach((userid) => {
+                getGags(serverid, userid).forEach((g) => {
+                    if (g.lock && (g.lock.keyholderID == process.client.user.id)) {
+                        gagbotHeldKeyTime(serverid, userid, g.lock.uuid);
+                    }
+                });
+		    });
+        });
+	}
+	// Headwear
+	if (process.headwear) {
+		Object.keys(process.headwear).forEach((serverid) => {
+            Object.keys(process.headwear[serverid]).forEach((userid) => {
+                getHeadwear(serverid, userid).forEach((h) => {
+                    if (h.lock && (h.lock.keyholderID == process.client.user.id)) {
+                        gagbotHeldKeyTime(serverid, userid, h.lock.uuid);
+                    }
+                });
+            });
+		});
+	}
+	// Mittens
+	if (process.mitten) {
+		Object.keys(process.mitten).forEach((serverid) => {
+            Object.keys(process.mitten[serverid]).forEach((userid) => {
+                if (getMitten(serverid, userid)) {
+                    if (getMitten(serverid, userid).lock && (getMitten(serverid, userid).lock.keyholderID == process.client.user.id)) {
+                        gagbotHeldKeyTime(serverid, userid, getMitten(serverid, userid).lock.uuid);
+                    }
+                }
+            });
+		});
+	}
+	// Heavy Bondage
+	if (process.heavy) {
+		Object.keys(process.heavy).forEach((serverid) => {
+            Object.keys(process.heavy[serverid]).forEach((userid) => {
+                if (getHeavyList(serverid, userid).length > 0) {
+                    getHeavyList(serverid, userid).forEach((h) => {
+                        if (h.lock && (h.lock.keyholderID == process.client.user.id)) {
+                            gagbotHeldKeyTime(serverid, userid, h.lock.uuid);
+                        }
+                    })
+                }
+            });
+        });
+	}
+    // Chastity Belts
+	if (process.chastity) {
+		Object.keys(process.chastity).forEach((serverid) => {
+            Object.keys(process.chastity[serverid]).forEach((userid) => {
+                if (getChastity(serverid, userid)) {
+                    if (getChastity(serverid, userid).lock && (getChastity(serverid, userid).lock.keyholderID == process.client.user.id)) {
+                        gagbotHeldKeyTime(serverid, userid, getChastity(serverid, userid).lock.uuid);
+                    }
+                }
+            });
+        });
+	}
+    // Chastity Bras
+	if (process.chastitybra) {
+		Object.keys(process.chastitybra).forEach((serverid) => {
+            Object.keys(process.chastitybra[serverid]).forEach((userid) => {
+                if (getChastityBra(serverid, userid)) {
+                    if (getChastityBra(serverid, userid).lock && (getChastityBra(serverid, userid).lock.keyholderID == process.client.user.id)) {
+                        gagbotHeldKeyTime(serverid, userid, getChastityBra(serverid, userid).lock.uuid);
+                    }
+                }
+            });
+        });
+	}
+	// Wearables
+	/*if (process.wearable) {
+		Object.keys(process.wearable).forEach((serverid) => {
+            Object.keys(process.wearable[serverid]).forEach((userid) => {
+                getWearable(serverid, userid).forEach((h) => {
+                    if (process.eventfunctions.wearable && process.eventfunctions.wearable[h] && process.eventfunctions.wearable[h].tick) {
+                        process.eventfunctions.wearable[h].tick(serverid, userid);
+                    }
+                });
+            });
+        });
+	}*/
+    // Toys
+    if (process.toys) {
+		Object.keys(process.toys).forEach((serverid) => {
+            Object.keys(process.toys[serverid]).forEach((userid) => {
+                getToys(serverid, userid).forEach((h) => {
+                    if (h.lock && (h.lock.keyholderID == process.client.user.id)) {
+                        gagbotHeldKeyTime(serverid, userid, h.lock.uuid);
+                    }
+                });
+            });
+        });
+	}
+    // Collars
+    if (process.collar) {
+		Object.keys(process.collar).forEach((serverid) => {
+            Object.keys(process.collar[serverid]).forEach((userid) => {
+                if (getCollar(serverid, userid)) {
+                    if (getCollar(serverid, userid).lock && (getCollar(serverid, userid).lock.keyholderID == process.client.user.id)) {
+                        gagbotHeldKeyTime(serverid, userid, getCollar(serverid, userid).lock.uuid);
+                    }
+                }
+            });
+        });
+	}
+    // Corset
+	if (process.corset) {
+		Object.keys(process.corset).forEach((serverid) => {
+            Object.keys(process.corset[serverid]).forEach((userid) => {
+                if (getCorset(serverid, userid)) {
+                    if (getCorset(serverid, userid).lock && (getCorset(serverid, userid).lock.keyholderID == process.client.user.id)) {
+                        gagbotHeldKeyTime(serverid, userid, getCorset(serverid, userid).lock.uuid);
+                    }
+                }
+            });
+		});
+	}
     
     if (process.heldkeytimers) {
         Object.keys(process.heldkeytimers).forEach((k) => {
@@ -248,8 +360,16 @@ function gagbotHeldKeyTime(serverID, wearerid, type) {
         markForSave("heldkeytimers");
     }
     else {
-        if ((process[type] && process[type][serverID] && process[type][serverID][wearerid] && (process[type][serverID][wearerid].keyholder != process.client.user.id)) || (process[type][serverID][wearerid] == undefined)) { // Key somehow returned to the wearer, or the device was removed
-            deleteHeldKeyTimers(serverID, wearerid, type);
+        let restrainttype = getItemType(getRestraintByUUID(type)?.restraint)
+        if (!restrainttype) {
+            console.log(process.heldkeytimers);
+            delete process.heldkeytimers[`${serverID}_${wearerid}_${type}`]
+            markForSave("heldkeytimers");
+            return;
+        }
+        if (restrainttype == "mask") { restrainttype = "headwear" };
+        if ((process[restrainttype] && process[restrainttype][serverID] && process[restrainttype][serverID][wearerid] && process[restrainttype][serverID][wearerid]?.lock && (process[restrainttype][serverID][wearerid].lock.keyholderID != process.client.user.id)) || !(process[restrainttype] && process[restrainttype][serverID] && process[restrainttype][serverID][wearerid] && process[restrainttype][serverID][wearerid].lock)) { // Key somehow returned to the wearer, or the device was removed
+            deleteHeldKeyTimers(serverID, wearerid, restrainttype);
             return;
         }
         if (process.heldkeytimers[`${serverID}_${wearerid}_${type}`].releasetime < Date.now()) {
@@ -258,20 +378,10 @@ function gagbotHeldKeyTime(serverID, wearerid, type) {
                 interactionuser: process.client.user,
                 targetuser: { id: wearerid },
             }
-            if (process[type] && process[type][serverID] && process[type][serverID][wearerid] && process[type][serverID][wearerid].keyholder == process.client.user.id) {
-                messageSendChannel(getTextGeneric(`return_key_${type}`, data), getRecentChannel(serverID, wearerid).channelid)
-                if (type == "collar") { 
-                    transferCollarKey(serverID, wearerid, wearerid) 
-                    markForSave("collar");
-                }
-                if (type == "chastity") { 
-                    transferChastityKey(serverID, wearerid, wearerid) 
-                    markForSave("chastity");
-                }
-                if (type == "chastitybra") { 
-                    transferChastityBraKey(serverID, wearerid, wearerid) 
-                    markForSave("chastitybra");
-                }
+            if (process[restrainttype] && process[restrainttype][serverID] && process[restrainttype][serverID][wearerid] && process[restrainttype][serverID][wearerid].lock && process[restrainttype][serverID][wearerid].lock.keyholderID == process.client.user.id) {
+                messageSendChannel(getTextGeneric(`return_key_${restrainttype}`, data), getRecentChannel(serverID, wearerid).channelid)
+                getRestraintByUUID(type).restraint.lock.keyholderID = wearerid;
+                markForSave(restrainttype);
             }
             delete process.heldkeytimers[`${serverID}_${wearerid}_${type}`]
             markForSave("heldkeytimers");
@@ -284,7 +394,7 @@ function gagbotHeldKeyTime(serverID, wearerid, type) {
  * This is a random time between 40% and 100% and shouldn't prefer the 40% like the old approach did.
  * 
  * - (server id) serverID - The server this is running on
- * - (wearer id) wearer - The user id of the person wearing the locked device
+ * - (user id) wearer - The user id of the person wearing the locked device
  * ---
  * ##### Return the time in milliseconds that Gagbot should hold onto the key.
  **********/

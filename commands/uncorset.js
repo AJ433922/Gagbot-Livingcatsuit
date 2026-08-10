@@ -14,6 +14,7 @@ const { canAccessChastity } = require("../functions/getters/chastity/canAccessCh
 const { getBaseChastity } = require("../functions/getters/chastity/getBaseChastity.js");
 const { getOption } = require("../functions/getters/config/getOption.js");
 const { removeCorset } = require("../functions/setters/corset/removeCorset.js");
+const { canRemoveLock } = require("../functions/getters/lock/canRemoveLock.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -48,15 +49,7 @@ module.exports = {
 					if (getCorset(interaction.guildId, corsetuser.id)) {
 						// We are wearing a corset!
 						data.corset = true;
-						if (getChastity(interaction.guildId, corsetuser.id)) {
-							// We're in a chastity belt!
-							data.chastity = true;
-							interaction.reply(getText(data));
-						} else {
-							// We're not belted
-							data.nochastity = true;
-							interaction.reply(getText(data));
-						}
+						interaction.reply(getText(data));
 					} else {
 						// We're not in a corset
 						data.nocorset = true;
@@ -68,15 +61,7 @@ module.exports = {
 					if (getCorset(interaction.guildId, corsetuser.id)) {
 						// They are wearing a corset!
 						data.corset = true;
-						if (getChastity(interaction.guildId, orsetuser.id)) {
-							// They're in a chastity belt!
-							data.chastity = true;
-							interaction.reply(getText(data));
-						} else {
-							// They're not belted
-							data.nochastity = true;
-							interaction.reply(getText(data));
-						}
+						interaction.reply(getText(data));
 					} else {
 						// They're not in a corset
 						data.nocorset = true;
@@ -92,45 +77,23 @@ module.exports = {
 					if (getCorset(interaction.guildId, corsetuser.id)) {
 						// We are wearing a corset!
 						data.corset = true;
-						if (getChastity(interaction.guildId, corsetuser.id)) {
-							// We're in a chastity belt!
-							data.chastity = true;
-							if (canAccessChastity(interaction.guildId, corsetuser.id, interaction.user.id).access) {
-								// We own the key for the chastity belt
-								data.key = true;
-								const fumbleResult = getBaseChastity(getChastity(interaction.guildId, corsetuser.id).chastitytype).fumble({ serverID: interaction.guildId, userID: corsetuser.id, keyholderID: interaction.user.id })
-								if (fumbleResult > 0) {
-									// We fumbled the key
-									data.fumble = true;
-									if ((getOption(interaction.guildId, corsetuser.id, "keyloss") == "enabled") && fumbleResult > 1) {
-										// We lost the key while fumbling
-										data.discard = true;
-										let discardresult = getBaseChastity(getChastity(interaction.guildId, corsetuser.id).chastitytype ?? "belt_silver").discard({ serverID: interaction.guildId, userID: corsetuser.id, keyholderID: interaction.user.id })
-										data[discardresult] = true;
-										interaction.reply(getText(data));
-									} else {
-										data.nodiscard = true;
-										interaction.reply(getText(data));
-									}
-								} else {
-									// We didnt fumble!
-									data.nofumble = true;
-									interaction.reply(getText(data));
-									removeCorset(interaction.guildId, corsetuser.id);
-								}
-							}
-							// Note, no public access to our own belt!
-							else {
-								// We do not own the key for the belt!
-								data.nokey = true;
-								interaction.reply(getText(data));
-							}
-						} else {
-							// We're not belted
-							data.nochastity = true;
-							interaction.reply(getText(data));
-							removeCorset(interaction.guildId, corsetuser.id);
-						}
+                        if (getCorset(interaction.guildId, corsetuser.id)?.lock && !canRemoveLock(interaction.guildId, corsetuser.id, interaction.user.id, getCorset(interaction.guildId, corsetuser.id).lock.uuid)) {
+                            // The corset is locked and we aren't permitted to remove it 
+                            data.noaccess = true;
+                            interaction.reply(getText(data));
+                        }
+                        else if (getCorset(interaction.guildId, corsetuser.id)?.lock) {
+                            // Locked, but we have the ability to remove it. 
+                            data.locked = true;
+                            interaction.reply(getText(data));
+                            removeCorset(interaction.guildId, corsetuser.id);
+                        }
+                        else {
+                            // Corset is NOT locked, so it can just be removed. 
+                            data.nolocked = true;
+                            interaction.reply(getText(data));
+                            removeCorset(interaction.guildId, corsetuser.id);
+                        }
 					} else {
 						// We're not in a corset
 						data.nocorset = true;

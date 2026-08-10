@@ -13,7 +13,7 @@ const { loadHeadwearTypes } = require('./functions/headwearfunctions.js')
 const { setUpCorsets } = require('./functions/corsetfunctions.js');
 const { setUpLocks } = require('./functions/lockfunctions.js');
 const { assignMemeImages, generateListTexts } = require('./functions/interactivefunctions.js');
-const { backupsAreAnnoying, saveFiles, processUnlockTimes, processTimedEvents, importFileNames, scavengeUsers, removeOldMessages } = require('./functions/timefunctions.js');
+const { backupsAreAnnoying, saveFiles, processUnlockTimes, processTimedEvents, importFileNames, scavengeUsers, removeOldMessages, removeOldLockAwaiting } = require('./functions/timefunctions.js');
 const { loadEmoji } = require("./functions/messagefunctions.js");
 const { loadWearables } = require("./functions/wearablefunctions.js");
 const { setGlobalCommands, loadWebhooks } = require('./functions/configfunctions.js');
@@ -79,6 +79,8 @@ process.on('uncaughtExceptionMonitor', (err,origin) => {
 
 // Assign nsfwflag to true. /debug process.nsfwflag = false to forcibly set nsfw commands to sfw. Not recommended, Discord API says this is not allowed.
 process.nsfwflag = true
+
+process.awaitinglockinteractions = {};
 
 // If they never changed from the default in .env.md, use base directory. 
 if (process.env.GAGBOTFILEDIRECTORY === "Z:\\Somewhere\\I\\Belong\\") { process.env.GAGBOTFILEDIRECTORY = "." }
@@ -252,6 +254,7 @@ client.on("clientReady", async () => {
 
         scavengeUsers(client);
         removeOldMessages(); 
+        removeOldLockAwaiting();
         setInterval(() => {
             try {
                 scavengeUsers(client);
@@ -259,6 +262,7 @@ client.on("clientReady", async () => {
             catch (err) { console.log(err) }
             try {
                 removeOldMessages();
+                removeOldLockAwaiting();
             }
             catch (err) { console.log(err) }
         }, 3600000);
@@ -338,6 +342,16 @@ client.on('interactionCreate', async (interaction) => {
             let interactioncommand = interaction.customId.split("_")[0]
             if (interactioncommand == "webhookedit") {
                 interactioncommand = "Edit Message"
+            }
+            else if (interactioncommand == "lockconfig") {
+                let lockfromuuid = getLockAwaiting(interaction.customId.split("_")[1])
+                if (!lockfromuuid) { 
+                    console.log(`Invalid lock`)
+                    console.log(interaction);
+                    return;
+                }
+                let configfunc = process.locktypes[lockfromuuid.locktype]
+                configfunc.lockinteractionmodalresponse(interaction); 
             }
             else if (interactioncommand == "modalevent") {
                 if (process.eventfunctions) {

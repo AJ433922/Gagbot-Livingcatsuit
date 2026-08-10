@@ -23,7 +23,7 @@ function removeLock(uuid, interactionuser) {
     baselock.onUnlock({ serverID: lock.serverID, userID: lock.userID, keyholderID: lock.keyholderID, uuid: uuid })
 
     let targettype = (lock.userID == interactionuser.id) ? "self" : "other"
-    sendLockToast({ serverID: lock.serverID, userID: lock.userID, actionuser: interactionuser.id, actiontype: "unlock", locktype: "simplepadlock", targettype: targettype, restraintname: getItemName(restraint) })
+    sendLockToast({ serverID: lock.serverID, userID: lock.userID, actionuser: interactionuser.id, actiontype: "unlock", locktype: lock.locktype ?? "defaultlock", targettype: targettype, restraintname: getItemName(restraint) })
     
     delete restraint.lock; // Remove the lock after completing the onUnlock function. 
     markForSave(getItemType(restraint))

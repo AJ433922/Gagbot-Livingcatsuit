@@ -2,6 +2,9 @@ const { ButtonStyle, ButtonBuilder, ActionRowBuilder, TextDisplayBuilder, Messag
 const { getLockAwaiting } = require("../functions/getters/lock/getLockAwaiting");
 const { removeLockAwaiting } = require("../functions/setters/lock/removeLockAwaiting");
 const { removeLock } = require("../functions/setters/lock/removeLock");
+const { getRestraintByUUID } = require("../functions/getters/lock/getRestraintByUUID");
+const { markForSave } = require("../functions/other/markForSave");
+const { getItemType } = require("../functions/getters/config/getItemType");
 
 // This is the base definition for a lock that is affixed to a restraint. Any new functionality that references a property
 // should have that reference here to ensure all locks are constructed with a default. 
@@ -13,19 +16,22 @@ function Lock() {
     this.canAddLock = (data) => { return true };
 
     // The condition to allow access to the item this lock is on
-    this.canAccessLock = (data) => { return true };
+    this.canAccessLock = (data) => { return false };
 
     // The condition to allow adding clonedKeyholders
-    this.canCloneKeys = (data) => { return true };
+    this.canCloneKeys = (data) => { return false };
 
     // The condition to allow removing clonedKeyholders
-    this.canRemoveCloneKeys = (data) => { return true };
+    this.canRemoveCloneKeys = (data) => { return false };
+
+    // The condition for removing self from clonedKeyholders
+    this.canRevokeSelfClone = (data) => { return false };
 
     // The condition to allow transferring primary keyholder
-    this.canTransfer = (data) => { return true };
+    this.canTransfer = (data) => { return false };
 
     // The condition to allow unlocking this lock
-    this.canUnlock = (data) => { return true };
+    this.canUnlock = (data) => { return false };
 
     // Events
     // Called immediately after applying the lock
@@ -48,6 +54,7 @@ function Lock() {
 
     // Remove this lock
     this.removeLock = (data) => {
+        markForSave(getItemType(getRestraintByUUID(data.uuid)?.restraint))
         removeLock(data.uuid, { id: data.keyholderID });
     }
 
@@ -58,6 +65,7 @@ function Lock() {
         if (data.param && data.value) {
             lock[data.param] = data.value;
         }
+        markForSave(getItemType(getRestraintByUUID(data.uuid)?.restraint))
     }
 
     // Modify Host Restraint - This generally should NOT be needed.
@@ -67,6 +75,7 @@ function Lock() {
         if (data.param && data.value) {
             lock[data.param] = data.value;
         }
+        markForSave(getItemType(getRestraintByUUID(data.uuid)?.restraint))
     }
 
     // Engage the awaiting lock
@@ -83,12 +92,23 @@ function Lock() {
         }
         // Clear the awaiting object whether we were able to use it or not
         removeLockAwaiting(data.uuid);
+        markForSave(getItemType(getRestraintByUUID(data.uuid)?.restraint))
     }
 
     // Initialize lock
     this.initializeLock = function (data) {
         let lock = getLockAwaiting(data.uuid);
         return true;
+    }
+
+    // Display Lock Status
+    this.lockStatus = function (data) {
+        return `Locked with a ${this.name}`
+    }
+
+    // Extended Lock Status (on restraints page)
+    this.extendedLockStatus = function (data) {
+        return `Locked with a ${this.name}`
     }
 
     // Base Data
@@ -168,6 +188,15 @@ function Lock() {
         if (menuinteraction) {
             this.lockinteraction(menuinteraction, { uuid: uuid });
         }
+    }
+
+    /********
+     * When prompting for permission, this is supplied in the DM message to the target. Should include all relevant info about the lock. 
+     * 
+     ********/
+    this.applyPermissionModal = function (lockawaiting) {
+        console.log(`Accessing the applyPermissionModal for ${lockawaiting.locktype} but none was specified!`)
+        return "";
     }
 }
 

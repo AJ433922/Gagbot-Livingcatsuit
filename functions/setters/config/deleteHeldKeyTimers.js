@@ -7,14 +7,16 @@
  * ---
  * ##### *No return value*
  ***********/
-function deleteHeldKeyTimers(serverID, userID, restraint) {
-    if (restraint && process.heldkeytimers) {
-        delete process.heldkeytimers[`${serverID}_${userID}_${restraint}`]
+function deleteHeldKeyTimers(serverID, userID, uuid) {
+    if (process.heldkeytimers) {
+        delete process.heldkeytimers[`${serverID}_${userID}_${uuid}`]
     }
     else {
-        delete process.heldkeytimers[`${serverID}_${userID}_collar`]
-        delete process.heldkeytimers[`${serverID}_${userID}_chastity`]
-        delete process.heldkeytimers[`${serverID}_${userID}_chastitybra`]
+        Object.keys(process.heldkeytimers).forEach((k) => {
+            if (k.startsWith(`${serverID}_${userID}`)) {
+                delete process.heldkeytimers[k];
+            }
+        })
     }
 }
 

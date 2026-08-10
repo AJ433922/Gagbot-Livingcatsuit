@@ -2,7 +2,7 @@
 let fs = require("fs");
 let path = require("path");
 let admZip = require("adm-zip");
-const { unlockTimelockChastity, unlockTimelockChastityBra, unlockTimelockCollar, gagbotHeldKeyTime, checkGagbotKeys } = require(`./timelockfunctions.js`);
+const { unlockTimelockChastity, unlockTimelockChastityBra, unlockTimelockCollar, checkGagbotKeys } = require(`./timelockfunctions.js`);
 const { updateArousalValues } = require("./vibefunctions.js");
 const { updateSharedBreath } = require("./vibefunctions.js");
 const { messageSendChannel } = require("./messagefunctions.js");
@@ -23,6 +23,8 @@ const { isWearingCollar } = require("./getters/collar/isWearingCollar.js");
 const { setUserVar } = require("./setters/config/setUserVar.js");
 const { getRecentChannel } = require("./getters/config/getRecentChannel.js");
 const { processdatatoload } = require("../lists/processdatatoload.js");
+const { removeLock } = require("./setters/lock/removeLock.js");
+const { getCorset } = require("./getters/corset/getCorset.js");
 
 // Takes input string, outputs a date object.
 const parseTime = (text) => {
@@ -208,31 +210,126 @@ function processTimedEvents() {
 
 function processUnlockTimes(client) {
 	let now = Date.now();
+
+    if (process.gags) {
+		Object.keys(process.gags).forEach((serverid) => {
+			Object.keys(process.gags[serverid]).forEach((userid) => {
+                getGags(serverid, userid).forEach((g) => {
+                    if (g.lock && g.lock.unlocktime && (g.lock.unlocktime < now)) {
+                        removeLock(g.lock.uuid, { id: userid })
+                    }
+                });
+		    });
+        });
+	}
+	// Headwear
+	if (process.headwear) {
+		Object.keys(process.headwear).forEach((serverid) => {
+            Object.keys(process.headwear[serverid]).forEach((userid) => {
+                getHeadwear(serverid, userid).forEach((h) => {
+                    if (h.lock && h.lock.unlocktime && (h.lock.unlocktime < now)) {
+                        removeLock(h.lock.uuid, { id: userid })
+                    }
+                });
+            });
+		});
+	}
+	// Mittens
+	if (process.mitten) {
+		Object.keys(process.mitten).forEach((serverid) => {
+            Object.keys(process.mitten[serverid]).forEach((userid) => {
+                if (getMitten(serverid, userid)) {
+                    if (getMitten(serverid, userid).lock && getMitten(serverid, userid).lock.unlocktime && (getMitten(serverid, userid).lock.unlocktime < now)) {
+                        removeLock(getMitten(serverid, userid).lock.uuid, { id: userid })
+                    }
+                }
+            });
+		});
+	}
+	// Heavy Bondage
+	if (process.heavy) {
+		Object.keys(process.heavy).forEach((serverid) => {
+            Object.keys(process.heavy[serverid]).forEach((userid) => {
+                if (getHeavyList(serverid, userid).length > 0) {
+                    getHeavyList(serverid, userid).forEach((h) => {
+                        if (h.lock && h.lock.unlocktime && (h.lock.unlocktime < now)) {
+                            removeLock(h.lock.uuid, { id: userid })
+                        }
+                    })
+                }
+            });
+        });
+	}
+    // Chastity Belts
 	if (process.chastity) {
-		Object.keys(process.chastity).forEach((server) => {
-			Object.keys(process.chastity[server]).forEach((person) => {
-                if (process.chastity[server][person]?.unlockTime < now) {
-                    unlockTimelockChastity(server, client, person);
+		Object.keys(process.chastity).forEach((serverid) => {
+            Object.keys(process.chastity[serverid]).forEach((userid) => {
+                if (getChastity(serverid, userid)) {
+                    if (getChastity(serverid, userid).lock && getChastity(serverid, userid).lock.unlocktime && (getChastity(serverid, userid).lock.unlocktime < now)) {
+                        removeLock(getChastity(serverid, userid).lock.uuid, { id: userid })
+                    }
                 }
-            })
-		});
+            });
+        });
 	}
+    // Chastity Bras
 	if (process.chastitybra) {
-		Object.keys(process.chastitybra).forEach((server) => {
-			Object.keys(process.chastitybra[server]).forEach((person) => {
-                if (process.chastitybra[server][person]?.unlockTime < now) {
-                    unlockTimelockChastityBra(server, client, person);
+		Object.keys(process.chastitybra).forEach((serverid) => {
+            Object.keys(process.chastitybra[serverid]).forEach((userid) => {
+                if (getChastityBra(serverid, userid)) {
+                    if (getChastityBra(serverid, userid).lock && getChastityBra(serverid, userid).lock.unlocktime && (getChastityBra(serverid, userid).lock.unlocktime < now)) {
+                        removeLock(getChastityBra(serverid, userid).lock.uuid, { id: userid })
+                    }
                 }
-            })
-		});
+            });
+        });
 	}
-	if (process.collar) {
-		Object.keys(process.collar).forEach((server) => {
-            Object.keys(process.collar[server]).forEach((person) => {
-                if (process.collar[server][person]?.unlockTime < now) {
-                    unlockTimelockCollar(server, client, person);
+	// Wearables
+	/*if (process.wearable) {
+		Object.keys(process.wearable).forEach((serverid) => {
+            Object.keys(process.wearable[serverid]).forEach((userid) => {
+                getWearable(serverid, userid).forEach((h) => {
+                    if (process.eventfunctions.wearable && process.eventfunctions.wearable[h] && process.eventfunctions.wearable[h].tick) {
+                        process.eventfunctions.wearable[h].tick(serverid, userid);
+                    }
+                });
+            });
+        });
+	}*/
+    // Toys
+    if (process.toys) {
+		Object.keys(process.toys).forEach((serverid) => {
+            Object.keys(process.toys[serverid]).forEach((userid) => {
+                getToys(serverid, userid).forEach((h) => {
+                    if (h.lock && h.lock.unlocktime && (h.lock.unlocktime < now)) {
+                        removeLock(h.lock.uuid, { id: userid })
+                    }
+                });
+            });
+        });
+	}
+    // Collars
+    if (process.collar) {
+		Object.keys(process.collar).forEach((serverid) => {
+            Object.keys(process.collar[serverid]).forEach((userid) => {
+                if (getCollar(serverid, userid)) {
+                    if (getCollar(serverid, userid).lock && getCollar(serverid, userid).lock.unlocktime && (getCollar(serverid, userid).lock.unlocktime < now)) {
+                        removeLock(getCollar(serverid, userid).lock.uuid, { id: userid })
+                    }
                 }
-            })
+            });
+        });
+	}
+    // Corset
+	if (process.corset) {
+		Object.keys(process.corset).forEach((serverid) => {
+            Object.keys(process.corset[serverid]).forEach((userid) => {
+                if (getCorset(serverid, userid)) {
+                    if (getCorset(serverid, userid).lock && getCorset(serverid, userid).lock.unlocktime && (getCorset(serverid, userid).lock.unlocktime < now)) {
+                        removeLock(getCorset(serverid, userid).lock.uuid, { id: userid })
+                    }
+                }
+            });
 		});
 	}
 }
@@ -360,6 +457,18 @@ function runTickEvents() {
                 }
             });
         });
+	}
+    // Mittens
+	if (process.corset) {
+		Object.keys(process.corset).forEach((serverid) => {
+            Object.keys(process.corset[serverid]).forEach((userid) => {
+                if (getCorset(serverid, userid)) {
+                    if (process.eventfunctions.corset && process.eventfunctions.corset[getCorset(serverid, userid).type] && process.eventfunctions.corset[getCorset(serverid, userid).type].tick) {
+                        process.eventfunctions.corset[getCorset(serverid, userid).type].tick(serverid, userid);
+                    }
+                }
+            });
+		});
 	}
 }
 
@@ -497,6 +606,17 @@ async function removeOldMessages() {
     })
 }
 
+// Cull any awaiting lock older than a day. 
+async function removeOldLockAwaiting() {
+    Object.keys(process.awaitinglock).forEach((k) => {
+        if ((process.awaitinglock && process.awaitinglock[k] && ((process.awaitinglock[k].awaitingcreated + 86400000) < Date.now())) || !process.awaitinglock[k]?.awaitingcreated) {
+            console.log(`Deleting awaiting lock with ID ${k}`)
+            delete process.awaitinglock[k];
+            markForSave("awaitinglock")
+        } 
+    })
+}
+
 exports.parseTime = parseTime;
 exports.parseDuration = parseDuration;
 exports.calculateTimeout = calculateTimeout;
@@ -509,3 +629,4 @@ exports.scavengeUsers = scavengeUsers;
 exports.processUnlockTimes = processUnlockTimes;
 exports.processTimedEvents = processTimedEvents;
 exports.removeOldMessages = removeOldMessages;
+exports.removeOldLockAwaiting = removeOldLockAwaiting;

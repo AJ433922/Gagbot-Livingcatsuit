@@ -4,6 +4,7 @@ const { getCollar } = require("../collar/getCollar");
 const { getCorset } = require("../corset/getCorset");
 const { getGag } = require("../gag/getGag");
 const { getHeadwear } = require("../headwear/getHeadwear");
+const { getSpecificHeadwear } = require("../headwear/getSpecificHeadwear");
 const { getHeavy } = require("../heavy/getHeavy");
 const { getMitten } = require("../mitten/getMitten");
 const { getSpecificToy } = require("../toy/getSpecificToy");
@@ -36,7 +37,7 @@ function getUserWornRestraint(serverID, userID, restraint, specific = undefined)
         case "heavy":
             return getHeavy(serverID, userID, specific);
         case "mask":
-            return getHeadwear(serverID, userID)
+            return getSpecificHeadwear(serverID, userID, specific);
         case "toy":
             return getSpecificToy(serverID, userID, specific);
         default:

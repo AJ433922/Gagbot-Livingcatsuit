@@ -109,10 +109,10 @@ module.exports = {
 								interaction.reply({ content: getText(data), flags: MessageFlags.Ephemeral });
 							}
 						} else {
-							// The collar isn't locked, BUT we don't want them to take off our collar. That's our job. 
-							data.nokey = true;
-                            data.nokeyholderonly = true;
+							// The collar isn't locked lol
+							data.nolock = true;
 							interaction.reply(getText(data));
+                            removeCollar(interaction.guildId, collaruser.id);
 						}
 					} else {
 						// They dont have a collar on. Ephemeral

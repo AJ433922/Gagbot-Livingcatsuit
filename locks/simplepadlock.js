@@ -8,6 +8,9 @@ const { getPronouns } = require("../functions/getters/config/getPronouns");
 const { getItemName } = require("../functions/getters/config/getItemName");
 const { sendLockToast } = require("../functions/setters/lock/sendLockToast");
 const { getItemType } = require("../functions/getters/config/getItemType");
+const { handleApplyLock } = require("../functions/lockfunctions");
+const { checkLockAwaiting } = require("../functions/getters/lock/checkLockAwaiting");
+const { getBaseLock } = require("../functions/getters/lock/getBaseLock");
 
 /***********
  * This is a basic keyed padlock for large restraints. It allows for permanent locking to a keyholder. 
@@ -15,11 +18,11 @@ const { getItemType } = require("../functions/getters/config/getItemType");
 
 // The condition to allow access to the item this lock is on
 exports.canAccessLock = (data) => { 
-    let lock = getRestraintByUUID(data.uuid).lock;
-    if (lock.keyholder == data.userID) {
+    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
+    if (lock?.keyholderID == data.userID) {
         return true;
     } 
-    else if (lock.clonedKeyholders && lock.clonedKeyholders.includes(data.userID)) {
+    else if (lock?.clonedKeyholders && lock?.clonedKeyholders?.includes(data.userID)) {
         return true;
     }
 
@@ -28,8 +31,8 @@ exports.canAccessLock = (data) => {
 
 // The condition to allow adding clonedKeyholders
 exports.canCloneKeys = (data) => {
-    let lock = getRestraintByUUID(data.uuid).lock;
-    if (lock.keyholder == data.userID) {
+    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
+    if (lock.keyholderID == data.userID) {
         return true;
     } 
     // If permitted by the lock configuration at the beginning, allow a clone to propagate.
@@ -42,8 +45,8 @@ exports.canCloneKeys = (data) => {
 
 // The condition to allow removing clonedKeyholders
 exports.canRemoveCloneKeys = (data) => {
-    let lock = getRestraintByUUID(data.uuid).lock;
-    if (lock.keyholder == data.userID) {
+    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
+    if (lock.keyholderID == data.userID) {
         return true;
     } 
     // If permitted by the lock configuration at the beginning, allow a clone to propagate.
@@ -56,8 +59,8 @@ exports.canRemoveCloneKeys = (data) => {
 
 // The condition to allow transferring primary keyholder
 exports.canTransfer = (data) => {
-    let lock = getRestraintByUUID(data.uuid).lock;
-    if (lock.keyholder == data.userID) {
+    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
+    if (lock.keyholderID == data.userID) {
         return true;
     } 
 }
@@ -65,33 +68,53 @@ exports.canTransfer = (data) => {
 // The condition to allow removing the lock
 exports.canUnlock = (data) => {
     let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
-    if (lock.keyholderID == data.keyholderID) {
+    if (lock.keyholderID == data.userID) {
+        return true;
+    } 
+    if (lock.clonedKeyholders && lock.clonedKeyholders.includes(data.userID)) {
         return true;
     } 
 }
 
-// Called when changing primary keyholders
+// The condition for removing self from clonedKeyholders
+exports.canRevokeSelfClone = (data) => { 
+    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
+    if (lock.clonedKeyholders && lock.clonedKeyholders.includes(data.userID)) {
+        return true;
+    } 
+};
+
+// Called when changing primary keyholders // Not currently being used lol
 exports.onTransfer = function (data) {
-    this.modifyLock({ uuid: data.uuid, param: "clonedKeyholder", value: [] })
+    this.modifyLock({ uuid: data.uuid, param: "clonedKeyholders", value: [] })
 }
 
 // Modify the keyholder
 // { uuid: uuid, keyholderID: user id }
 exports.modifyKeyholder = function(data) {
-    this.modifyLock({ uuid: data.uuid, param: "keyholder", value: data.keyholderID })
+    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
+    this.modifyLock({ uuid: data.uuid, param: "keyholderID", value: data.userID })
+    if (!lock.preserveclone) {
+        this.modifyLock({ uuid: data.uuid, param: "clonedKeyholders", value: [] })
+    }
+    if (lock.clonedKeyholders && lock.clonedKeyholders.includes(data.userID)) {
+        let currclones = lock.clonedKeyholders;
+        currclones.splice(lock.clonedKeyholders.indexOf(data.userID), 1);
+        this.modifyLock({ uuid: data.uuid, param: "clonedKeyholders", value: currclones });
+    }
 }
 
 // Modify the cloned keyholder
 // { uuid: uuid, keyholderID: user id, add: boolean }
 exports.modifyClones = function(data) {
-    let lock = getRestraintByUUID(data.uuid).lock;
-    let currclones = lock.clonedKeyholders;
-    if (data.add && !lock.clonedKeyholders.includes(data.keyholderID)) {
-        this.modifyLock({ uuid: data.uuid, param: "clonedKeyholder", value: [...currclones, data.keyholderID] })
+    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
+    let currclones = lock.clonedKeyholders ?? [];
+    if (data.add && !currclones.includes(data.userID)) {
+        this.modifyLock({ uuid: data.uuid, param: "clonedKeyholders", value: [...currclones, data.userID] })
     }
-    else if (lock.clonedKeyholders.includes(data.keyholderID)) {
-        currclones.splice(lock.clonedKeyholders.indexOf(data.keyholderID), 1);
-        this.modifyLock({ uuid: data.uuid, param: "clonedKeyholder", value: currclones });
+    else if (lock?.clonedKeyholders?.includes(data.userID)) {
+        currclones.splice(lock?.clonedKeyholders?.indexOf(data.userID), 1);
+        this.modifyLock({ uuid: data.uuid, param: "clonedKeyholders", value: currclones });
     }
 }
 
@@ -179,6 +202,18 @@ exports.lockinteraction = function (interaction, data, update = false) {
         );
     pagecomponents.push(propagatesection)
 
+    // Preserve Clones when transferring
+    let preservesection = new SectionBuilder()
+        .addTextDisplayComponents((text) => text.setContent(`**Preserve cloned keyholders when transferring primary keys?**`))
+        .setButtonAccessory((button) =>
+            button
+                .setCustomId(`lockconfig_${data.uuid}_preserveclone`)
+                .setLabel(getLockAwaiting(data.uuid)?.preserveclone ? "Enabled" : "Disabled")
+                .setStyle(getLockAwaiting(data.uuid)?.preserveclone ? ButtonStyle.Success : ButtonStyle.Danger)
+                .setDisabled(false)
+        );
+    pagecomponents.push(preservesection)
+
     // Ending description text
     let textaboutlock = new TextDisplayBuilder().setContent(`${this.desc}`);
     pagecomponents.push(textaboutlock)
@@ -208,7 +243,7 @@ exports.lockinteraction = function (interaction, data, update = false) {
     }
 }
 
-exports.lockinteractionresponse = function(interaction) {
+exports.lockinteractionresponse = async function(interaction) {
     let splits = interaction.customId.split("_")
     if (splits.length < 3) {
         console.error(`Something went wrong processing the interaction for a lock configuration`)
@@ -229,6 +264,11 @@ exports.lockinteractionresponse = function(interaction) {
     else if (command == "setpropagation") {
         // Flip the bit, if it exists. 
         updateLockAwaiting(uuid, "allowclonetoclone", !getLockAwaiting(uuid)?.allowclonetoclone);
+        this.lockinteraction(interaction, { uuid: uuid }, true);
+    }
+    else if (command == "preserveclone") {
+        // Flip the bit, if it exists. 
+        updateLockAwaiting(uuid, "preserveclone", !getLockAwaiting(uuid)?.preserveclone);
         this.lockinteraction(interaction, { uuid: uuid }, true);
     }
     else if (command == "leavebutton") {
@@ -256,7 +296,7 @@ exports.lockinteractionresponse = function(interaction) {
             let keyholderID = getLockAwaiting(uuid).keyholderID
             let lockrestrainttype = getItemType(getLockAwaiting(uuid).restraintobject)
             let lockrestraint = getLockAwaiting(uuid).restraintname
-            let appliedlock = applyLockAwaiting(uuid);
+            let appliedlock = checkLockAwaiting(uuid);
             let targettype = (userID == interaction.user.id) ? "self" : "other"
             let further = [(keyholderID == interaction.user.id) ? "selflock" : (keyholderID == userID) ? "otherselflock" : "otherlock"]
             let extratext = (further[0] == "other") ? [keyholderID] : undefined;
@@ -267,12 +307,82 @@ exports.lockinteractionresponse = function(interaction) {
                 interaction.update({ components: [new TextDisplayBuilder().setContent(`<@${userID}> is not wearing a ${lockrestraint}!`)] })
             }
             else {
-                interaction.update({ components: [new TextDisplayBuilder().setContent(`Applying lock!`)] })
-                sendLockToast({ serverID: interaction.guildId, userID: userID, actionuser: interaction.user.id, actiontype: "lock", locktype: "simplepadlock", restraintname: lockrestraint, restrainttype: lockrestrainttype, targettype: targettype, extratext: extratext, further: further })
+                await interaction.update({ components: [new TextDisplayBuilder().setContent(`Attempting to apply lock...`)] })
+                await handleApplyLock(interaction.guildId, interaction.user, await interaction.guild.members.fetch(userID), uuid).then(
+                    async (success) => {
+                        await interaction.followUp({ content: `Applying lock!`, flags: MessageFlags.Ephemeral })
+                        applyLockAwaiting(uuid);
+                        if (userID == interaction.user.id) { userID = keyholderID }
+                        sendLockToast({ serverID: interaction.guildId, userID: userID, actionuser: interaction.user.id, actiontype: "lock", locktype: "simplepadlock", restraintname: lockrestraint, restrainttype: lockrestrainttype, targettype: targettype, extratext: extratext, further: further })
+                    },
+                    async (reject) => {
+                        let nomessage = `<@${userID}> rejected the lock on the ${lockrestraint}.`;
+                        if (reject == "Disabled") {
+                            nomessage = `Item locking is currently disabled in <@${userID}>'s settings!`;
+                        }
+                        if (reject == "Error") {
+                            nomessage = `Something went wrong - Submit a bug report!`;
+                        }
+                        if (reject == "NoDM") {
+                            nomessage = `Something went wrong sending a DM to <@${userID}> , or ${getPronouns(interaction.guildId, userID, "subject")} ${getPronouns(interaction.guildId, userID, "subject") == "they" ? `have` : "has"} DMs from this server disabled. Cannot obtain consent for locking the restraint.`;
+                        }
+                        await interaction.followUp({ content: nomessage, flags: MessageFlags.Ephemeral });
+                    },
+                );
             }
         }
         catch (err) {
             console.log(err);
         }
     }
+}
+
+exports.applyPermissionModal = function (lockawaiting) {
+    let text = `🔑 **Keyholder:** Your **keyholder** will be <@${lockawaiting.keyholderID}>. Only ${getPronouns(lockawaiting.serverID, lockawaiting.keyholderID, "subject")} will be able to unlock your restraint.`
+    if (lockawaiting.allowclonetoclone) {
+        text = `${text}\n🤝 **Propagation:** If your **primary key** is cloned, cloned keyholders will be allowed to attempt to make additional clones.`
+    }
+    if (lockawaiting.preserveclone) {
+        text = `${text}\n💾 **Preserve:** If your **primary key** is transferred, cloned keys will not be destroyed on transfer.`
+    }
+    text = `${text}\n\n${getBaseLock(lockawaiting.locktype).desc}`
+    return text;
+}
+
+// Display Lock Status
+exports.lockStatus = function (data) {
+    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock
+    let lockemoji = "🔒"
+    if ((lock.keyholderID == data.userID)) {
+        lockemoji = "🔑"
+    }
+    else if (lock.clonedKeyholders && lock.clonedKeyholders.includes(data.userID)) {
+        lockemoji = process.emojis.keyclone
+    }
+    return `${lockemoji} Locked by <@${lock.keyholderID}>`
+}
+
+// More verbose lock status info
+exports.extendedLockStatus = function (data) {
+    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock
+    let lockemoji = "🔒"
+    if (lock.keyholderID == data.userID) {
+        lockemoji = "🔑"
+    }
+    else if (lock.clonedKeyholders && lock.clonedKeyholders.includes(data.userID)) {
+        lockemoji = process.emojis.keyclone
+    }
+    let textreturn = `${lockemoji} Locked by <@${lock.keyholderID}>`
+    if (lock.clonedKeyholders && (lock.clonedKeyholders.length > 0)) {
+        textreturn = `${textreturn}, Cloned Keys held by `
+        for (let i = 0; i < lock.clonedKeyholders.length; i++) {
+            if (i != 0) {
+                textreturn = `${textreturn}, <@${lock.clonedKeyholders[i]}>`
+            }
+            else {
+                textreturn = `${textreturn}<@${lock.clonedKeyholders[i]}>`
+            }
+        }
+    }
+    return textreturn;
 }
