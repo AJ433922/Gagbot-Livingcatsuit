@@ -1976,7 +1976,7 @@ const texts_lock = {
                         only: (t) => {
                             return (t.c2 == "corset");
                         },
-                        text: `USER_TAG wriggles slightly as USER_THEY place a Simple Padlock on TARGET_TAG's VAR_C1, securing it on the ring of TARGET_THEIR corset! The laces won't loosen until it is removed with USER_THEIR key!`,
+                        text: `USER_TAG wriggles slightly as USER_THEY placeUSER_S a Simple Padlock on TARGET_TAG's VAR_C1, securing it on the ring of TARGET_THEIR corset! The laces won't loosen until it is removed with USER_THEIR key!`,
                     },
                     {
                         only: (t) => {
@@ -2029,7 +2029,7 @@ const texts_lock = {
                         only: (t) => {
                             return (t.c2 == "corset");
                         },
-                        text: `USER_TAG wriggles slightly as USER_THEY place a Simple Padlock on TARGET_TAG's VAR_C1, securing it on the ring of TARGET_THEIR corset! The laces won't loosen until it is removed with the key that USER_THEY just gave to TARGET_THEM!`,
+                        text: `USER_TAG wriggles slightly as USER_THEY placeUSER_S a Simple Padlock on TARGET_TAG's VAR_C1, securing it on the ring of TARGET_THEIR corset! The laces won't loosen until it is removed with the key that USER_THEY just gave to TARGET_THEM!`,
                     },
                     {
                         only: (t) => {
@@ -2082,7 +2082,7 @@ const texts_lock = {
                         only: (t) => {
                             return (t.c2 == "corset");
                         },
-                        text: `USER_TAG wriggles slightly as USER_THEY place a Simple Padlock on TARGET_TAG's VAR_C1, securing it on the ring of TARGET_THEIR corset! The laces won't loosen until it is removed with the key that USER_THEY just gave to <@VAR_C3>!`,
+                        text: `USER_TAG wriggles slightly as USER_THEY placeUSER_S a Simple Padlock on TARGET_TAG's VAR_C1, securing it on the ring of TARGET_THEIR corset! The laces won't loosen until it is removed with the key that USER_THEY just gave to <@VAR_C3>!`,
                     },
                     {
                         only: (t) => {
