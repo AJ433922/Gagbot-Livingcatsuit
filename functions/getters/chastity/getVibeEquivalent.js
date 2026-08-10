@@ -20,6 +20,8 @@ function getVibeEquivalent(serverID, user) {
 
 	let intensity = getArousal(serverID, user);
 	if (intensity >= STUTTER_LIMIT) intensity += calcFrustration(serverID, user) / 20;
+    // Require at least 5 intensity to begin stuttering
+    if (intensity < 5.0) { intensity = 0 }
 	return intensity;
 }
 
