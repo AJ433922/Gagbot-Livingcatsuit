@@ -171,7 +171,7 @@ module.exports = {
 							} else {
                                 data.multiple = true;
 								interaction.reply(getText(data));
-								deleteGag(interaction.guildId, gaggeduser.id);
+								deleteGag(interaction.guildId, gaggeduser.id, undefined, interaction.user.id);
                             }
 						} else {
 							// Not gagged! Ephemeral
@@ -211,7 +211,7 @@ module.exports = {
 								} else {
                                     data.multiple = true;
 									interaction.reply(getText(data));
-									deleteGag(interaction.guildId, gaggeduser.id);
+									deleteGag(interaction.guildId, gaggeduser.id, undefined, interaction.user.id);
 								}
 							} else {
 								// We need to ask first.
@@ -234,7 +234,7 @@ module.exports = {
 										} else {
                                             data.multiple = true;
 											await interaction.followUp(getText(data));
-											deleteGag(interaction.guildId, gaggeduser.id);
+											deleteGag(interaction.guildId, gaggeduser.id, undefined, interaction.user.id);
 										}
 									},
 									async (rej) => {
