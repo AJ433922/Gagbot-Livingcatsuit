@@ -5141,7 +5141,19 @@ const texts_unheavy = {
                             return t.c2.includes("Cat in Lap");
                         },
                         text: `USER_TAG gently taps on the cat sitting in USER_THEIR lap. The cat looks up at USER_THEM, offended, before hopping off and running away at breakneck speed!`,
-                    }
+                    },
+                    {
+                        only: (t) => {
+                            return t.c2.includes("Wind-up");
+                        },
+                        text: `USER_TAG reaches for the enchanted Wind-Up Key Behind USER_THEM! As USER_THEY brush against it the key stops turning and drops into USER_THEIR hand!`,
+                    },
+                    {
+                        only: (t) => {
+                            return t.c2.includes("Stable");
+                        },
+                        text: `USER_TAG reaches over the stall door of the VAR_C2, releasing the latch and letting USER_THEMSELF out!`,
+                    },
                 ],
                 noaccess: [
                     `USER_TAG pulls at USER_THEIR VAR_C2, but makes absolutely no progress escaping from it because of the locks.`,
@@ -5384,7 +5396,19 @@ const texts_unheavy = {
                             return t.c2.includes("Cat in Lap");
                         },
                         text: `USER_TAG tries to "pspsps!" to lure the cat away from TARGET_TAG's lap! The cat zooms off and around the corner!`,
-                    }
+                    },
+                    {
+                        only: (t) => {
+                            return t.c2.includes("Wind-up");
+                        },
+                        text: `USER_TAG reaches for the enchanted VAR_C2 attached to TARGET_TAG! As USER_THEY brush against it the key's enchantment fades and it drops into USER_THEIR hand!`,
+                    },
+                    {
+                        only: (t) => {
+                            return t.c2.includes("Stable");
+                        },
+                        text: `USER_TAG reaches over the stall door of the VAR_C2, releasing the latch and letting TARGET_TAG escape the confines of the stall!`,
+                    },
                 ],
                 noaccess: [
                     `USER_TAG tries to prod at the mechanisms of TARGET_TAG's VAR_C2, but unfortunately it remains completely locked.`,
