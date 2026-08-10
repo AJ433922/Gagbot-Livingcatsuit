@@ -57,38 +57,38 @@ module.exports = {
                 let outopts = [];
                 if (heavybondage && heavybondage.length > 0) {
                     heavybondage.forEach((h) => {
-                        if (h.lock && getBaseLock(h.lock.locktype).canUnlock({ uuid: h.lock.uuid, keyholderID: interaction.user.id })) {
+                        if (h.lock && getBaseLock(h.lock.locktype).canUnlock({ uuid: h.lock.uuid, userID : interaction.user.id })) {
                             outopts.push({ name: `Heavy Bondage: ${h.displayname}`, value: h.type });
                         }
                     })
                 }
                 if (gagbondage && (gagbondage.length > 0)) {
                     gagbondage.forEach((g) => {
-                        if (g.lock && getBaseLock(h.lock.locktype).canUnlock({ uuid: h.lock.uuid, keyholderID: interaction.user.id })) {
+                        if (g.lock && getBaseLock(g.lock.locktype).canUnlock({ uuid: g.lock.uuid, userID: interaction.user.id })) {
                             outopts.push({ name: `Gag: ${convertGagText(g.gagtype)}`, value: g.gagtype });
                         }
                     })
                 }
-                if (mittenbondage && mittenbondage.lock && getBaseLock(mittenbondage.lock.locktype).canUnlock({ uuid: mittenbondage.lock.uuid, keyholderID: interaction.user.id })) {
+                if (mittenbondage && mittenbondage.lock && getBaseLock(mittenbondage.lock.locktype).canUnlock({ uuid: mittenbondage.lock.uuid, userID: interaction.user.id })) {
                     outopts.push({ name: `Mittens: ${getBaseMitten(mittenbondage.mittenname).name}`, value: mittenbondage.mittenname });
                 }
-                if (chastitybondage && chastitybondage.lock && getBaseLock(chastitybondage.lock.locktype).canUnlock({ uuid: chastitybondage.lock.uuid, keyholderID: interaction.user.id })) {
+                if (chastitybondage && chastitybondage.lock && getBaseLock(chastitybondage.lock.locktype).canUnlock({ uuid: chastitybondage.lock.uuid, userID: interaction.user.id })) {
                     outopts.push({ name: `Chastity: ${getBaseChastity(chastitybondage.chastitytype).name}`, value: chastitybondage.chastitytype });
                 }
-                if (chastitybrabondage && chastitybrabondage.lock && getBaseLock(chastitybrabondage.lock.locktype).canUnlock({ uuid: chastitybrabondage.lock.uuid, keyholderID: interaction.user.id })) {
+                if (chastitybrabondage && chastitybrabondage.lock && getBaseLock(chastitybrabondage.lock.locktype).canUnlock({ uuid: chastitybrabondage.lock.uuid, userID: interaction.user.id })) {
                     outopts.push({ name: `Chastity Bra: ${getBaseChastity(chastitybrabondage.chastitytype).name}`, value: chastitybrabondage.chastitytype });
                 }
                 if (headbondage && headbondage.length > 0) {
                     headbondage.forEach((h) => {
-                        if (h.lock && getBaseLock(h.lock.locktype).canUnlock({ uuid: h.lock.uuid, keyholderID: interaction.user.id })) {
+                        if (h.lock && getBaseLock(h.lock.locktype).canUnlock({ uuid: h.lock.uuid, userID: interaction.user.id })) {
                             outopts.push({ name: `Head Restraints: ${getBaseHeadwear(h.type).name}`, value: h.type });
                         }
                     })
                 }
-                if (corsetbondage && corsetbondage.lock && getBaseLock(corsetbondage.lock.locktype).canUnlock({ uuid: corsetbondage.lock.uuid, keyholderID: interaction.user.id })) {
+                if (corsetbondage && corsetbondage.lock && getBaseLock(corsetbondage.lock.locktype).canUnlock({ uuid: corsetbondage.lock.uuid, userID: interaction.user.id })) {
                     outopts.push({ name: `Corset: ${getBaseCorset(corsetbondage.type).name}`, value: corsetbondage.type });
                 }
-                if (collarbondage && collarbondage.lock && getBaseLock(collarbondage.lock.locktype).canUnlock({ uuid: collarbondage.lock.uuid, keyholderID: interaction.user.id })) {
+                if (collarbondage && collarbondage.lock && getBaseLock(collarbondage.lock.locktype).canUnlock({ uuid: collarbondage.lock.uuid, userID: interaction.user.id })) {
                     outopts.push({ name: `Collar: ${getBaseCollar(collarbondage.collartype).name}`, value: collarbondage.collartype });
                 }
 
