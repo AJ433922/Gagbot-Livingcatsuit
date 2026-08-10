@@ -193,6 +193,7 @@ module.exports = {
                                 // Locked but without access to that specific gag
                                 data.noaccess = true;
                                 interaction.reply(getText(data));
+                                return;
                             }
 							// Now lets make sure the wearer wants that.
 							if (checkBondageRemoval(interaction.guildId, interaction.user.id, gaggeduser.id, "gag") == true) {

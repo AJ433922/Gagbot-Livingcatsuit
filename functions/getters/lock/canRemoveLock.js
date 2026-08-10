@@ -24,7 +24,7 @@ function canRemoveLock(serverID, userID, keyholderID, uuid) {
         return false 
     } 
     if (getHeavyBound(serverID, keyholderID, userID)) {
-        return lock.canUnlock({ serverID: serverID, userID: userID, keyholderID: keyholderID, uuid: uuid })
+        return lock.canUnlock({ serverID: serverID, userID: keyholderID, uuid: uuid })
     }
 }
 

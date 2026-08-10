@@ -19,7 +19,7 @@ const { getBaseLock } = require("../functions/getters/lock/getBaseLock");
 // The condition to allow access to the item this lock is on
 exports.canAccessLock = (data) => { 
     let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
-    if (lock.keyholderID == data.userID) {
+    if (lock.userID == data.userID) {
         return true;
     } 
 }
@@ -42,7 +42,7 @@ exports.canTransfer = (data) => {
 // The condition to allow removing the lock
 exports.canUnlock = (data) => {
     let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
-    if (lock.keyholderID == data.userID) {
+    if (lock.userID == data.userID) {
         return true;
     } 
 }
@@ -52,6 +52,7 @@ exports.initializeLock = function(data) {
     let lock = getLockAwaiting(data.uuid);
     console.log(lock);
     updateLockAwaiting(data.uuid, "restraintname", getItemName(lock.restraintobject));
+    updateLockAwaiting(data.uuid, "keyholderID", lock.userID);
 }
 
 // Base Data
@@ -83,7 +84,7 @@ exports.lockinteraction = function (interaction, data, update = false) {
             .setCustomId(`lockconfig_${data.uuid}_lockbutton`)
             .setLabel("Lock")
             .setStyle(ButtonStyle.Success)
-            .setDisabled(!getLockAwaiting(data.uuid)?.keyholderID),
+            .setDisabled(false),
     ]
     pagecomponents.push(new ActionRowBuilder().addComponents(...buttons));
 
@@ -129,7 +130,6 @@ exports.lockinteractionresponse = async function(interaction) {
     else if (command == "lockbutton") {
         // Engage the lock!
         try {
-            updateLockAwaiting(uuid, "unlocktime", (Date.now() + 300000));
             let userID = getLockAwaiting(uuid).userID;
             let keyholderID = getLockAwaiting(uuid).keyholderID
             let lockrestrainttype = getItemType(getLockAwaiting(uuid).restraintobject)
