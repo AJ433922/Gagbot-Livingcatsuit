@@ -62,7 +62,7 @@ function setUpLocks() {
  * ##### Returns an interaction end state
  *****/
 function addLockModal(interaction) {
-    let locktarget = interaction.options.getUser("user") ?? interaction.user;
+    let locktarget = interaction.options.getUser("wearer") ?? interaction.user;
     let itemtolock = interaction.options.getString("restraint");
     if (itemtolock == null) {
         interaction.editReply({ content: `Please select an item to lock!` })

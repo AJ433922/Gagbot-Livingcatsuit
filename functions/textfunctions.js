@@ -7228,6 +7228,21 @@ function getTextGeneric(type, data_in) {
         return_key_chastitybra: [
             `USER_TAG gives TARGET_TAG TARGET_THEIR keys back for TARGET_THEIR breasts. Best not to lose them again!`
         ],
+        return_key_gag: [
+            `USER_TAG gives TARGET_TAG TARGET_THEIR keys back for TARGET_THEIR gag. Perhaps now TARGET_THEY could take it out and speak again!`
+        ],
+        return_key_headwear: [
+            `USER_TAG hands TARGET_TAG the keys for TARGET_THEIR headwear. TARGET_THEY_CAP should try not to lose it again...`
+        ],
+        return_key_corset: [
+            `USER_TAG hands TARGET_TAG the keys for TARGET_THEIR corset. TARGET_THEY_CAP might be able to breathe once more if TARGET_THEY avoidTARGET_S misplacing them again!`
+        ],
+        return_key_heavy: [
+            `USER_TAG hands TARGET_TAG the keys for TARGET_THEIR bondage. Hopefully TARGET_THEY can use it and get free before the keys miraculously disappear again...`
+        ],
+        return_key_toy: [
+            `USER_TAG hands TARGET_TAG the keys for TARGET_THEIR toy! TARGET_THEY_CAP might want to take it out before it gets *too* stimulating...`
+        ],
         buttonboard: [
             `USER_TAG presses the VAR_C1 button. What doUSER_ES USER_THEY mean?`,
             `USER_TAG presses the VAR_C1 button. What is USER_THEY saying?`,

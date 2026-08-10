@@ -24,6 +24,7 @@ const { setUserVar } = require("./setters/config/setUserVar.js");
 const { getRecentChannel } = require("./getters/config/getRecentChannel.js");
 const { processdatatoload } = require("../lists/processdatatoload.js");
 const { removeLock } = require("./setters/lock/removeLock.js");
+const { getCorset } = require("./getters/corset/getCorset.js");
 
 // Takes input string, outputs a date object.
 const parseTime = (text) => {
@@ -319,6 +320,18 @@ function processUnlockTimes(client) {
             });
         });
 	}
+    // Corset
+	if (process.corset) {
+		Object.keys(process.corset).forEach((serverid) => {
+            Object.keys(process.corset[serverid]).forEach((userid) => {
+                if (getCorset(serverid, userid)) {
+                    if (getCorset(serverid, userid).lock && getCorset(serverid, userid).lock.unlocktime && (getCorset(serverid, userid).lock.unlocktime < now)) {
+                        removeLock(getCorset(serverid, userid).lock.uuid, { id: userid })
+                    }
+                }
+            });
+		});
+	}
 }
 
 function runTickEvents() {
@@ -444,6 +457,18 @@ function runTickEvents() {
                 }
             });
         });
+	}
+    // Mittens
+	if (process.corset) {
+		Object.keys(process.corset).forEach((serverid) => {
+            Object.keys(process.corset[serverid]).forEach((userid) => {
+                if (getCorset(serverid, userid)) {
+                    if (process.eventfunctions.corset && process.eventfunctions.corset[getCorset(serverid, userid).type] && process.eventfunctions.corset[getCorset(serverid, userid).type].tick) {
+                        process.eventfunctions.corset[getCorset(serverid, userid).type].tick(serverid, userid);
+                    }
+                }
+            });
+		});
 	}
 }
 
