@@ -9,6 +9,9 @@ const { getItemName } = require("../functions/getters/config/getItemName");
 const { sendLockToast } = require("../functions/setters/lock/sendLockToast");
 const { getItemType } = require("../functions/getters/config/getItemType");
 const { parseTime } = require("../functions/timefunctions");
+const { handleApplyLock } = require("../functions/lockfunctions");
+const { checkLockAwaiting } = require("../functions/getters/lock/checkLockAwaiting");
+const { getBaseLock } = require("../functions/getters/lock/getBaseLock");
 
 /***********
  * This is a fixed timelock that only operates for five minutes and then removes itself. It can be affixed to small locks.
@@ -128,7 +131,7 @@ exports.lockinteraction = function (interaction, data, update = false) {
     }
 }
 
-exports.lockinteractionresponse = function(interaction) {
+exports.lockinteractionresponse = async function(interaction) {
     let splits = interaction.customId.split("_")
     if (splits.length < 3) {
         console.error(`Something went wrong processing the interaction for a lock configuration`)
@@ -204,7 +207,7 @@ exports.lockinteractionresponse = function(interaction) {
                 updateLockAwaiting(uuid, "unlocktime", getLockAwaiting(uuid).minTime);
             }
             locktime = getLockAwaiting(uuid).unlocktime
-            let appliedlock = applyLockAwaiting(uuid);
+            let appliedlock = checkLockAwaiting(uuid);
             let targettype = (userID == interaction.user.id) ? "self" : "other"
             if (appliedlock == "NoAccess") {
                 interaction.update({ components: [new TextDisplayBuilder().setContent(`You don't have access to apply a Timer Lock to <@${userID}>'s ${lockrestraint}.`)] })
@@ -213,9 +216,29 @@ exports.lockinteractionresponse = function(interaction) {
                 interaction.update({ components: [new TextDisplayBuilder().setContent(`<@${userID}> is not wearing a ${lockrestraint}!`)] })
             }
             else {
-                interaction.update({ components: [new TextDisplayBuilder().setContent(`Applying lock!`)] })
+                await interaction.update({ components: [new TextDisplayBuilder().setContent(`Attempting to apply lock...`)] })
                 let extratext = [hiddentimer ? `for an unknown amount of time` : `until <t:${Math.floor(locktime / 1000)}:f>`]
-                sendLockToast({ serverID: interaction.guildId, userID: userID, actionuser: interaction.user.id, actiontype: "lock", locktype: "timerlock", restraintname: lockrestraint, restrainttype: lockrestrainttype, targettype: targettype, extratext: extratext })
+                await handleApplyLock(interaction.guildId, interaction.user, await interaction.guild.members.fetch(userID), uuid).then(
+                    async (success) => {
+                        await interaction.followUp({ content: `Applying lock!`, flags: MessageFlags.Ephemeral })
+                        applyLockAwaiting(uuid);
+                        if (userID == interaction.user.id) { userID = keyholderID }
+                        sendLockToast({ serverID: interaction.guildId, userID: userID, actionuser: interaction.user.id, actiontype: "lock", locktype: "timerlock", restraintname: lockrestraint, restrainttype: lockrestrainttype, targettype: targettype, extratext: extratext })
+                    },
+                    async (reject) => {
+                        let nomessage = `<@${userID}> rejected the lock on the ${lockrestraint}.`;
+                        if (reject == "Disabled") {
+                            nomessage = `Item locking is currently disabled in <@${userID}>'s settings!`;
+                        }
+                        if (reject == "Error") {
+                            nomessage = `Something went wrong - Submit a bug report!`;
+                        }
+                        if (reject == "NoDM") {
+                            nomessage = `Something went wrong sending a DM to <@${userID}> , or ${getPronouns(interaction.guildId, userID, "subject")} ${getPronouns(interaction.guildId, userID, "subject") == "they" ? `have` : "has"} DMs from this server disabled. Cannot obtain consent for locking the restraint.`;
+                        }
+                        await interaction.followUp({ content: nomessage, flags: MessageFlags.Ephemeral });
+                    },
+                );
             }
         }
         catch (err) {
@@ -244,7 +267,8 @@ exports.lockinteractionmodalresponse = function (interaction) {
 }
 
 exports.applyPermissionModal = function (lockawaiting) {
-    let text = `⏱️ **Timer:** Your lock will be locked ${lockawaiting.hidetimer ? `for an unknown amount of time.` : `until <t:${Math.floor(lockawaiting?.unlocktime / 1000)}:f>`}.`
+    let trange = lockawaiting?.maxTime ? `until sometime between <t:${Math.floor(lockawaiting?.minTime / 1000)}:f> and <t:${Math.floor(lockawaiting?.maxTime / 1000)}:f>` : `until <t:${Math.floor(lockawaiting?.unlocktime / 1000)}:f>`
+    let text = `⏱️ **Timer:** Your lock will be locked ${lockawaiting.hidetimer ? `for an unknown amount of time.` : trange}.`
     if (lockawaiting.hidetimer) {
         text = `${text}\n🤝 **Hidden:** The timer will not be displayed to you or anyone.`
     }

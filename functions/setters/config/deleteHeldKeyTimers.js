@@ -8,7 +8,7 @@
  * ##### *No return value*
  ***********/
 function deleteHeldKeyTimers(serverID, userID, uuid) {
-    if (restraint && process.heldkeytimers) {
+    if (process.heldkeytimers) {
         delete process.heldkeytimers[`${serverID}_${userID}_${uuid}`]
     }
     else {

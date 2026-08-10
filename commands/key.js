@@ -46,7 +46,7 @@ const { getBaseItem } = require("../functions/getters/config/getBaseItem.js");
 const { getItemType } = require("../functions/getters/config/getItemType.js");
 const { getRestraintByUUID } = require("../functions/getters/lock/getRestraintByUUID.js");
 const { getBaseLock } = require("../functions/getters/lock/getBaseLock.js");
-const { promptCloneKey } = require("../functions/lockfunctions.js");
+const { promptCloneKey, promptTransferKey } = require("../functions/lockfunctions.js");
 const { getHeavyBound } = require("../functions/getters/heavy/getHeavyBound.js");
 
 module.exports = {
@@ -79,8 +79,8 @@ module.exports = {
 			subcommand
 				.setName("swapitem")
 				.setDescription("Swap a worn restraint for another you have the key for...")
-				.addUserOption((opt) => opt.setName("wearer").setDescription("Whose restraint to give key for?"))
-				.addStringOption((opt) => opt.setName("restraint").setDescription("Which restraint of theirs to give key for?").setAutocomplete(true))
+				.addUserOption((opt) => opt.setName("wearer").setDescription("Whose restraint to swap an item?"))
+				.addStringOption((opt) => opt.setName("restraint").setDescription("Which restraint of theirs to swap?").setAutocomplete(true))
 				.addStringOption((opt) => opt.setName("restrainttype").setDescription("What new restraint to put on them?").setAutocomplete(true)),
 		)
         /*.addSubcommand((subcommand) =>
@@ -204,7 +204,7 @@ module.exports = {
                     let chosenuserid = interaction.options.get("wearer")?.value ?? interaction.user.id; // Note we can only retrieve the user ID here!
                     let choices = [];
                     getLocksWithAccess(interaction.guildId, interaction.user.id, "Unlock").forEach((la) => {
-                        if (la.restraint && la.type && ["chastity", "chastitybra","collar"].includes(getItemType(la.restraint))) {
+                        if (la.restraint && la.type && ["chastity", "chastitybra","collar"].includes(getItemType(la.restraint)) && (la.userID == chosenuserid)) {
                             choices.push({ name: `${la.type}: ${getItemName(la.restraint)}`, value: getItemType(la.restraint)})
                         }
                     })
@@ -215,7 +215,7 @@ module.exports = {
                         choices.push({ name: `Chastity Belt: ${getItemName(getChastity(interaction.guildId, chosenuserid))}`, value: "chastity"})
                     }
                     if (getChastityBra(interaction.guildId, chosenuserid) && !getChastityBra(interaction.guildId, chosenuserid).lock) {
-                        choices.push({ name: `Collar: ${getItemName(getChastityBra(interaction.guildId, chosenuserid))}`, value: "chastitybra"})
+                        choices.push({ name: `Chastity Bra: ${getItemName(getChastityBra(interaction.guildId, chosenuserid))}`, value: "chastitybra"})
                     }
                     if (choices.length == 0) {
                         choices = [{ name: "No Items to Swap", value: "nothing" }]
@@ -225,14 +225,13 @@ module.exports = {
 				} else {
 					let chosenrestrainttype = interaction.options.get("restraint")?.value;
                     // If its not the right kind go away. 
-                    if (!chosenrestrainttype || !["chastity", "chastitybra","collar"].includes(getItemType(chosenrestrainttype))) {
+                    if (!chosenrestrainttype || !["chastity", "chastitybra","collar"].includes(chosenrestrainttype)) {
                         interaction.respond([{ name: "Nothing", value: "nothing" }]);
                         return;
                     }
                     if (chosenrestrainttype == "chastity") { chosenrestrainttype = "chastitybelt" }
 					let chosenuserid = interaction.options.get("wearer")?.value ?? interaction.user.id; // Note we can only retrieve the user ID here!
                     let choices = [];
-                    let choicefunc;
 					
                     let matches = didYouMean(focusedValue, process.autocompletes[chosenrestrainttype], {
                         matchPath: ['name'], 
@@ -440,7 +439,7 @@ module.exports = {
 							}
 							//data[restrainttoclone] = true;
                             if (getBaseLock(getRestraintByUUID(chosenrestrainttoclone.split("_")[1]).restraint.lock.locktype)?.modifyClones) {
-                                getBaseLock(getRestraintByUUID(chosenrestrainttoclone.split("_")[1]).restraint.lock.locktype)?.modifyClones({ uuid: chosenrestrainttoclone.split("_")[1], keyholderID: clonedkeyholder.id, add: true })
+                                getBaseLock(getRestraintByUUID(chosenrestrainttoclone.split("_")[1]).restraint.lock.locktype)?.modifyClones({ uuid: chosenrestrainttoclone.split("_")[1], userID: clonedkeyholder.id, add: true })
                                 await confirmation.update({ content: getTextGeneric(cloneaccept, data.textdata), components: [] });
 							    await confirmation.followUp(getText(data));
                             }
@@ -467,7 +466,7 @@ module.exports = {
                                     data.other = true;
                                     //data[restrainttoclone] = true;
                                     if (getBaseLock(getRestraintByUUID(chosenrestrainttoclone.split("_")[1]).restraint.lock.locktype)?.modifyClones) {
-                                        getBaseLock(getRestraintByUUID(chosenrestrainttoclone.split("_")[1]).restraint.lock.locktype)?.modifyClones({ uuid: chosenrestrainttoclone.split("_")[1], keyholderID: clonedkeyholder.id, add: true })
+                                        getBaseLock(getRestraintByUUID(chosenrestrainttoclone.split("_")[1]).restraint.lock.locktype)?.modifyClones({ uuid: chosenrestrainttoclone.split("_")[1], userID: clonedkeyholder.id, add: true })
                                         await confirmation.editReply({ content: getTextGeneric("clone_accept", data.textdata), components: [] });
                                         await confirmation.followUp(getText(data));
                                     }
@@ -581,7 +580,7 @@ module.exports = {
                             data.other = true;
                         }
 						//data[typeofrestraint] = true;
-                        getBaseLock(getRestraintByUUID(uuid)?.restraint?.lock?.locktype).modifyClones({ uuid: uuid, keyholderID: clonedkeyholder.id, add: false });
+                        getBaseLock(getRestraintByUUID(uuid)?.restraint?.lock?.locktype).modifyClones({ uuid: uuid, userID: clonedkeyholder.id, add: false });
 						await confirmation.update({ content: getTextGeneric("revoke_accept", data.textdata), components: [] });
 						await confirmation.followUp(getText(data));
 					} else if (confirmation.customId === "cancel") {
@@ -659,7 +658,16 @@ module.exports = {
 					if (confirmation.customId === "agreetogivebutton") {
 						// Skip the DM if the wearer is the giver or receiver, or if they have auto accepting enabled
 						if (wearer == interaction.user || wearer == newKeyholder || (getOption(interaction.guildId, wearer.id, "keygiving") == "auto")) {
-							let data = { textarray: "texts_key", textdata: { serverID: interaction.guildId, interactionuser: interaction.user, targetuser: wearer, c1: chosenrestraintreadable, c2: newKeyholder } };
+							let data = { 
+                                textarray: "texts_key", 
+                                textdata: { 
+                                    serverID: interaction.guildId, 
+                                    interactionuser: interaction.user, 
+                                    targetuser: wearer, 
+                                    c1: getItemName(getRestraintByUUID(uuid)?.restraint), 
+                                    c2: newKeyholder 
+                                } 
+                            };
 							data.give = true;
 							if (wearer == interaction.user) {
 								data.self = true;
@@ -669,10 +677,10 @@ module.exports = {
 							//data[typeofrestraint] = true;
 							await confirmation.update({ content: getTextGeneric("give_accept_self", data.textdata), components: [] });
 							await confirmation.followUp(getText(data));
-                            getBaseLock(getRestraintByUUID(uuid)?.restraint.lock.locktype).modifyKeyholder({ uuid: uuid, keyholderID: newKeyholder.id })
+                            getBaseLock(getRestraintByUUID(uuid)?.restraint.lock.locktype).modifyKeyholder({ uuid: uuid, userID: newKeyholder.id })
 						} else {
 							await confirmation.update({ content: `Prompting the user for permission.`, components: [] });
-							await promptTransferKey(interaction.guildId, interaction.user, wearer, newKeyholder).then(
+							await promptTransferKey(interaction.guildId, interaction.user, wearer, newKeyholder, uuid).then(
                                 async (res) => {
                                     // User said yes
                                     let data = { 
@@ -690,7 +698,7 @@ module.exports = {
                                     //data[typeofrestraint] = true;
                                     await confirmation.editReply(getTextGeneric("give_accept", data.textdata));
                                     await confirmation.followUp(getText(data));
-                                    transferCollarKey(interaction.guildId, wearer.id, newKeyholder.id);
+                                    getBaseLock(getRestraintByUUID(uuid)?.restraint.lock.locktype).modifyKeyholder({ uuid: uuid, userID: newKeyholder.id })
                                 },
                                 async (rej) => {
                                     // User said no.
@@ -831,12 +839,12 @@ module.exports = {
                 let additionaltype = interaction.options.getString("type"); // "additionalcollar_add", "additionalcollar_remove"
 				let collareffect = interaction.options.getString("collareffect"); // eligible collar type!
                 let collarkeyholder;
-                if (getCollar(interaction.guildId, chosenuserid)) {
+                if (getCollar(interaction.guildId, wearer.id)) {
                     // We only have collar access to those we have the key for, public access if unlocked or self if unlocked.
-                    if (getCollar(interaction.guildId, chosenuserid)?.lock) {
-                        collarkeyholder = getBaseLock(getCollar(interaction.guildId, chosenuserid)?.lock).canAccessLock({ uuid: getCollar(interaction.guildId, chosenuserid)?.lock.uuid, userID: interaction.user.id })
+                    if (getCollar(interaction.guildId, wearer.id)?.lock) {
+                        collarkeyholder = getBaseLock(getCollar(interaction.guildId, wearer.id)?.lock).canAccessLock({ uuid: getCollar(interaction.guildId, wearer.id)?.lock.uuid, userID: interaction.user.id })
                     }
-                    else if ((getOption(interaction.guildId, chosenuserid, "publicaccess") == "enabled") || (chosenuserid == interaction.user.id)) {
+                    else if ((getOption(interaction.guildId, wearer.id, "publicaccess") == "enabled") || (wearer.id == interaction.user.id)) {
                         collarkeyholder = true
                     }
                 }

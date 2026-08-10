@@ -8,6 +8,9 @@ const { getPronouns } = require("../functions/getters/config/getPronouns");
 const { getItemName } = require("../functions/getters/config/getItemName");
 const { sendLockToast } = require("../functions/setters/lock/sendLockToast");
 const { getItemType } = require("../functions/getters/config/getItemType");
+const { handleApplyLock } = require("../functions/lockfunctions");
+const { checkLockAwaiting } = require("../functions/getters/lock/checkLockAwaiting");
+const { getBaseLock } = require("../functions/getters/lock/getBaseLock");
 
 /***********
  * This is a fixed timelock that only operates for five minutes and then removes itself. It can be affixed to small locks.
@@ -92,7 +95,7 @@ exports.lockinteraction = function (interaction, data, update = false) {
     }
 }
 
-exports.lockinteractionresponse = function(interaction) {
+exports.lockinteractionresponse = async function(interaction) {
     let splits = interaction.customId.split("_")
     if (splits.length < 3) {
         console.error(`Something went wrong processing the interaction for a lock configuration`)
@@ -131,7 +134,7 @@ exports.lockinteractionresponse = function(interaction) {
             let keyholderID = getLockAwaiting(uuid).keyholderID
             let lockrestrainttype = getItemType(getLockAwaiting(uuid).restraintobject)
             let lockrestraint = getLockAwaiting(uuid).restraintname
-            let appliedlock = applyLockAwaiting(uuid);
+            let appliedlock = checkLockAwaiting(uuid);
             let targettype = (userID == interaction.user.id) ? "self" : "other"
             if (appliedlock == "NoAccess") {
                 interaction.update({ components: [new TextDisplayBuilder().setContent(`You don't have access to apply a Self Lock to <@${userID}>'s ${lockrestraint}.`)] })
@@ -140,8 +143,28 @@ exports.lockinteractionresponse = function(interaction) {
                 interaction.update({ components: [new TextDisplayBuilder().setContent(`<@${userID}> is not wearing a ${lockrestraint}!`)] })
             }
             else {
-                interaction.update({ components: [new TextDisplayBuilder().setContent(`Applying lock!`)] })
-                sendLockToast({ serverID: interaction.guildId, userID: userID, actionuser: interaction.user.id, actiontype: "lock", locktype: "selflock", restraintname: lockrestraint, restrainttype: lockrestrainttype, targettype: targettype })
+                await interaction.update({ components: [new TextDisplayBuilder().setContent(`Attempting to apply lock...`)] })
+                await handleApplyLock(interaction.guildId, interaction.user, await interaction.guild.members.fetch(userID), uuid).then(
+                    async (success) => {
+                        await interaction.followUp({ content: `Applying lock!`, flags: MessageFlags.Ephemeral })
+                        applyLockAwaiting(uuid);
+                        if (userID == interaction.user.id) { userID = keyholderID }
+                        sendLockToast({ serverID: interaction.guildId, userID: userID, actionuser: interaction.user.id, actiontype: "lock", locktype: "selflock", restraintname: lockrestraint, restrainttype: lockrestrainttype, targettype: targettype })
+                    },
+                    async (reject) => {
+                        let nomessage = `<@${userID}> rejected the lock on the ${lockrestraint}.`;
+                        if (reject == "Disabled") {
+                            nomessage = `Item locking is currently disabled in <@${userID}>'s settings!`;
+                        }
+                        if (reject == "Error") {
+                            nomessage = `Something went wrong - Submit a bug report!`;
+                        }
+                        if (reject == "NoDM") {
+                            nomessage = `Something went wrong sending a DM to <@${userID}> , or ${getPronouns(interaction.guildId, userID, "subject")} ${getPronouns(interaction.guildId, userID, "subject") == "they" ? `have` : "has"} DMs from this server disabled. Cannot obtain consent for locking the restraint.`;
+                        }
+                        await interaction.followUp({ content: nomessage, flags: MessageFlags.Ephemeral });
+                    },
+                );
             }
         }
         catch (err) {

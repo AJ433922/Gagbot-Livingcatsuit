@@ -2,7 +2,7 @@ const { canPlaceLock } = require("../functions/getters/lock/canPlaceLock");
 const { canRemoveLock } = require("../functions/getters/lock/canRemoveLock");
 const { userIsWearingItem } = require("../functions/getters/config/userIsWearingItem");
 const { createLockAwaiting } = require("../functions/setters/lock/createLockAwaiting");
-const { MessageFlags, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require("discord.js");
+const { MessageFlags, ButtonBuilder, ButtonStyle, ActionRowBuilder, ComponentType } = require("discord.js");
 const { getBaseLock } = require("./getters/lock/getBaseLock");
 const { getBaseItem } = require("./getters/config/getBaseItem");
 const { getUserWornRestraint } = require("./getters/config/getUserWornRestraint");
@@ -125,15 +125,15 @@ function addLockModal(interaction) {
  * ---
  * ##### Returns an interaction end state
  *****/
-function handleRemoveLock(interaction) {
+async function handleRemoveLock(interaction) {
     let locktarget = interaction.options.getUser("user") ?? interaction.user;
     let itemtolock = interaction.options.getString("restraint");
     if (itemtolock == null) {
-        interaction.editReply({ content: `Please select an item to remove!` })
+        await interaction.editReply({ content: `Please select an item to remove!` })
         return;
     }
+    await interaction.editReply({ content: `Attempting to remove lock!`, flags: MessageFlags.Ephemeral })
     let locktoremove = getUserWornRestraint(interaction.guildId, locktarget.id, getItemType(itemtolock), itemtolock)
-    console.log(locktoremove);
     // If the user isn't wearing that item or it has a lock or the locker isn't allowed, tell them to leave
     if (!locktoremove) {
         if (locktarget.id == interaction.user.id) {
@@ -163,6 +163,7 @@ function handleRemoveLock(interaction) {
         return;
     }
 
+    await interaction.editReply({ content: `Removing Lock!`, flags: MessageFlags.Ephemeral })
     removeLock(locktoremove?.lock?.uuid, interaction.user);
 } 
 
@@ -321,6 +322,7 @@ async function handleApplyLock(serverID, user, target, uuid) {
                 })
                 .catch((err) => {
                     console.log(`Error sending message to lock ${user}.`);
+                    console.log(err);
                     rej("NoDM");
                 });
         }

@@ -246,7 +246,7 @@ function rewardDoll(serverID, userID) {
 			else if (doll.violations == 0 && doll.punishmentLevel > 0) {
 				// Or reward by decrementing punishment level.
 				doll.punishmentLevel--;
-				doll.violations = getOption(userID, "dollpunishthresh") - 1;
+				doll.violations = getOption(serverID, userID, "dollpunishthresh") - 1;
 				return "punishlevel";
 			}
 		}

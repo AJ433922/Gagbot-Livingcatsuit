@@ -68,10 +68,10 @@ exports.canTransfer = (data) => {
 // The condition to allow removing the lock
 exports.canUnlock = (data) => {
     let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
-    if (lock.keyholderID == data.keyholderID) {
+    if (lock.keyholderID == data.userID) {
         return true;
     } 
-    if (lock.clonedKeyholders && lock.clonedKeyholders.includes(data.keyholderID)) {
+    if (lock.clonedKeyholders && lock.clonedKeyholders.includes(data.userID)) {
         return true;
     } 
 }
@@ -93,13 +93,13 @@ exports.onTransfer = function (data) {
 // { uuid: uuid, keyholderID: user id }
 exports.modifyKeyholder = function(data) {
     let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
-    this.modifyLock({ uuid: data.uuid, param: "keyholderID", value: data.keyholderID })
+    this.modifyLock({ uuid: data.uuid, param: "keyholderID", value: data.userID })
     if (!lock.preserveclone) {
         this.modifyLock({ uuid: data.uuid, param: "clonedKeyholders", value: [] })
     }
-    if (lock.clonedKeyholders && lock.clonedKeyholders.includes(data.keyholderID)) {
+    if (lock.clonedKeyholders && lock.clonedKeyholders.includes(data.userID)) {
         let currclones = lock.clonedKeyholders;
-        currclones.splice(lock.clonedKeyholders.indexOf(data.keyholderID), 1);
+        currclones.splice(lock.clonedKeyholders.indexOf(data.userID), 1);
         this.modifyLock({ uuid: data.uuid, param: "clonedKeyholders", value: currclones });
     }
 }
@@ -109,11 +109,11 @@ exports.modifyKeyholder = function(data) {
 exports.modifyClones = function(data) {
     let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
     let currclones = lock.clonedKeyholders ?? [];
-    if (data.add && !currclones.includes(data.keyholderID)) {
-        this.modifyLock({ uuid: data.uuid, param: "clonedKeyholders", value: [...currclones, data.keyholderID] })
+    if (data.add && !currclones.includes(data.userID)) {
+        this.modifyLock({ uuid: data.uuid, param: "clonedKeyholders", value: [...currclones, data.userID] })
     }
-    else if (lock?.clonedKeyholders?.includes(data.keyholderID)) {
-        currclones.splice(lock?.clonedKeyholders?.indexOf(data.keyholderID), 1);
+    else if (lock?.clonedKeyholders?.includes(data.userID)) {
+        currclones.splice(lock?.clonedKeyholders?.indexOf(data.userID), 1);
         this.modifyLock({ uuid: data.uuid, param: "clonedKeyholders", value: currclones });
     }
 }
@@ -307,7 +307,6 @@ exports.lockinteractionresponse = async function(interaction) {
                 interaction.update({ components: [new TextDisplayBuilder().setContent(`<@${userID}> is not wearing a ${lockrestraint}!`)] })
             }
             else {
-
                 await interaction.update({ components: [new TextDisplayBuilder().setContent(`Attempting to apply lock...`)] })
                 await handleApplyLock(interaction.guildId, interaction.user, await interaction.guild.members.fetch(userID), uuid).then(
                     async (success) => {
@@ -317,7 +316,7 @@ exports.lockinteractionresponse = async function(interaction) {
                         sendLockToast({ serverID: interaction.guildId, userID: userID, actionuser: interaction.user.id, actiontype: "lock", locktype: "simplepadlock", restraintname: lockrestraint, restrainttype: lockrestrainttype, targettype: targettype, extratext: extratext, further: further })
                     },
                     async (reject) => {
-                        let nomessage = `${targetuser} rejected the ${convertheavy(heavychoice)}.`;
+                        let nomessage = `<@${userID}> rejected the lock on the ${lockrestraint}.`;
                         if (reject == "Disabled") {
                             nomessage = `Item locking is currently disabled in <@${userID}>'s settings!`;
                         }
@@ -325,7 +324,7 @@ exports.lockinteractionresponse = async function(interaction) {
                             nomessage = `Something went wrong - Submit a bug report!`;
                         }
                         if (reject == "NoDM") {
-                            nomessage = `Something went wrong sending a DM to ${targetuser}, or ${getPronouns(interaction.guildId, targetuser.id, "subject")} ${getPronouns(interaction.guildId, targetuser.id, "subject") == "they" ? `have` : "has"} DMs from this server disabled. Cannot obtain consent for locking the restraint.`;
+                            nomessage = `Something went wrong sending a DM to <@${userID}> , or ${getPronouns(interaction.guildId, userID, "subject")} ${getPronouns(interaction.guildId, userID, "subject") == "they" ? `have` : "has"} DMs from this server disabled. Cannot obtain consent for locking the restraint.`;
                         }
                         await interaction.followUp({ content: nomessage, flags: MessageFlags.Ephemeral });
                     },

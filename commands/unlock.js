@@ -24,6 +24,13 @@ const { getOption } = require("../functions/getters/config/getOption.js");
 const { getTaggedList } = require("../functions/getters/config/getTaggedList.js");
 const { getBaseLock } = require("../functions/getters/lock/getBaseLock.js");
 const { getBaseItem } = require("../functions/getters/config/getBaseItem.js");
+const { getHeavyList } = require("../functions/getters/heavy/getHeavyList.js");
+const { getGags } = require("../functions/getters/gag/getGags.js");
+const { getBaseCorset } = require("../functions/getters/corset/getBaseCorset.js");
+const { getBaseCollar } = require("../functions/getters/collar/getBaseCollar.js");
+const { getBaseHeadwear } = require("../functions/getters/headwear/getBaseHeadwear.js");
+const { getBaseChastity } = require("../functions/getters/chastity/getBaseChastity.js");
+const { getBaseMitten } = require("../functions/getters/mitten/getBaseMitten.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
