@@ -687,6 +687,13 @@ async function inspectModal(serverID, userID, inspectuserIDin, menu, page) {
             else if (!getCollar(serverID, inspectuserID).keyholder_only) {
                 wearingtext = `${wearingtext}, **Free Use!**`
             }
+            if (getCollar(serverID, inspectuserID).additionalcollars) {
+                wearingtext = `${wearingtext}\n-# ‎   ⤷ Additional effects: `
+                getCollar(serverID, inspectuserID).additionalcollars.forEach((ac) => {
+                    wearingtext = `${wearingtext}**${getCollarName(serverID, inspectuserID, ac)}**, `
+                })
+                wearingtext = wearingtext.slice(0,-2);
+            }
             if (getCollar(serverID, inspectuserID).lock) {
                 wearingtext = `${wearingtext}\n-# ‎   ⤷ ${!headwearrestrictions.canInspect ? blindlocktext : getBaseLock(getCollar(serverID, inspectuserID).lock.locktype).lockStatus({ uuid: getCollar(serverID, inspectuserID).lock.uuid, userID: userID })}`
             }
@@ -828,6 +835,13 @@ async function inspectModal(serverID, userID, inspectuserIDin, menu, page) {
             }
             else if (!getCollar(serverID, inspectuserID).keyholder_only) {
                 wearingtext = `${wearingtext}, **Free Use!**`
+            }
+            if (getCollar(serverID, inspectuserID).additionalcollars) {
+                wearingtext = `${wearingtext}\n-# ‎   ⤷ Additional effects: `
+                getCollar(serverID, inspectuserID).additionalcollars.forEach((ac) => {
+                    wearingtext = `${wearingtext}**${getCollarName(serverID, inspectuserID, ac)}**, `
+                })
+                wearingtext = wearingtext.slice(0,-2);
             }
             if (getCollar(serverID, inspectuserID).lock) {
                 wearingtext = `${wearingtext}\n-# ‎   ⤷ ${!headwearrestrictions.canInspect ? blindlocktext : getBaseLock(getCollar(serverID, inspectuserID).lock.locktype).extendedLockStatus({ uuid: getCollar(serverID, inspectuserID).lock.uuid, userID: userID })}`
