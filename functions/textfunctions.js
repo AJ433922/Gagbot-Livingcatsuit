@@ -7217,7 +7217,7 @@ function getTextGeneric(type, data_in) {
             `USER_TAG is confused when it is given keys for TARGET_TAG. It makes a note to return them... eventually.`,
             `USER_TAG grins devillishly as it notices it has keys for TARGET_TAG. TARGET_THEY_CAP may have to subject TARGET_THEMSELF to some... *experiments*... to get them back!`,
             `USER_TAG smirks as TARGET_TAG is so subby that TARGET_THEY just can't help but throw keys at it. Such a good TARGET_PRAISEOBJECT!`,
-            `It may be the purveyor of restraints, but USER_TAG still enjoys holding keys from silly little TARGET_PRAISEOBJECTs that hand them to it.`
+            `It may be the purveyor of restraints, but USER_TAG still enjoys holding keys from silly TARGET_PRAISEOBJECTs that hand them to it.`
         ],
         return_key_collar: [
             `USER_TAG returns the keys for TARGET_TAG's collar after a while.`
