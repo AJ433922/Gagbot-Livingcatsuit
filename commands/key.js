@@ -202,11 +202,24 @@ module.exports = {
 					// Note, we only need to know if we can ***unlock*** a restraint to swap it.
                     // For now, this will be limited to just the collar and chastity. May explore swapping other types in the future. 
                     let chosenuserid = interaction.options.get("wearer")?.value ?? interaction.user.id; // Note we can only retrieve the user ID here!
+                    let choices = [];
                     getLocksWithAccess(interaction.guildId, interaction.user.id, "Unlock").forEach((la) => {
                         if (la.restraint && la.type && ["chastity", "chastitybra","collar"].includes(getItemType(la.restraint))) {
                             choices.push({ name: `${la.type}: ${getItemName(la.restraint)}`, value: getItemType(la.restraint)})
                         }
                     })
+                    if (getCollar(interaction.guildId, chosenuserid) && !getCollar(interaction.guildId, chosenuserid).lock) {
+                        choices.push({ name: `Collar: ${getItemName(getCollar(interaction.guildId, chosenuserid))}`, value: "collar"})
+                    }
+                    if (getChastity(interaction.guildId, chosenuserid) && !getChastity(interaction.guildId, chosenuserid).lock) {
+                        choices.push({ name: `Chastity Belt: ${getItemName(getChastity(interaction.guildId, chosenuserid))}`, value: "chastity"})
+                    }
+                    if (getChastityBra(interaction.guildId, chosenuserid) && !getChastityBra(interaction.guildId, chosenuserid).lock) {
+                        choices.push({ name: `Collar: ${getItemName(getChastityBra(interaction.guildId, chosenuserid))}`, value: "chastitybra"})
+                    }
+                    if (choices.length == 0) {
+                        choices = [{ name: "No Items to Swap", value: "nothing" }]
+                    }
 
 					await interaction.respond(choices);
 				} else {
@@ -704,7 +717,7 @@ module.exports = {
                 }
 				let newrestraint = interaction.options.getString("restrainttype");
 
-				if (!wearer || !restrainttype || !newrestraint) {
+				if (!wearer || !restrainttype || !newrestraint || (restrainttype == "nothing") || (newrestraint == "nothing")) {
 					interaction.reply({ content: `Something went wrong. The command was parsed as:\nSwap ${wearer}'s ${restrainttype} to a ${newrestraint}!`, flags: MessageFlags.Ephemeral });
 					return;
 				}

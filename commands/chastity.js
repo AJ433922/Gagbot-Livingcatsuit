@@ -21,7 +21,7 @@ const { getOption } = require("../functions/getters/config/getOption.js");
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName("chastity")
-		.setDescription("Put yourself in chastity, locking /toy settings")
+		.setDescription("Put someone in chastity, locking /toy settings")
         //.addUserOption((opt) => opt.setName("keyholder").setDescription("Keyholder (leave blank to lock yourself)"))
         .addUserOption((opt) => opt.setName("user").setDescription("Who to put a chastity device on?"))
 		.addStringOption((opt) => opt.setName("braorbelt").setDescription("Chastity belt or bra?").setChoices({ name: "Chastity Belt", value: "chastitybelt" }, { name: "Chastity Bra", value: "chastitybra" }))

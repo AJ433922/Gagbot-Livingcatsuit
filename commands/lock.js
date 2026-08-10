@@ -88,10 +88,10 @@ module.exports = {
                         }
                     })
                 }
-                if (corsetbondage && !corsetbondage.lock && !getBaseCorset(corsetbondage.type).nolock) {
+                if (corsetbondage && !corsetbondage.lock && corsetbondage.type && !getBaseCorset(corsetbondage.type).nolock) {
                     outopts.push({ name: `Corset: ${getBaseCorset(corsetbondage.type).name}`, value: corsetbondage.type });
                 }
-                if (collarbondage && !collarbondage.lock && !getBaseCollar(collarbondage.type).nolock) {
+                if (collarbondage && !collarbondage.lock && collarbondage.collartype && !getBaseCollar(collarbondage.collartype).nolock) {
                     outopts.push({ name: `Collar: ${getBaseCollar(collarbondage.collartype).name}`, value: collarbondage.collartype });
                 }
 

@@ -244,7 +244,12 @@ exports.lockinteractionmodalresponse = function (interaction) {
 }
 
 exports.applyPermissionModal = function (lockawaiting) {
-    return getBaseLock(lockawaiting.locktype).desc;
+    let text = `⏱️ **Timer:** Your lock will be locked ${lockawaiting.hidetimer ? `for an unknown amount of time.` : `until <t:${Math.floor(lockawaiting?.unlocktime / 1000)}:f>`}.`
+    if (lockawaiting.hidetimer) {
+        text = `${text}\n🤝 **Hidden:** The timer will not be displayed to you or anyone.`
+    }
+    text = `${text}\n\n${getBaseLock(lockawaiting.locktype).desc}`
+    return text;
 }
 
 // Display Lock Status

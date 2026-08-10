@@ -51,7 +51,7 @@ module.exports = {
             if (chastitybrabondage) {
 				outopts.push({ name: `Chastity Bra${chastitybrabondage.chastitytype ? `: ${getChastityBraName(interaction.guildId, interaction.user.id)}` : " Bra"}`, value: "chastitybra" });
 			}
-			if (headbondage.length > 0) {
+			if (headbondage && headbondage.length > 0) {
 				outopts.push({ name: `Head Restraints`, value: "head" });
 			}
 			if (corsetbondage) {

@@ -53,7 +53,7 @@ function loadCollarTypes() {
         const collar = require(`${commandsPath}/${file}`);
         collartypes[file.replace(".js", "")] = collar;
         collartypes[file.replace(".js", "")].value = file.replace(".js", "") // Compatibility with old .value code
-        if (!collartypes[file.replace(".js", "")].locktypes) { collartypes[file.replace(".js", "")].locktypes = ["small"] }
+        if (!collartypes[file.replace(".js", "")].locktypes) { collartypes[file.replace(".js", "")].locktypes = ["small", "large"] }
         // Add a remover function that can be called on the item itself!
         collartypes[file.replace(".js", "")].removeItem = function (data) { removeCollar(data.serverID, data.userID) }
         if (!collar.hidden) { collarautocompletes.push({ name: collar.name, value: file.replace(".js", "") }) };

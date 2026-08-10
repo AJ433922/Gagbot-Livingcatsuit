@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, MessageFlags, TextDisplayBuilder } = require("discord.js");
-const { timelockChastityModal, timelockChastityBraModal, timelockCollarModal, timelockBuildConfirm } = require("./../functions/interactivefunctions.js");
+const { timelockChastityModal, timelockChastityBraModal, timelockCollarModal, timelockBuildConfirm } = require("../functions/interactivefunctions.js");
 const { their } = require("../functions/pronounfunctions.js");
-const { parseTime } = require("./../functions/timefunctions.js");
+const { parseTime } = require("../functions/timefunctions.js");
 const { getText } = require("../functions/textfunctions.js");
 const { getCollar } = require("../functions/getters/collar/getCollar.js");
 const { getChastity } = require("../functions/getters/chastity/getChastity.js");
