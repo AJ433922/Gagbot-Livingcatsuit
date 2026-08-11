@@ -17,6 +17,7 @@ const { getClonedCollarKey } = require("./getters/collar/getClonedCollarKey");
 const { canAccessCollar } = require("./getters/collar/canAccessCollar");
 const { statsAddCounter } = require("./setters/config/statsAddCounter");
 const { traceFirstParam } = require("./other/TESTS/traceFirstParam");
+const { getHeavyList } = require("./getters/heavy/getHeavyList");
 
 /****************
  * Rolls a Pat based on the user's bondage and the target's bondage. If hit is false, then boundmiss will note the reason, if it is due to the user being bound. 
@@ -211,12 +212,13 @@ async function handleTouchEvent(serverID, user, target, type, noprompt = false) 
         
         let iskeyholder = false;
         
-        if (getCollar(serverID, target.id)?.keyholder == user.id) { iskeyholder = true }
-        if (getChastity(serverID, target.id)?.keyholder == user.id) { iskeyholder = true }
-        if (getChastityBra(serverID, target.id)?.keyholder == user.id) { iskeyholder = true }
-        if (getClonedChastityKey(serverID, target.id).includes(user.id)) { iskeyholder = true }
-        if (getClonedChastityBraKey(serverID, target.id).includes(user.id)) { iskeyholder = true }
-        if (getClonedCollarKey(serverID, target.id).includes(user.id)) { iskeyholder = true }
+        if (getCollar(serverID, target.id)?.lock?.locktype && getBaseLock(getCollar(serverID, target.id)?.lock?.locktype).canAccessLock({ uuid: getCollar(serverID, target.id)?.lock.uuid, userID: user.id })) { iskeyholder = true }
+        if (getChastity(serverID, target.id)?.lock?.locktype && getBaseLock(getChastity(serverID, target.id)?.lock?.locktype).canAccessLock({ uuid: getChastity(serverID, target.id)?.lock.uuid, userID: user.id })) { iskeyholder = true }
+        if (getChastityBra(serverID, target.id)?.lock?.locktype && getBaseLock(getChastityBra(serverID, target.id)?.lock?.locktype).canAccessLock({ uuid: getChastityBra(serverID, target.id)?.lock.uuid, userID: user.id })) { iskeyholder = true }
+        if (getGags(serverID, target.id) && getGags(serverID, target.id).some((g) => (g?.lock && getBaseLock(g?.lock?.locktype).canAccessLock({ uuid: g.lock.uuid, userID: user.id })))) { iskeyholder = true }
+        if (getHeavyList(serverID, target.id) && getHeavyList(serverID, target.id).some((g) => (g?.lock && getBaseLock(g?.lock?.locktype).canAccessLock({ uuid: g.lock.uuid, userID: user.id })))) { iskeyholder = true }
+        if (getToys(serverID, target.id) && getToys(serverID, target.id).some((g) => (g?.lock && getBaseLock(g?.lock?.locktype).canAccessLock({ uuid: g.lock.uuid, userID: user.id })))) { iskeyholder = true }
+        if (getHeadwear(serverID, target.id) && getHeadwear(serverID, target.id).some((g) => (g?.lock && getBaseLock(g?.lock?.locktype).canAccessLock({ uuid: g.lock.uuid, userID: user.id })))) { iskeyholder = true }
 
         if (hasOption === "everyonenoprompt") {
             // Nothing needs to be done here.
