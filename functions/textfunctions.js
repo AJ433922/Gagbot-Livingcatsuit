@@ -1779,7 +1779,7 @@ const texts_letgo = {
         `USER_TAG thrusts USER_THEIR hips, trying to quickly finish before... the Orgasm Control Module softened the stimulation *again*.`,
         `USER_TAG pouts as USER_THEY forgetUSER_S that USER_THEY USER_DOESNT get to choose when USER_THEY can orgasm anymore.`,
         `USER_TAG grumbles as once again when USER_THEY attempt to get that last thrust, USER_THEIR crotch feels numb, ruining the moment!`,
-        `USER_TAG keeps trying to get that last little bit of pleasure, but really USER_THEY should focus on behaving. USER_THEY_CAP's orgasms do *not* belong to USER_THEM.`,
+        `USER_TAG keeps trying to get that last little bit of pleasure, but really USER_THEY should focus on behaving. USER_THEIR orgasms do *not* belong to USER_THEM.`,
         `USER_TAG bucks USER_THEIR hips again but the dams just won't open as USER_THEIR thigh muscles involuntarily stop at the peak!`,
         `USER_TAG tries to touch down there, but despite how horny USER_THEY may be, it just doesn't offer any pleasure. Perhaps if USER_THEY could press the button on USER_THEIR remote...`,
         `USER_TAG frantically claws, trying to get a little more sensation there before the Orgasm Control Module notices but its too late!`
