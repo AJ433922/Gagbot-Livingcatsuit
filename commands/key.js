@@ -239,7 +239,7 @@ module.exports = {
                         threshold: 0.2, // Default is 0.4 - this is how much of the word must exist. 
                     })
                     if (matches.length == 0) {
-                        matches = choices.slice(0,25);
+                        matches = process.autocompletes[chosenrestrainttype].slice(0,25);
                     }
                     let tags = getUserTags(interaction.guildId, chosenuserid);
                     let newsorted = [];

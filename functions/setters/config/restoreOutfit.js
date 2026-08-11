@@ -38,7 +38,7 @@ function restoreOutfit(serverID, userID, storedobject) {
 		}
 		if (k == "gag") {
 			getGags(serverID, userID);
-			if (!getHeavy(serverID, userID) && !getMitten(serverID, userID)) {
+			if (!getHeavy(serverID, userID) && !getMitten(serverID, userID) && !getGags(serverID, userID).some((g) => g.lock)) {
 				process.gags[serverID][userID] = storedobject.gag;
 				markForSave("gags");
 			}
@@ -52,14 +52,14 @@ function restoreOutfit(serverID, userID, storedobject) {
 		}
 		if (k == "headwear") {
 			getHeadwear(serverID, userID);
-			if (!getHeavy(serverID, userID) && !getMitten(serverID, userID)) {
+			if (!getHeavy(serverID, userID) && !getMitten(serverID, userID) && !getHeadwear(serverID, userID).some((g) => g.lock)) {
 				process.headwear[serverID][userID] = storedobject.headwear;
 				markForSave("headwear");
 			}
 		}
 		if (k == "collar") {
 			getCollar(serverID, userID);
-			if (!getHeavy(serverID, userID) && (canAccessCollar(serverID, userID, userID, true).access || !canAccessCollar(serverID, userID, userID, true).hascollar)) {
+			if (!getHeavy(serverID, userID) && !getCollar(serverID, userID)?.lock) {
 				process.collar[serverID][userID] = storedobject.collar;
 				markForSave("collar");
 			}
@@ -80,14 +80,14 @@ function restoreOutfit(serverID, userID, storedobject) {
 		}
 		if (k == "corset") {
 			getCorset(serverID, userID);
-			if (!getHeavy(serverID, userID) && (canAccessChastity(serverID, userID, userID, true).access || !canAccessChastity(serverID, userID, userID, true).hasbelt)) {
+			if (!getHeavy(serverID, userID) && !getCorset(serverID, userID)?.lock) {
 				process.corset[serverID][userID] = storedobject.corset;
 				markForSave("corset");
 			}
 		}
 		if (k == "chastity") {
 			getChastity(serverID, userID);
-			if (!getHeavy(serverID, userID) && (canAccessChastity(serverID, userID, userID, true).access || !canAccessChastity(serverID, userID, userID, true).hasbelt)) {
+			if (!getHeavy(serverID, userID) && !getChastity(serverID, userID)?.lock) {
 				process.chastity[serverID][userID] = storedobject.chastity;
                 if (process.chastity[serverID][userID].stateligible) {
                     process.chastity[serverID][userID].stateligible = false;
@@ -97,7 +97,7 @@ function restoreOutfit(serverID, userID, storedobject) {
 		}
 		if (k == "chastitybra") {
 			getChastityBra(serverID, userID);
-			if (!getHeavy(serverID, userID) && (canAccessChastityBra(serverID, userID, userID, true).access || !canAccessChastityBra(serverID, userID, userID, true).hasbelt)) {
+			if (!getHeavy(serverID, userID) && !getChastityBra(serverID, userID)?.lock) {
 				process.chastitybra[serverID][userID] = storedobject.chastitybra;
                 if (process.chastitybra[serverID][userID].stateligible) {
                     process.chastitybra[serverID][userID].stateligible = false;

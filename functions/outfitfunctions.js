@@ -109,7 +109,7 @@ async function generateOutfitModal(serverID, userID, menu, page, options) {
 						textdisplay = `${textdisplay}${process.emojis.gasmask} Headwear: ${emoji}, `;
 					}
 					if (k == "collar") {
-						let emoji = getHeavy(serverID, userID) || (!canAccessCollar(serverID, userID, userID, true).access && canAccessCollar(serverID, userID, userID, true).hascollar) ? "⚠️" : "✅";
+						let emoji = getHeavy(serverID, userID) || getCollar(serverID, userID) ? "⚠️" : "✅";
 						textdisplay = `${textdisplay}${process.emojis.collar} Collar: ${emoji}, `;
 					}
 					if (k == "heavy") {
@@ -117,15 +117,15 @@ async function generateOutfitModal(serverID, userID, menu, page, options) {
 						textdisplay = `${textdisplay}${process.emojis.armbinder} Heavy: ${emoji}, `;
 					}
 					if (k == "corset") {
-						let emoji = getHeavy(serverID, userID) || (!canAccessChastity(serverID, userID, userID, true).access && canAccessChastity(serverID, userID, userID, true).hasbelt) ? "⚠️" : "✅";
+						let emoji = getHeavy(serverID, userID) || getCorset(serverID, userID) ? "⚠️" : "✅";
 						textdisplay = `${textdisplay}${process.emojis.corset} Corset: ${emoji}, `;
 					}
 					if (k == "chastity") {
-						let emoji = getHeavy(serverID, userID) || (!canAccessChastity(serverID, userID, userID, true).access && canAccessChastity(serverID, userID, userID, true).hasbelt) ? "⚠️" : "✅";
+						let emoji = getHeavy(serverID, userID) || getChastity(serverID, userID) ? "⚠️" : "✅";
 						textdisplay = `${textdisplay}${process.emojis.chastity} Chastity: ${emoji}, `;
 					}
 					if (k == "chastitybra") {
-						let emoji = getHeavy(serverID, userID) || (!canAccessChastityBra(serverID, userID, userID, true).access && canAccessChastityBra(serverID, userID, userID, true).hasbelt) ? "⚠️" : "✅";
+						let emoji = getHeavy(serverID, userID) || getChastityBra(serverID, userID) ? "⚠️" : "✅";
 						textdisplay = `${textdisplay}${process.emojis.chastitybra} Chastity Bra: ${emoji}, `;
 					}
 					/*if (k == "vibe") {
