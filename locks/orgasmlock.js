@@ -204,7 +204,10 @@ exports.lockinteractionresponse = async function(interaction) {
 }
 
 exports.applyPermissionModal = function (lockawaiting) {
-    return getBaseLock(lockawaiting.locktype).desc;
+    let orgasmcount = getRestraintByUUID(data.uuid)?.restraint?.lock.orgasmMax;
+    let text = `💦 **Orgasms:** You will need to successfully orgasm ${orgasmcount} time${(orgasmcount != 1) ? "s" : ""} to unlock the lock.`
+    text = `${text}\n\n${getBaseLock(lockawaiting.locktype).desc}`
+    return text;
 }
 
 // Display Lock Status
