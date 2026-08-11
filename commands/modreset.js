@@ -25,7 +25,7 @@ module.exports = {
             if (interaction.member.permissions.has(PermissionFlagsBits.ManageMessages) && resetuser) {
                 // User has the permission, proceed with the action (e.g., a purge command)
                 await interaction.reply({ content: `Resetting ${resetuser}`, flags: MessageFlags.Ephemeral });
-                deleteGag(interaction.guildId, resetuser.id, undefined, true);
+                deleteGag(interaction.guildId, resetuser.id, undefined, undefined, true);
                 deleteMitten(interaction.guildId, resetuser.id);
                 removeChastity(interaction.guildId, resetuser.id, undefined, true);
                 removeChastityBra(interaction.guildId, resetuser.id, undefined, true);

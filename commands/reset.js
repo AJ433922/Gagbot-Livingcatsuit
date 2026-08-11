@@ -26,7 +26,7 @@ module.exports = {
             } else if (getServerOption(interaction.guildId, "server-safewordroleid") && interaction.member.roles.cache.has(getServerOption(interaction.guildId, "server-safewordroleid"))) {
                 // User has the safeword role, we should remove all their restraints because they safeworded
                 await interaction.reply({ content: "Resetting all of your restraints because you are safeworded.", flags: MessageFlags.Ephemeral });
-                deleteGag(interaction.guildId, interaction.user.id, undefined, true);
+                deleteGag(interaction.guildId, interaction.user.id, undefined, undefined, true);
                 deleteMitten(interaction.guildId, interaction.user.id);
                 removeChastity(interaction.guildId, interaction.user.id, undefined, true);
                 removeChastityBra(interaction.guildId, interaction.user.id, undefined, true);
