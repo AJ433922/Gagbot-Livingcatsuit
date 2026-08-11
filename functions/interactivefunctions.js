@@ -873,17 +873,18 @@ async function handleMajorRestraint(serverID, user, target, type, restraint) {
                 let headwearrestricts = getHeadwearBlocks(restraint)
                 limitationstext = ``;
                 if (headwearrestricts.blockinspect) {
-                    limitationstext = `This restraint will blind you, preventing you from seeing information on others in **/inspect**.`
+                    limitationstext = `${limitationstext}\n- This restraint will blind you, preventing you from seeing information on others in **/inspect**.`
                 }
                 if (headwearrestricts.blockemote) {
-                    limitationstext = `${limitationstext}\nThis restraint will prevent you from using emotes correctly. Typed emotes will be discarded.`
+                    limitationstext = `${limitationstext}\n- This restraint will prevent you from using emotes correctly. Typed emotes will be discarded.`
                 }
                 if (headwearrestricts.blockgag) {
-                    limitationstext = `${limitationstext}\nThis restraint will prevent changing your gags. You or others will not be able to add or remove a gag.`
+                    limitationstext = `${limitationstext}\n- This restraint will prevent changing your gags. You or others will not be able to add or remove a gag.`
                 }
                 if (limitationstext.length == 0) {
-                    limitationstext = `This restraint does not have any particular restrictive properties.`
+                    limitationstext = `\n- This restraint does not have any particular restrictive properties.`
                 }
+                limitationstext = limitationstext.slice(1)
                 break;
 			default:
 				console.log(`Could not find a restraint by that type.`);
