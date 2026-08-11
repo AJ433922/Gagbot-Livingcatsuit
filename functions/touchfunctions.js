@@ -18,6 +18,7 @@ const { canAccessCollar } = require("./getters/collar/canAccessCollar");
 const { statsAddCounter } = require("./setters/config/statsAddCounter");
 const { traceFirstParam } = require("./other/TESTS/traceFirstParam");
 const { getHeavyList } = require("./getters/heavy/getHeavyList");
+const { getBaseLock } = require("./getters/lock/getBaseLock");
 
 /****************
  * Rolls a Pat based on the user's bondage and the target's bondage. If hit is false, then boundmiss will note the reason, if it is due to the user being bound. 

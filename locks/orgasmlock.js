@@ -90,6 +90,11 @@ exports.lockinteraction = function (interaction, data, update = false) {
     let textaboutlock = new TextDisplayBuilder().setContent(`${this.desc}`);
     pagecomponents.push(textaboutlock)
 
+    if (getItemName(getLockAwaiting(data.uuid)?.restraintobject) && getItemName(getLockAwaiting(data.uuid)?.restraintobject).startsWith(`Chastity Belt of Eternal`)) {
+        let impossibletitle = new TextDisplayBuilder().setContent(`***Note: This lock will make it impossible to remove this restraint!***`);
+        pagecomponents.push(impossibletitle)
+    }
+
     // Buttons
     let buttons = [
         // Page Down
@@ -206,6 +211,9 @@ exports.lockinteractionresponse = async function(interaction) {
 exports.applyPermissionModal = function (lockawaiting) {
     let orgasmcount = getRestraintByUUID(data.uuid)?.restraint?.lock.orgasmMax;
     let text = `💦 **Orgasms:** You will need to successfully orgasm ${orgasmcount} time${(orgasmcount != 1) ? "s" : ""} to unlock the lock.`
+    if (getItemName(getRestraintByUUID(data.uuid)?.restraint) && getItemName(getRestraintByUUID(data.uuid)?.restraint).startsWith(`Chastity Belt of Eternal`)) {
+        text = `${text}\n\n***Note: This lock will make it impossible to remove this restraint!***`
+    }
     text = `${text}\n\n${getBaseLock(lockawaiting.locktype).desc}`
     return text;
 }
