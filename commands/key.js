@@ -287,7 +287,7 @@ module.exports = {
                 if (getCollar(interaction.guildId, chosenuserid)) {
                     // We only have collar access to those we have the key for, public access if unlocked or self if unlocked.
                     if (getCollar(interaction.guildId, chosenuserid)?.lock) {
-                        collarkeyholder = getBaseLock(getCollar(interaction.guildId, chosenuserid)?.lock).canAccessLock({ uuid: getCollar(interaction.guildId, chosenuserid)?.lock.uuid, userID: interaction.user.id })
+                        collarkeyholder = getBaseLock(getCollar(interaction.guildId, chosenuserid)?.lock.locktype).canAccessLock({ uuid: getCollar(interaction.guildId, chosenuserid)?.lock.uuid, userID: interaction.user.id })
                     }
                     else if ((getOption(interaction.guildId, chosenuserid, "publicaccess") == "enabled") || (chosenuserid == interaction.user.id)) {
                         collarkeyholder = true
@@ -295,7 +295,6 @@ module.exports = {
                 }
                 let chosentype = interaction.options.get("type")?.value;
                 let choices = [];
-                console.log(chosentype)
                 if (!collarkeyholder) {
                     choices = [{ name: "Not holding Collar Key", value: "nokeys" }];
                 }

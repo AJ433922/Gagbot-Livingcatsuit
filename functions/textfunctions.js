@@ -1777,7 +1777,7 @@ const texts_letgo = {
         `USER_TAG's Orgasm Control Module senses USER_THEIR attempts and deadens the stimulation at the very last moment!`,
         `USER_TAG squirms and softly screams as USER_THEIR sensations down there go numb right before climax!`,
         `USER_TAG thrusts USER_THEIR hips, trying to quickly finish before... the Orgasm Control Module softened the stimulation *again*.`,
-        `USER_TAG pouts as USER_THEY forgetUSER_S that USER_THEY USER_DOESNT get to choose when USER_THEY can orgasm anymore.`
+        `USER_TAG pouts as USER_THEY forgetUSER_S that USER_THEY USER_DOESNT get to choose when USER_THEY can orgasm anymore.`,
         `USER_TAG grumbles as once again when USER_THEY attempt to get that last thrust, USER_THEIR crotch feels numb, ruining the moment!`,
         `USER_TAG keeps trying to get that last little bit of pleasure, but really USER_THEY should focus on behaving. USER_THEY_CAP's orgasms do *not* belong to USER_THEM.`,
         `USER_TAG bucks USER_THEIR hips again but the dams just won't open as USER_THEIR thigh muscles involuntarily stop at the peak!`,
@@ -7715,7 +7715,9 @@ function getTextGeneric(type, data_in) {
             `It can juuuuust barely be heard, but USER_TAG moves a little bit and jingles USER_THEIR collar!`,
             `-# Jingle\nUSER_TAG isn't very stealthy, but USER_THEY tried.`,
             `USER_TAG looks at something and a little movement of USER_THEIR neck jingles USER_THEIR collar!`,
-            `-# Jinglejinglejingle!\nUSER_TAG tries to move around the channel sneakily. USER_THEY_CAP USER_ISARE totally invisible!`
+            `-# Jinglejinglejingle!\nUSER_TAG tries to move around the channel sneakily. USER_THEY_CAP USER_ISARE totally invisible!`,
+            `It's so small, it's so little, but there was definitely a little bell sound as USER_TAG moved!`,
+
         ],
         "bellcollar_2": [
             `Doubtless finding something bigger, USER_TAG's bell makes a slightly louder jangle!`,
