@@ -186,7 +186,7 @@ async function handleApplyLock(serverID, user, target, uuid) {
         }
 
         // User is able to access the lock of the collar and it has the appropriate permission. 
-        if (getCollar(serverID, target.id) && getCollar(serverID, target.id)?.lock && getBaseLock(getCollar(serverID, target.id)?.lock.uuid).canAccessLock({ uuid: getCollar(serverID, target.id)?.lock.uuid, userID: user.id }) && getCollar(serverID, target.id).locks) {
+        if (getCollar(serverID, target.id) && getCollar(serverID, target.id)?.lock && getBaseLock(getCollar(serverID, target.id)?.lock.locktype).canAccessLock({ uuid: getCollar(serverID, target.id)?.lock.uuid, userID: user.id }) && getCollar(serverID, target.id).locks) {
             res(true);
             return;
         }
