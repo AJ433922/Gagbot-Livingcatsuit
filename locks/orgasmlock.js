@@ -209,9 +209,9 @@ exports.lockinteractionresponse = async function(interaction) {
 }
 
 exports.applyPermissionModal = function (lockawaiting) {
-    let orgasmcount = getRestraintByUUID(data.uuid)?.restraint?.lock.orgasmMax;
+    let orgasmcount = lockawaiting.orgasmMax;
     let text = `💦 **Orgasms:** You will need to successfully orgasm ${orgasmcount} time${(orgasmcount != 1) ? "s" : ""} to unlock the lock.`
-    if (getItemName(getRestraintByUUID(data.uuid)?.restraint) && getItemName(getRestraintByUUID(data.uuid)?.restraint).startsWith(`Chastity Belt of Eternal`)) {
+    if (getItemName(lockawaiting.restraintobject) && getItemName(lockawaiting.restraintobject).startsWith(`Chastity Belt of Eternal`)) {
         text = `${text}\n\n***Note: This lock will make it impossible to remove this restraint!***`
     }
     text = `${text}\n\n${getBaseLock(lockawaiting.locktype).desc}`
