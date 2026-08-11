@@ -39,6 +39,8 @@ const { getRecentChannel } = require("./getters/config/getRecentChannel.js");
 const { getItemTags } = require("./getters/config/getItemTags.js");
 const { getGagName } = require("./getters/gag/getGagName.js");
 const { getBaseHeavy } = require("./getters/heavy/getBaseHeavy.js");
+const { getHeadwearRestrictions } = require("./getters/headwear/getHeadwearRestrictions.js");
+const { getHeadwearBlocks } = require("./getters/headwear/getBaseHeadwear.js");
 
 // Generates a consent button which the user will have to agree to.
 const consentMessage = (interaction, user) => {
@@ -868,7 +870,20 @@ async function handleMajorRestraint(serverID, user, target, type, restraint) {
                 restraintfullname = getHeadwearName(restraint);
                 prettytype = "Mask"
                 emoji = `${process.emojis.gasmask}`;
-                limitationstext = `This may have a major effect on your speech or emoji, as well as blinding you in **/inspect**!`
+                let headwearrestricts = getHeadwearBlocks(restraint)
+                limitationstext = ``;
+                if (headwearrestricts.blockinspect) {
+                    limitationstext = `This restraint will blind you, preventing you from seeing information on others in **/inspect**.`
+                }
+                if (headwearrestricts.blockemote) {
+                    limitationstext = `${limitationstext}\nThis restraint will prevent you from using emotes correctly. Typed emotes will be discarded.`
+                }
+                if (headwearrestricts.blockgag) {
+                    limitationstext = `${limitationstext}\nThis restraint will prevent changing your gags. You or others will not be able to add or remove a gag.`
+                }
+                if (limitationstext.length == 0) {
+                    limitationstext = `This restraint does not have any particular restrictive properties.`
+                }
                 break;
 			default:
 				console.log(`Could not find a restraint by that type.`);
