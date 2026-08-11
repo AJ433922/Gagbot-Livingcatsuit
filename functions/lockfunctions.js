@@ -16,6 +16,7 @@ const { getCollar } = require("./getters/collar/getCollar");
 const { traceFirstParam } = require("./other/TESTS/traceFirstParam");
 const { getLockAwaiting } = require("./getters/lock/getLockAwaiting");
 const { getRestraintByUUID } = require("./getters/lock/getRestraintByUUID");
+const { getOption } = require("./getters/config/getOption");
 
 // Imports each lock in ./locks and makes them accessible as objects
 // in process.locktypes mapped to their respective ids.
@@ -178,14 +179,23 @@ async function handleRemoveLock(interaction) {
 async function handleApplyLock(serverID, user, target, uuid) {
     traceFirstParam(arguments[0]);
 	return new Promise(async (res, rej) => {
-		let hasOption = "enabled" //getOption(serverID, target.id, `majorrestraint`);
-		if (canAccessCollar(serverID, target.id, user.id).access) {
-            if (getCollar(serverID, target.id) && getCollar(serverID, target.id)?.lock) {
-                // User is able to access the collar of the user *and* it has the permission. 
-                res(true);
-			    return;
-            }
-		} 
+        // If the restraint is being SWAPPED, we need to reject if it is disabled
+        if ((getOption(serverID, target.id, "swaplocks") == "disabled") && (user.id != target.id) && getRestraintByUUID(uuid)?.restraint?.lock && getBaseLock(getRestraintByUUID(uuid)?.restraint?.lock.locktype).canAccessLock({ uuid: getRestraintByUUID(uuid)?.restraint?.lock.uuid, userID: user.id })) {
+            rej("NoSwap")
+            return;
+        }
+
+        // User is able to access the lock of the collar and it has the appropriate permission. 
+        if (getCollar(serverID, target.id) && getCollar(serverID, target.id)?.lock && getBaseLock(getCollar(serverID, target.id)?.lock.uuid).canAccessLock({ uuid: getCollar(serverID, target.id)?.lock.uuid, userID: user.id }) && getCollar(serverID, target.id).locks) {
+            res(true);
+            return;
+        }
+
+        // User is wearing a free use collar and it has the appropriate permission.
+        if (getCollar(serverID, target.id) && !getCollar(serverID, target.id)?.keyholder_only && getCollar(serverID, target.id).locks) {
+            res(true);
+            return;
+        }
 
         // Always approve ourselves. 
         if (user.id === target.id) {

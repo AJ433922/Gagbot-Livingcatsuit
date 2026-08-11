@@ -134,6 +134,7 @@ This restraint is intended to allow **others** to use **/mitten**, **/chastity**
             { label: `Chastity`, value: 'chastity', description: "Allows the use of /chastity on you" },
             { label: `Heavy`, value: 'heavy', description: "Allows the use of /heavy on you" },
             { label: `Mask`, value: 'mask', description: "Allows the use of /mask on you" },
+            { label: `Lock`, value: 'locks', description: "Allows locks to be applied to you" },
         ])
         .setRequired(false)
         .setMinValues(0)

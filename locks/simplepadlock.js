@@ -323,6 +323,9 @@ exports.lockinteractionresponse = async function(interaction) {
                         if (reject == "Error") {
                             nomessage = `Something went wrong - Submit a bug report!`;
                         }
+                        if (reject == "NoSwap") {
+                            nomessage = `<@${userID}>'s settings do not permit swapping locks on restraints! Unlock the restraint first!`;
+                        }
                         if (reject == "NoDM") {
                             nomessage = `Something went wrong sending a DM to <@${userID}> , or ${getPronouns(interaction.guildId, userID, "subject")} ${getPronouns(interaction.guildId, userID, "subject") == "they" ? `have` : "has"} DMs from this server disabled. Cannot obtain consent for locking the restraint.`;
                         }

@@ -104,6 +104,7 @@ module.exports = {
 			let choice_chastity = checkboxselectedValues.includes("chastity")
 			let choice_heavy = checkboxselectedValues.includes("heavy")
 			let choice_mask = checkboxselectedValues.includes("mask")
+            let choice_locks = checkboxselectedValues.includes("locks")
 			// lol consistency with naming scheme is hard
 			let choice_collartype = interaction.customId.split("_")[3].length > 0 ? `${interaction.customId.split("_")[3]}_${interaction.customId.split("_")[4]}` : undefined;
             if (choice_collartype.endsWith("_undefined")) { // This is an ugly workaround
@@ -156,11 +157,11 @@ module.exports = {
                             else {*/
                                 interaction.reply(getText(data));
                             //}
-							assignCollar(interaction.guildId, interaction.user.id, collarkeyholder, { mitten: choice_mitten, chastity: choice_chastity, heavy: choice_heavy, mask: choice_mask }, true, choice_collartype);
+							assignCollar(interaction.guildId, interaction.user.id, collarkeyholder, { mitten: choice_mitten, chastity: choice_chastity, heavy: choice_heavy, mask: choice_mask, locks: choice_locks }, true, choice_collartype);
 						} else {
 							data.nonamedcollar = true;
 							interaction.reply(getText(data));
-							assignCollar(interaction.guildId, interaction.user.id, collarkeyholder, { mitten: choice_mitten, chastity: choice_chastity, heavy: choice_heavy, mask: choice_mask }, true);
+							assignCollar(interaction.guildId, interaction.user.id, collarkeyholder, { mitten: choice_mitten, chastity: choice_chastity, heavy: choice_heavy, mask: choice_mask, locks: choice_locks }, true);
 						}
 					} else {
 						data.freeuse = true;
@@ -168,11 +169,11 @@ module.exports = {
 							// Custom named collar declared
 							data.namedcollar = true;
 							interaction.reply(getText(data));
-							assignCollar(interaction.guildId, interaction.user.id, collarkeyholder, { mitten: choice_mitten, chastity: choice_chastity, heavy: choice_heavy, mask: choice_mask }, false, choice_collartype);
+							assignCollar(interaction.guildId, interaction.user.id, collarkeyholder, { mitten: choice_mitten, chastity: choice_chastity, heavy: choice_heavy, mask: choice_mask, locks: choice_locks }, false, choice_collartype);
 						} else {
 							data.nonamedcollar = true;
 							interaction.reply(getText(data));
-							assignCollar(interaction.guildId, interaction.user.id, collarkeyholder, { mitten: choice_mitten, chastity: choice_chastity, heavy: choice_heavy, mask: choice_mask }, false);
+							assignCollar(interaction.guildId, interaction.user.id, collarkeyholder, { mitten: choice_mitten, chastity: choice_chastity, heavy: choice_heavy, mask: choice_mask, locks: choice_locks }, false);
 						}
 					}
 				} else if (collarkeyholder != interaction.user.id) {
@@ -183,11 +184,11 @@ module.exports = {
 							// Custom named collar declared
 							data.namedcollar = true;
 							interaction.reply(getText(data));
-							assignCollar(interaction.guildId, interaction.user.id, collarkeyholder, { mitten: choice_mitten, chastity: choice_chastity, heavy: choice_heavy, mask: choice_mask }, true, choice_collartype);
+							assignCollar(interaction.guildId, interaction.user.id, collarkeyholder, { mitten: choice_mitten, chastity: choice_chastity, heavy: choice_heavy, mask: choice_mask, locks: choice_locks }, true, choice_collartype);
 						} else {
 							data.nonamedcollar = true;
 							interaction.reply(getText(data));
-							assignCollar(interaction.guildId, interaction.user.id, collarkeyholder, { mitten: choice_mitten, chastity: choice_chastity, heavy: choice_heavy, mask: choice_mask }, true);
+							assignCollar(interaction.guildId, interaction.user.id, collarkeyholder, { mitten: choice_mitten, chastity: choice_chastity, heavy: choice_heavy, mask: choice_mask, locks: choice_locks }, true);
 						}
 					} else {
 						data.freeuse = true;
@@ -195,11 +196,11 @@ module.exports = {
 							// Custom named collar declared
 							data.namedcollar = true;
 							interaction.reply(getText(data));
-							assignCollar(interaction.guildId, interaction.user.id, collarkeyholder, { mitten: choice_mitten, chastity: choice_chastity, heavy: choice_heavy, mask: choice_mask }, false, choice_collartype);
+							assignCollar(interaction.guildId, interaction.user.id, collarkeyholder, { mitten: choice_mitten, chastity: choice_chastity, heavy: choice_heavy, mask: choice_mask, locks: choice_locks }, false, choice_collartype);
 						} else {
 							data.nonamedcollar = true;
 							interaction.reply(getText(data));
-							assignCollar(interaction.guildId, interaction.user.id, collarkeyholder, { mitten: choice_mitten, chastity: choice_chastity, heavy: choice_heavy, mask: choice_mask }, false);
+							assignCollar(interaction.guildId, interaction.user.id, collarkeyholder, { mitten: choice_mitten, chastity: choice_chastity, heavy: choice_heavy, mask: choice_mask, locks: choice_locks }, false);
 						}
 					}
 				}

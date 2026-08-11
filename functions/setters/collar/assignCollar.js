@@ -30,6 +30,7 @@ function assignCollar(serverID, user, keyholder, restraints, only, customcollar)
         chastity: restraints?.chastity, 
         heavy: restraints?.heavy, 
         mask: restraints?.mask, 
+        locks: restraints?.locks,
         collartype: customcollar,
         timestamp: existingcollar?.timestamp ?? Date.now(),
         additionalcollars: existingcollar?.additionalcollars,

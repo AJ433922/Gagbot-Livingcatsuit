@@ -345,6 +345,11 @@ function runTickEvents() {
                         if (process.eventfunctions.gags && process.eventfunctions.gags[g.gagtype] && process.eventfunctions.gags[g.gagtype].tick) {
                             process.eventfunctions.gags[g.gagtype].tick(serverid, userid);
                         }
+                        if (g.lock) {
+                            if (process.eventfunctions.locks && process.eventfunctions.locks[g.lock.locktype] && process.eventfunctions.locks[g.lock.locktype].tick) {
+                                process.eventfunctions.locks[g.lock.locktype].tick(g.lock.uuid);
+                            }
+                        }
                     });
                 }
                 catch (err) {
@@ -361,6 +366,11 @@ function runTickEvents() {
                     if (process.eventfunctions.headwear && process.eventfunctions.headwear[h] && process.eventfunctions.headwear[h.type].tick) {
                         process.eventfunctions.headwear[h.type].tick(serverid, userid);
                     }
+                    if (h.lock) {
+                        if (process.eventfunctions.locks && process.eventfunctions.locks[h.lock.locktype] && process.eventfunctions.locks[h.lock.locktype].tick) {
+                            process.eventfunctions.locks[h.lock.locktype].tick(h.lock.uuid);
+                        }
+                    }
                 });
             });
 		});
@@ -372,6 +382,12 @@ function runTickEvents() {
                 if (getMitten(serverid, userid)) {
                     if (process.eventfunctions.mitten && process.eventfunctions.mitten[getMitten(serverid, userid).mittenname] && process.eventfunctions.mitten[getMitten(serverid, userid).mittenname].tick) {
                         process.eventfunctions.mitten[getMitten(serverid, userid).mittenname].tick(serverid, userid);
+                    }
+                    let h = getMitten(serverid, userid);
+                    if (h.lock) {
+                        if (process.eventfunctions.locks && process.eventfunctions.locks[h.lock.locktype] && process.eventfunctions.locks[h.lock.locktype].tick) {
+                            process.eventfunctions.locks[h.lock.locktype].tick(h.lock.uuid);
+                        }
                     }
                 }
             });
@@ -386,6 +402,11 @@ function runTickEvents() {
                         if (process.eventfunctions.heavy && process.eventfunctions.heavy[h.type] && process.eventfunctions.heavy[h.type].tick) {
                             process.eventfunctions.heavy[h.type].tick(serverid, userid);
                         }
+                        if (h.lock) {
+                            if (process.eventfunctions.locks && process.eventfunctions.locks[h.lock.locktype] && process.eventfunctions.locks[h.lock.locktype].tick) {
+                                process.eventfunctions.locks[h.lock.locktype].tick(h.lock.uuid);
+                            }
+                        }
                     })
                 }
             });
@@ -399,6 +420,12 @@ function runTickEvents() {
                     if (process.eventfunctions.chastity && process.eventfunctions.chastity[getChastity(serverid, userid).chastitytype] && process.eventfunctions.chastity[getChastity(serverid, userid).chastitytype].tick) {
                         process.eventfunctions.chastity[getChastity(serverid, userid).chastitytype].tick(serverid, userid);
                     }
+                    let h = getChastity(serverid, userid);
+                    if (h.lock) {
+                        if (process.eventfunctions.locks && process.eventfunctions.locks[h.lock.locktype] && process.eventfunctions.locks[h.lock.locktype].tick) {
+                            process.eventfunctions.locks[h.lock.locktype].tick(h.lock.uuid);
+                        }
+                    }
                 }
             });
         });
@@ -410,6 +437,12 @@ function runTickEvents() {
                 if (getChastityBra(serverid, userid)) {
                     if (process.eventfunctions.chastitybra && process.eventfunctions.chastitybra[getChastityBra(serverid, userid).chastitytype] && process.eventfunctions.chastitybra[getChastityBra(serverid, userid).chastitytype].tick) {
                         process.eventfunctions.chastitybra[getChastityBra(serverid, userid).chastitytype].tick(serverid, userid);
+                    }
+                    let h = getChastityBra(serverid, userid);
+                    if (h.lock) {
+                        if (process.eventfunctions.locks && process.eventfunctions.locks[h.lock.locktype] && process.eventfunctions.locks[h.lock.locktype].tick) {
+                            process.eventfunctions.locks[h.lock.locktype].tick(h.lock.uuid);
+                        }
                     }
                 }
             });
@@ -435,6 +468,11 @@ function runTickEvents() {
                     if (process.eventfunctions.toys && process.eventfunctions.toys[h.type] && process.eventfunctions.toys[h.type].tick) {
                         process.eventfunctions.toys[h.type].tick(serverid, userid);
                     }
+                    if (h.lock) {
+                        if (process.eventfunctions.locks && process.eventfunctions.locks[h.lock.locktype] && process.eventfunctions.locks[h.lock.locktype].tick) {
+                            process.eventfunctions.locks[h.lock.locktype].tick(h.lock.uuid);
+                        }
+                    }
                 });
             });
         });
@@ -454,6 +492,12 @@ function runTickEvents() {
                             }
                         })
                     }
+                    let h = getCollar(serverid, userid);
+                    if (h.lock) {
+                        if (process.eventfunctions.locks && process.eventfunctions.locks[h.lock.locktype] && process.eventfunctions.locks[h.lock.locktype].tick) {
+                            process.eventfunctions.locks[h.lock.locktype].tick(h.lock.uuid);
+                        }
+                    }
                 }
             });
         });
@@ -465,6 +509,12 @@ function runTickEvents() {
                 if (getCorset(serverid, userid)) {
                     if (process.eventfunctions.corset && process.eventfunctions.corset[getCorset(serverid, userid).type] && process.eventfunctions.corset[getCorset(serverid, userid).type].tick) {
                         process.eventfunctions.corset[getCorset(serverid, userid).type].tick(serverid, userid);
+                    }
+                    let h = getCorset(serverid, userid);
+                    if (h.lock) {
+                        if (process.eventfunctions.locks && process.eventfunctions.locks[h.lock.locktype] && process.eventfunctions.locks[h.lock.locktype].tick) {
+                            process.eventfunctions.locks[h.lock.locktype].tick(h.lock.uuid);
+                        }
                     }
                 }
             });
