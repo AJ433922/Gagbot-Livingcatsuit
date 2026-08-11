@@ -10,6 +10,7 @@ const { getMitten } = require("./getters/mitten/getMitten");
 const { getHeavyList } = require("./getters/heavy/getHeavyList");
 const { getChastity } = require("./getters/chastity/getChastity");
 const { getChastityBra } = require("./getters/chastity/getChastityBra");
+const { getCorset } = require("./getters/corset/getCorset");
 
 
 /*********
@@ -35,6 +36,11 @@ async function emitEvent(type, userid, serverid, data, delay = 0) {
             if (process.eventfunctions && process.eventfunctions.gags && process.eventfunctions.gags[g.gagtype] && process.eventfunctions.gags[g.gagtype][type]) {
                 process.eventfunctions.gags[g.gagtype][type](serverid, userid, data);
             }
+            if (g.lock) {
+                if (process.eventfunctions.locks && process.eventfunctions.locks[g.lock.locktype] && process.eventfunctions.locks[g.lock.locktype][type]) {
+                    process.eventfunctions.locks[g.lock.locktype][type](g.lock.uuid, data);
+                }
+            }
         });
 	}
 	// Headwear
@@ -42,6 +48,11 @@ async function emitEvent(type, userid, serverid, data, delay = 0) {
         getHeadwear(serverid, userid).forEach((h) => {
             if (process.eventfunctions && process.eventfunctions.headwear && process.eventfunctions.headwear[h.type] && process.eventfunctions.headwear[h.type][type]) {
                 process.eventfunctions.headwear[h.type][type](serverid, userid, data);
+            }
+            if (h.lock) {
+                if (process.eventfunctions.locks && process.eventfunctions.locks[h.lock.locktype] && process.eventfunctions.locks[h.lock.locktype][type]) {
+                    process.eventfunctions.locks[h.lock.locktype][type](h.lock.uuid, data);
+                }
             }
         });
 	}
@@ -51,6 +62,12 @@ async function emitEvent(type, userid, serverid, data, delay = 0) {
             if (process.eventfunctions && process.eventfunctions.mitten && process.eventfunctions.mitten[getMitten(serverid, userid).mittenname] && process.eventfunctions.mitten[process.mitten[userid].mittenname][type]) {
                 process.eventfunctions.mitten[getMitten(serverid, userid).mittenname][type](serverid, userid, data);
             }
+            let h = getMitten(serverid, userid)
+            if (h.lock) {
+                if (process.eventfunctions.locks && process.eventfunctions.locks[h.lock.locktype] && process.eventfunctions.locks[h.lock.locktype][type]) {
+                    process.eventfunctions.locks[h.lock.locktype][type](h.lock.uuid, data);
+                }
+            }
         }
 	}
     // Chastity
@@ -59,6 +76,12 @@ async function emitEvent(type, userid, serverid, data, delay = 0) {
             if (process.eventfunctions && process.eventfunctions.mitten && process.eventfunctions.chastity[getChastity(serverid, userid).chastitytype] && process.eventfunctions.chastity[getChastity(serverid, userid).chastitytype][type]) {
                 process.eventfunctions.chastity[getChastity(serverid, userid).chastitytype][type](serverid, userid, data);
             }
+            let h = getChastity(serverid, userid);
+            if (h.lock) {
+                if (process.eventfunctions.locks && process.eventfunctions.locks[h.lock.locktype] && process.eventfunctions.locks[h.lock.locktype][type]) {
+                    process.eventfunctions.locks[h.lock.locktype][type](h.lock.uuid, data);
+                }
+            }
         }
 	}
     // Chastity Bra
@@ -66,6 +89,12 @@ async function emitEvent(type, userid, serverid, data, delay = 0) {
         if (getChastityBra(serverid, userid)) {
             if (process.eventfunctions && process.eventfunctions.mitten && process.eventfunctions.chastitybra[getChastityBra(serverid, userid).chastitytype] && process.eventfunctions.chastitybra[getChastityBra(serverid, userid).chastitytype][type]) {
                 process.eventfunctions.chastitybra[getChastityBra(serverid, userid).chastitytype](serverid, userid, data);
+            }
+            let h = getChastityBra(serverid, userid);
+            if (h.lock) {
+                if (process.eventfunctions.locks && process.eventfunctions.locks[h.lock.locktype] && process.eventfunctions.locks[h.lock.locktype][type]) {
+                    process.eventfunctions.locks[h.lock.locktype][type](h.lock.uuid, data);
+                }
             }
         }
 	}
@@ -76,6 +105,11 @@ async function emitEvent(type, userid, serverid, data, delay = 0) {
                 if (process.eventfunctions && process.eventfunctions.heavy && process.eventfunctions.heavy[heavy.type] && process.eventfunctions.heavy[heavy.type][type]) {
                     process.eventfunctions.heavy[heavy.type][type](serverid, userid, data);
                 }
+                if (heavy.lock) {
+                    if (process.eventfunctions.locks && process.eventfunctions.locks[heavy.lock.locktype] && process.eventfunctions.locks[heavy.lock.locktype][type]) {
+                        process.eventfunctions.locks[heavy.lock.locktype][type](heavy.lock.uuid, data);
+                    }
+                }
             })
         }
 	}
@@ -85,6 +119,12 @@ async function emitEvent(type, userid, serverid, data, delay = 0) {
             if (process.eventfunctions && process.eventfunctions.wearable && process.eventfunctions.wearable[h] && process.eventfunctions.wearable[h][type]) {
                 process.eventfunctions.wearable[h][type](serverid, userid, data);
             }
+            /*
+            if (h.lock) {
+                if (process.eventfunctions.locks && process.eventfunctions.locks[h.lock.locktype] && process.eventfunctions.locks[h.lock.locktype][type]) {
+                    process.eventfunctions.locks[h.lock.locktype][type](h.lock.uuid, data);
+                }
+            }*/
         });
 	}
     // Toys
@@ -92,6 +132,11 @@ async function emitEvent(type, userid, serverid, data, delay = 0) {
         getToys(serverid, userid).forEach((h) => {
             if (process.eventfunctions && process.eventfunctions.toys && process.eventfunctions.toys[h.type] && process.eventfunctions.toys[h.type][type]) {
                 process.eventfunctions.toys[h.type][type](serverid, userid, data);
+            }
+            if (h.lock) {
+                if (process.eventfunctions.locks && process.eventfunctions.locks[h.lock.locktype] && process.eventfunctions.locks[h.lock.locktype][type]) {
+                    process.eventfunctions.locks[h.lock.locktype][type](h.lock.uuid, data);
+                }
             }
         });
 	}
@@ -107,6 +152,26 @@ async function emitEvent(type, userid, serverid, data, delay = 0) {
                         process.eventfunctions.collar[ac][type](serverid, userid, data);
                     }
                 })
+            }
+            let h = getCollar(serverid, userid)
+            if (h.lock) {
+                if (process.eventfunctions.locks && process.eventfunctions.locks[h.lock.locktype] && process.eventfunctions.locks[h.lock.locktype][type]) {
+                    process.eventfunctions.locks[h.lock.locktype][type](h.lock.uuid, data);
+                }
+            }
+        }
+	}
+    // Corset
+    if (getCorset(serverid, userid)) {
+        if (getCorset(serverid, userid)) {
+            if (process.eventfunctions && process.eventfunctions.corset && process.eventfunctions.corset[getCorset(serverid, userid).type] && process.eventfunctions.corset[getCorset(serverid, userid).type][type]) {
+                process.eventfunctions.corset[getCorset(serverid, userid).type][type](serverid, userid, data);
+            }
+            let h = getCorset(serverid, userid)
+            if (h.lock) {
+                if (process.eventfunctions.locks && process.eventfunctions.locks[h.lock.locktype] && process.eventfunctions.locks[h.lock.locktype][type]) {
+                    process.eventfunctions.locks[h.lock.locktype][type](h.lock.uuid, data);
+                }
             }
         }
 	}

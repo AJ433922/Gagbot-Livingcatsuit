@@ -396,7 +396,7 @@ module.exports = {
 				delete process.recentinteraction[interaction.user.id];
 			}
 		}
-        if (optionparts[3] == "allowedheadpats") {
+        if (optionparts[3] == "allowedheadpat") {
             choiceinput = interaction.fields.getSelectedUsers("choiceinput");
             let choiceusers = Array.from(choiceinput) ?? [];
             if (choiceusers.length > 0) {

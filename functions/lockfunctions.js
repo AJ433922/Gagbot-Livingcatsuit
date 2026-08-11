@@ -127,7 +127,7 @@ function addLockModal(interaction) {
  * ##### Returns an interaction end state
  *****/
 async function handleRemoveLock(interaction) {
-    let locktarget = interaction.options.getUser("user") ?? interaction.user;
+    let locktarget = interaction.options.getUser("wearer") ?? interaction.user;
     let itemtolock = interaction.options.getString("restraint");
     if (itemtolock == null) {
         await interaction.editReply({ content: `Please select an item to remove!` })

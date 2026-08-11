@@ -36,7 +36,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName("unlock")
 		.setDescription("Remove a lock from a restraint...")
-        .addUserOption((opt) => opt.setName("user").setDescription("The person wearing the restraint to unlock"))
+        .addUserOption((opt) => opt.setName("wearer").setDescription("The person wearing the restraint to unlock"))
         .addStringOption((opt) => opt.setName("restraint").setDescription("Which restraint to unlock?").setAutocomplete(true)),
 	async autoComplete(interaction) {
 		const focusedValue = interaction.options.getFocused(true); // Note, we're extracting the entire object this time. 

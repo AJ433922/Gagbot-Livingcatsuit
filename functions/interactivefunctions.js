@@ -37,6 +37,10 @@ const { canAccessChastityBra } = require("./getters/chastity/canAccessChastityBr
 const { getChastityBraName } = require("./getters/chastity/getChastityBraName.js");
 const { getRecentChannel } = require("./getters/config/getRecentChannel.js");
 const { getItemTags } = require("./getters/config/getItemTags.js");
+const { getGagName } = require("./getters/gag/getGagName.js");
+const { getBaseHeavy } = require("./getters/heavy/getBaseHeavy.js");
+const { getHeadwearRestrictions } = require("./getters/headwear/getHeadwearRestrictions.js");
+const { getHeadwearBlocks } = require("./getters/headwear/getBaseHeadwear.js");
 
 // Generates a consent button which the user will have to agree to.
 const consentMessage = (interaction, user) => {
@@ -712,7 +716,7 @@ async function handleExtremeRestraint(serverID, user, target, type, restraint) {
                 }
             })
         }
-		if (!hasOption || hasOption == "Enabled" || (hasOption == "PromptOthers" && user.id == target.id)) {
+		if (!hasOption || hasOption == "Enabled" || (hasOption == "PromptOthers")) {
 			res(true);
 			return;
 		} // Either it's Enabled, set to Prompt Others if on self, or it doesn't exist. Go away.
@@ -734,10 +738,10 @@ async function handleExtremeRestraint(serverID, user, target, type, restraint) {
 				restraintfullname = getHeavyName(restraint);
 				break;
 			case "gag":
-				restraintfullname = process.autocompletes.gag.find((f) => f.value == restraint)?.name;
+				restraintfullname = getGagName(restraint);
 				break;
             case "mask":
-				restraintfullname = process.autocompletes.headtypes.find((f) => f.value == restraint)?.name;
+				restraintfullname = getHeadwearName(restraint);
 				break;
 			default:
 				console.log(`Could not find a restraint by that type.`);
@@ -827,7 +831,22 @@ async function handleMajorRestraint(serverID, user, target, type, restraint) {
 				restraintfullname = getHeavyName(restraint);
                 prettytype = "Heavy Bondage"
                 emoji = `${process.emojis.armbinder}`;
-                limitationstext = `This will prevent you from using most commands in the bot, including **/unheavy** to free yourself!`
+                limitationstext = `Something weird happened with heavy tags, so please let the dev know including what item was attempted here!`
+                let htags = getBaseHeavy(restraint).heavytags;
+                if (htags.includes("container")) {
+                    limitationstext = `This will limit you to only being able to perform actions on yourself and others in the same container!`
+                }
+                if (htags.includes("legs")) {
+                    limitationstext = `This will limit you to only being able to apply or remove restraints from yourself in the bot!`
+                }
+                if (htags.includes("arms")) {
+                    limitationstext = `This will prevent you from using most commands in the bot, including **/unheavy** to free yourself!`
+                }
+                // If it's furniture, do we REALLY need to worry? 
+                if (htags.length == 0) {
+                    res(true);
+                    return
+                }
 				break;
 			case "chastity":
 				restraintfullname = getBaseChastity(restraint)?.name;
@@ -848,10 +867,24 @@ async function handleMajorRestraint(serverID, user, target, type, restraint) {
                 limitationstext = `This will prevent you from adding or removing gags with **/gag** or masks with **/mask** until someone else unmittens you!`
                 break;
             case "mask":
-                restraintfullname = getHeadwearName(serverID, undefined, restraint);
+                restraintfullname = getHeadwearName(restraint);
                 prettytype = "Mask"
                 emoji = `${process.emojis.gasmask}`;
-                limitationstext = `This may have a major effect on your speech or emoji, as well as blinding you in **/inspect**!`
+                let headwearrestricts = getHeadwearBlocks(restraint)
+                limitationstext = ``;
+                if (headwearrestricts.blockinspect) {
+                    limitationstext = `${limitationstext}\n- This restraint will blind you, preventing you from seeing information on others in **/inspect**.`
+                }
+                if (headwearrestricts.blockemote) {
+                    limitationstext = `${limitationstext}\n- This restraint will prevent you from using emotes correctly. Typed emotes will be discarded.`
+                }
+                if (headwearrestricts.blockgag) {
+                    limitationstext = `${limitationstext}\n- This restraint will prevent changing your gags. You or others will not be able to add or remove a gag.`
+                }
+                if (limitationstext.length == 0) {
+                    limitationstext = `\n- This restraint does not have any particular restrictive properties.`
+                }
+                limitationstext = limitationstext.slice(1)
                 break;
 			default:
 				console.log(`Could not find a restraint by that type.`);

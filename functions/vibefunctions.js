@@ -31,6 +31,7 @@ const { getPronouns } = require("./getters/config/getPronouns.js");
 const { getRecentChannel } = require("./getters/config/getRecentChannel.js");
 const { getProcessVariable } = require("./getters/config/getProcessVariable.js");
 const { getArousalGenerationFromToys } = require("./getters/arousal/getArousalGenerationFromToys.js");
+const { emitEvent } = require("./eventhandling.js");
 
 // NOTE: canUnequip is currently checked in functions that remove/assign chastity and those functions return if it succeeded, but the text responses are not yet updated
 // probably makes more sense to make custom text responses for the belts/bras that use this that explain why it failed
@@ -706,6 +707,7 @@ function tryOrgasm(serverID, user, forced = false) {
 			markForSave("chastity");
 		}
 		traits.onOrgasm({ serverID: serverID, userID: user, prevArousal: arousal });
+        emitEvent("onOrgasm", user, serverID, { arousal: arousal, denialCoefficient: denialCoefficient });
 		return true;
 	}
 

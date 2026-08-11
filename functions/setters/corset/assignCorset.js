@@ -34,6 +34,7 @@ function assignCorset(serverID, user, type, tightness, origbinder) {
 		timestamp: Date.now(),
 		origbinder: originalbinder ?? origbinder, // Preserve original binder until it is removed.
 		type: type,
+        lock: old?.lock
 	};
 	if (old.type == type) {
 		getBaseCorset(old?.type)?.onAdjustTightness({ serverID: serverID, userID: user, oldTightness: old.tightness, newTightness: tightness });
