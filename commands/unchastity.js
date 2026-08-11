@@ -336,7 +336,7 @@ module.exports = {
 							} else if (getChastity(interaction.guildId, chastitywearer.id)?.lock) {
                                 // We don't have the keys
 								data.nokey = true;
-								interaction.reply(getText(data));
+								interaction.reply({ content: getText(data), flags: MessageFlags.Ephemeral });
                             }
                             else {
 								// There are no keys. 

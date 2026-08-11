@@ -2112,7 +2112,7 @@ const texts_lock = {
                     only: (t) => {
                         return (t.c2 == "chastitybra");
                     },
-                    text: `USER_TAG slips a tiny 5 Minute Lock on the closing ring of USER_THEIR VAR_C1. USER_THEIR_CAP breasts will remain secure from unwarranted groping for the next five minutes!.`,
+                    text: `USER_TAG slips a tiny 5 Minute Lock on the closing ring of USER_THEIR VAR_C1. USER_THEIR_CAP breasts will remain secure from unwarranted groping for the next five minutes!`,
                 },
                 {
                     only: (t) => {
@@ -2411,6 +2411,113 @@ const texts_lock = {
                     text: `USER_TAG puts a timer lock on each of TARGET_TAG's VAR_C1, keeping TARGET_THEIR hands completely helpless VAR_C3!`,
                 },
             ]
+        },
+        // region timerlock
+        timedpadlock: {
+            "self": [
+                {
+                    only: (t) => {
+                        return (t.c2 == "chastity");
+                    },
+                    text: `USER_TAG puts a timed padlock on USER_THEIR VAR_C1, sealing away USER_THEIR chastity! USER_THEY_CAP won't be able to touch VAR_C3! The key for it is given to <@VAR_C4>.`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "chastitybra");
+                    },
+                    text: `USER_TAG puts a timed padlock on USER_THEIR VAR_C1, sealing away USER_THEIR breasts! USER_THEY_CAP won't be able to touch them VAR_C3! The key for it is given to <@VAR_C4>.`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "collar");
+                    },
+                    text: `USER_TAG puts a timed padlock on USER_THEIR VAR_C1, keeping USER_THEIR neck adorned VAR_C3! It will be impossible to hide from <@VAR_C4> now... `,
+                },
+                // Should not happen
+                {
+                    only: (t) => {
+                        return (t.c2 == "gag");
+                    },
+                    text: `USER_TAG somehow puts a timed padlock on USER_THEIR VAR_C1, sealing USER_THEIR words VAR_C3! The key for it is given to <@VAR_C4>.`,
+                },
+                // Should not happen
+                {
+                    only: (t) => {
+                        return (t.c2 == "mask");
+                    },
+                    text: `USER_TAG somehow puts a timed padlock on USER_THEIR VAR_C1, hiding USER_THEIR face VAR_C3! The key for it is given to <@VAR_C4>.`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "corset");
+                    },
+                    text: `USER_TAG puts a timed padlock on the laces of USER_THEIR VAR_C1! Really, who needs to breathe VAR_C3 anyway? The key for it is given to <@VAR_C4>.`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "heavy");
+                    },
+                    text: `USER_TAG manages to slip a timed padlock on USER_THEIR VAR_C1, keeping it firmly locked away VAR_C3! The key for it is given to <@VAR_C4>.`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "mitten");
+                    },
+                    text: `USER_TAG manages to slip a little timed padlocks on USER_THEIR VAR_C1, rendering USER_THEIR hands completely useless VAR_C3! The key for it is given to <@VAR_C4>.`,
+                },
+            ],
+            "other": [
+                {
+                    only: (t) => {
+                        return (t.c2 == "chastity");
+                    },
+                    text: `USER_TAG puts a timed padlock on TARGET_TAG's VAR_C1, sealing away TARGET_THEIR chastity! TARGET_THEY_CAP will just have to be a good TARGET_PRAISEOBJECT VAR_C3! The key for it is given to <@VAR_C4>.`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "chastitybra");
+                    },
+                    text: `USER_TAG puts a timed padlock on TARGET_TAG's VAR_C1, sealing away TARGET_THEIR breasts! TARGET_THEY_CAP will just have to be a good TARGET_PRAISEOBJECT VAR_C3! The key for it is given to <@VAR_C4>.`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "collar");
+                    },
+                    text: `USER_TAG puts a timed padlock on TARGET_TAG's VAR_C1, keeping TARGET_THEIR neck adorned with a reminder of TARGET_THEIR submission! TARGET_THEY_CAP will have to wear it VAR_C3! The key for it is given to <@VAR_C4>.`,
+                },
+                // Should not happen
+                {
+                    only: (t) => {
+                        return (t.c2 == "gag");
+                    },
+                    text: `USER_TAG puts a timed padlock on TARGET_TAG's VAR_C1! TARGET_THEY_CAP will not speak VAR_C3! The key for it is given to <@VAR_C4>.`,
+                },
+                // Should not happen
+                {
+                    only: (t) => {
+                        return (t.c2 == "mask");
+                    },
+                    text: `USER_TAG puts a timed padlock on TARGET_TAG's VAR_C1! TARGET_THEY_CAP will not remove TARGET_THEIR headgear VAR_C3! The key for it is given to <@VAR_C4>.`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "corset");
+                    },
+                    text: `USER_TAG puts a timed padlock on TARGET_TAG's VAR_C1, stealing TARGET_THEIR breath away VAR_C3! The key for it is given to <@VAR_C4>.`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "heavy");
+                    },
+                    text: `USER_TAG puts a timed padlock on TARGET_TAG's VAR_C1, locking TARGET_THEM up VAR_C3! The key for it is given to <@VAR_C4>.`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "mitten");
+                    },
+                    text: `USER_TAG puts a timed padlock on each of TARGET_TAG's VAR_C1, keeping TARGET_THEIR hands completely helpless VAR_C3! The key for it is given to <@VAR_C4>.`,
+                },
+            ]
         }
     },
     unlock: {
@@ -2449,6 +2556,14 @@ const texts_lock = {
             // This should never happen
             "other": [
                 `After USER_TAG's intervention, the timer lock finally falls off of TARGET_TAG's VAR_C1! This should never happen, so please report it!`
+            ]
+        },
+        timerlock: {
+            "self": [
+                `The timed padlock finally falls off of USER_TAG's VAR_C1!`
+            ],
+            "other": [
+                `USER_TAG removes the timer lock from TARGET_TAG's VAR_C1 early!`
             ]
         },
         defaultlock: {

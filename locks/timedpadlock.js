@@ -1,4 +1,4 @@
-const { ButtonStyle, ButtonBuilder, ActionRowBuilder, TextDisplayBuilder, MessageFlags, UserSelectMenuBuilder, SectionBuilder } = require("discord.js");
+const { ButtonStyle, ButtonBuilder, ActionRowBuilder, TextDisplayBuilder, MessageFlags, UserSelectMenuBuilder, SectionBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, LabelBuilder } = require("discord.js");
 const { getRestraintByUUID } = require("../functions/getters/lock/getRestraintByUUID");
 const { getLockAwaiting } = require("../functions/getters/lock/getLockAwaiting");
 const { updateLockAwaiting } = require("../functions/setters/lock/updateLockAwaiting");
@@ -8,12 +8,13 @@ const { getPronouns } = require("../functions/getters/config/getPronouns");
 const { getItemName } = require("../functions/getters/config/getItemName");
 const { sendLockToast } = require("../functions/setters/lock/sendLockToast");
 const { getItemType } = require("../functions/getters/config/getItemType");
+const { parseTime } = require("../functions/timefunctions");
 const { handleApplyLock } = require("../functions/lockfunctions");
 const { checkLockAwaiting } = require("../functions/getters/lock/checkLockAwaiting");
 const { getBaseLock } = require("../functions/getters/lock/getBaseLock");
 
 /***********
- * This is a basic keyed padlock for large restraints. It allows for permanent locking to a keyholder. 
+ * This is a timed padlock that can be configured for any amount of time and keyed to a keyholder. 
  ***********/
 
 // The condition to allow access to the item this lock is on
@@ -84,57 +85,37 @@ exports.canRevokeSelfClone = (data) => {
     } 
 };
 
-// Called when changing primary keyholders // Not currently being used lol
-exports.onTransfer = function (data) {
-    this.modifyLock({ uuid: data.uuid, param: "clonedKeyholders", value: [] })
-}
-
-// Modify the keyholder
-// { uuid: uuid, keyholderID: user id }
-exports.modifyKeyholder = function(data) {
-    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
-    this.modifyLock({ uuid: data.uuid, param: "keyholderID", value: data.userID })
-    if (!lock.preserveclone) {
-        this.modifyLock({ uuid: data.uuid, param: "clonedKeyholders", value: [] })
+// Timelock specific code
+exports.checkTimelock = function (data) {
+    let restraintobject = getRestraintByUUID(data.uuid).restraint
+    if (!restraintobject || (typeof restraintobject.timelock != "number")) {
+        // The timelock somehow broke, get out of here. 
+        markForSave(getItemType(getRestraintByUUID(data.uuid)?.restraint))
+        this.removeLock(data.uuid, { id: restraintobject.lock.keyholderID });
     }
-    if (lock.clonedKeyholders && lock.clonedKeyholders.includes(data.userID)) {
-        let currclones = lock.clonedKeyholders;
-        currclones.splice(lock.clonedKeyholders.indexOf(data.userID), 1);
-        this.modifyLock({ uuid: data.uuid, param: "clonedKeyholders", value: currclones });
-    }
-}
-
-// Modify the cloned keyholder
-// { uuid: uuid, keyholderID: user id, add: boolean }
-exports.modifyClones = function(data) {
-    let lock = getRestraintByUUID(data.uuid)?.restraint?.lock;
-    let currclones = lock.clonedKeyholders ?? [];
-    if (data.add && !currclones.includes(data.userID)) {
-        this.modifyLock({ uuid: data.uuid, param: "clonedKeyholders", value: [...currclones, data.userID] })
-    }
-    else if (lock?.clonedKeyholders?.includes(data.userID)) {
-        currclones.splice(lock?.clonedKeyholders?.indexOf(data.userID), 1);
-        this.modifyLock({ uuid: data.uuid, param: "clonedKeyholders", value: currclones });
-    }
+    if (Date.now() > restraintobject.timelock) {
+        // End of the timelock!
+        markForSave(getItemType(getRestraintByUUID(data.uuid)?.restraint))
+        this.removeLock(data.uuid, { id: restraintobject.lock.keyholderID });
+    };
 }
 
 exports.initializeLock = function(data) {
     // Initialize it by setting the person who started this as the keyholder. 
     let lock = getLockAwaiting(data.uuid);
-    updateLockAwaiting(data.uuid, "keyholderID", data.keyholderID);
     updateLockAwaiting(data.uuid, "restraintname", getItemName(lock.restraintobject));
 }
 
 // Base Data
-exports.name = "Simple Padlock"
+exports.name = "Timed Padlock"
 exports.locktype = "large"
-exports.desc = `A simple lock that has a key. The key can be cloned for others to have access as well. This lock will not expire until it is unlocked.`
+exports.desc = `A configurable timer with a key. The lock will automatically open at the end of the timer if it is still locked. `
 
 exports.lockinteraction = function (interaction, data, update = false) {
     let pagecomponents = [];
 
     // Main Title text
-    let maintitle = new TextDisplayBuilder().setContent(`## Applying a Simple Padlock to ${(getLockAwaiting(data.uuid)?.userID == interaction.user.id) ? "your" : `<@${getLockAwaiting(data.uuid)?.userID}>'s`} ${getLockAwaiting(data.uuid)?.restraintname}`);
+    let maintitle = new TextDisplayBuilder().setContent(`## Applying a Timer Lock to ${(getLockAwaiting(data.uuid)?.userID == interaction.user.id) ? "your" : `<@${getLockAwaiting(data.uuid)?.userID}>'s`} ${getLockAwaiting(data.uuid)?.restraintname}`);
     pagecomponents.push(maintitle)
 
     // Keyholder Select text
@@ -148,70 +129,31 @@ exports.lockinteraction = function (interaction, data, update = false) {
         .setMaxValues(1);
     pagecomponents.push(new ActionRowBuilder().addComponents(userselect));
 
-    // Keyholder Select text
-    if (getLockAwaiting(data.uuid)?.keyholderID) {
-        let holdtext = ``;
-        //let itemtext = `**${getLockAwaiting(data.uuid)?.restraintobject}**` // We need *another* function to feed a restraint object and get the display name of it. 
-        if (getLockAwaiting(data.uuid)?.keyholderID == getLockAwaiting(data.uuid)?.userID) {
-            // Holding self keys
-            if (interaction.user.id == getLockAwaiting(data.uuid)?.userID) {
-                // This is ourself!
-                holdtext = `*You will be holding your own key!*`
-            }
-            else {
-                // This is someone else!
-                holdtext = `*<@${getLockAwaiting(data.uuid)?.userID}> will be holding ${getPronouns(getLockAwaiting(data.uuid)?.serverID, getLockAwaiting(data.uuid)?.userID, "possessiveDeterminer")} key!*`
-            }
-        }
-        else {
-            // Someone else is holding the key
-            if (interaction.user.id == getLockAwaiting(data.uuid)?.userID) {
-                // This is ourself!
-                holdtext = `*<@${getLockAwaiting(data.uuid)?.keyholderID}> will be holding your key!*`
-            }
-            else {
-                // This is someone else
-                if (interaction.user.id == getLockAwaiting(data.uuid)?.keyholderID) {
-                    // We're holding someone else's key
-                    holdtext = `*You will be holding <@${getLockAwaiting(data.uuid)?.userID}>'s key!*`
-                }
-                else {
-                    // Someone else will be holding their key
-                    holdtext = `*<@${getLockAwaiting(data.uuid)?.keyholderID}> will be holding <@${getLockAwaiting(data.uuid)?.userID}>'s key!*`
-                }
-            }
-        }
-        let userkeytext = new TextDisplayBuilder().setContent(`-# ${holdtext}`);
-        pagecomponents.push(userkeytext)
-    }
-    else {
-        let userkeytext = new TextDisplayBuilder().setContent(`-# *No keyholder currently selected!*`);
-        pagecomponents.push(userkeytext)
-    }
-    
-    // Allow Clones to Propagate Section
-    let propagatesection = new SectionBuilder()
-        .addTextDisplayComponents((text) => text.setContent(`**Allow cloned keyholders to add or remove other cloned keyholders?**`))
+    // Timer configuration
+    let timertexttitle = `### Timer Configuration`
+    let timertimeinfo = (getLockAwaiting(data.uuid)?.minTime ? (getLockAwaiting(data.uuid)?.maxTime ? `Will unlock between <t:${Math.floor((getLockAwaiting(data.uuid)?.minTime) / 1000)}:f> and <t:${Math.floor((getLockAwaiting(data.uuid)?.maxTime) / 1000)}:f>` : `Will unlock at <t:${Math.floor((getLockAwaiting(data.uuid)?.minTime) / 1000)}:f>`) : `*Timer not configured*`)
+    let timerconfigsection = new SectionBuilder()
+        .addTextDisplayComponents((text) => text.setContent(`${timertexttitle}\n\n${timertimeinfo}`))
         .setButtonAccessory((button) =>
             button
-                .setCustomId(`lockconfig_${data.uuid}_setpropagation`)
-                .setLabel(getLockAwaiting(data.uuid)?.allowclonetoclone ? "Enabled" : "Disabled")
-                .setStyle(getLockAwaiting(data.uuid)?.allowclonetoclone ? ButtonStyle.Success : ButtonStyle.Danger)
+                .setCustomId(`lockconfig_${data.uuid}_settimer`)
+                .setLabel("Set Time")
+                .setStyle(ButtonStyle.Primary)
                 .setDisabled(false)
         );
-    pagecomponents.push(propagatesection)
+    pagecomponents.push(timerconfigsection)
 
-    // Preserve Clones when transferring
-    let preservesection = new SectionBuilder()
-        .addTextDisplayComponents((text) => text.setContent(`**Preserve cloned keyholders when transferring primary keys?**`))
+    // Timer configuration
+    let timerhidesection = new SectionBuilder()
+        .addTextDisplayComponents((text) => text.setContent(`### Hide Timer While Active\n\nShould the timer be hidden while locked?`))
         .setButtonAccessory((button) =>
             button
-                .setCustomId(`lockconfig_${data.uuid}_preserveclone`)
-                .setLabel(getLockAwaiting(data.uuid)?.preserveclone ? "Enabled" : "Disabled")
-                .setStyle(getLockAwaiting(data.uuid)?.preserveclone ? ButtonStyle.Success : ButtonStyle.Danger)
+                .setCustomId(`lockconfig_${data.uuid}_hidetimer`)
+                .setLabel(getLockAwaiting(data.uuid)?.hidetimer ? "Enabled" : "Disabled")
+                .setStyle(getLockAwaiting(data.uuid)?.hidetimer ? ButtonStyle.Success : ButtonStyle.Danger)
                 .setDisabled(false)
         );
-    pagecomponents.push(preservesection)
+    pagecomponents.push(timerhidesection)
 
     // Ending description text
     let textaboutlock = new TextDisplayBuilder().setContent(`${this.desc}`);
@@ -255,19 +197,38 @@ exports.lockinteractionresponse = async function(interaction) {
     let uuid = interaction.customId.split("_")[1] // Get the UUID!
     let command = interaction.customId.split("_")[2]
 
+    process.awaitinglockinteractions[uuid] = interaction
+
     if (command == "setkeyholder") {
         let userid = interaction.values[0] ?? interaction.user.id; // Either them or us lol
         updateLockAwaiting(uuid, "keyholderID", userid);
         this.lockinteraction(interaction, { uuid: uuid }, true);
     }
-    else if (command == "setpropagation") {
-        // Flip the bit, if it exists. 
-        updateLockAwaiting(uuid, "allowclonetoclone", !getLockAwaiting(uuid)?.allowclonetoclone);
-        this.lockinteraction(interaction, { uuid: uuid }, true);
+    else if (command == "settimer") {
+        const modal = new ModalBuilder().setCustomId(`lockconfig_${uuid}_settimer`).setTitle(`Configure Timer`)
+        // Text Entry for the choice
+        const timertextentrymin = new TextInputBuilder()
+            .setCustomId("choiceinputmin")
+            .setStyle(TextInputStyle.Short)
+            .setPlaceholder("1h20m")
+            .setRequired(true);
+
+        const timertextentryminentry = new LabelBuilder().setLabel(`Minimum Time Bound`).setDescription(`Enter a string such as __h__m to be bound for:`).setTextInputComponent(timertextentrymin);
+        modal.addLabelComponents(timertextentryminentry);
+        // Text Entry for the choice
+        const timertextentrymax = new TextInputBuilder()
+            .setCustomId("choiceinputmax")
+            .setStyle(TextInputStyle.Short)
+            .setPlaceholder("(Optional) 5h48m")
+            .setRequired(false);
+
+        const timertextentrymaxentry = new LabelBuilder().setLabel(`Maximum Time Bound`).setDescription(`(Optional) If specified, will choose range:`).setTextInputComponent(timertextentrymax);
+        modal.addLabelComponents(timertextentrymaxentry);
+        interaction.showModal(modal);
     }
-    else if (command == "preserveclone") {
+    else if (command == "hidetimer") {
         // Flip the bit, if it exists. 
-        updateLockAwaiting(uuid, "preserveclone", !getLockAwaiting(uuid)?.preserveclone);
+        updateLockAwaiting(uuid, "hidetimer", !getLockAwaiting(uuid)?.hidetimer);
         this.lockinteraction(interaction, { uuid: uuid }, true);
     }
     else if (command == "leavebutton") {
@@ -295,25 +256,32 @@ exports.lockinteractionresponse = async function(interaction) {
             let keyholderID = getLockAwaiting(uuid).keyholderID
             let lockrestrainttype = getItemType(getLockAwaiting(uuid).restraintobject)
             let lockrestraint = getLockAwaiting(uuid).restraintname
+            let hiddentimer = getLockAwaiting(uuid).hidetimer
+            let locktime = Date.now();
+            if (getLockAwaiting(uuid).maxTime) {
+                updateLockAwaiting(uuid, "unlocktime", (getLockAwaiting(uuid).minTime + Math.floor((getLockAwaiting(uuid).maxTime - getLockAwaiting(uuid).minTime) * Math.random())));
+            }
+            else {
+                updateLockAwaiting(uuid, "unlocktime", getLockAwaiting(uuid).minTime);
+            }
+            locktime = getLockAwaiting(uuid).unlocktime
             let appliedlock = checkLockAwaiting(uuid);
             let targettype = (userID == interaction.user.id) ? "self" : "other"
-            let further = [(keyholderID == interaction.user.id) ? "selflock" : (keyholderID == userID) ? "otherselflock" : "otherlock"]
-            let extratext = (further[0] == "other") ? [keyholderID] : undefined;
             if (appliedlock == "NoAccess") {
-                interaction.update({ components: [new TextDisplayBuilder().setContent(`You don't have access to apply a Simple Padlock to <@${userID}>'s ${lockrestraint}.`)] })
+                interaction.update({ components: [new TextDisplayBuilder().setContent(`You don't have access to apply a Timed Padlock to <@${userID}>'s ${lockrestraint}.`)] })
             }
             else if (appliedlock == "NoRestraint") {
                 interaction.update({ components: [new TextDisplayBuilder().setContent(`<@${userID}> is not wearing a ${lockrestraint}!`)] })
             }
             else {
                 await interaction.update({ components: [new TextDisplayBuilder().setContent(`Attempting to apply lock...`)] })
-                let extratext = [keyholderID]
+                let extratext = [hiddentimer ? `for an unknown amount of time` : `until <t:${Math.floor(locktime / 1000)}:f>`, keyholderID]
                 await handleApplyLock(interaction.guildId, interaction.user, await interaction.guild.members.fetch(userID), uuid).then(
                     async (success) => {
                         await interaction.followUp({ content: `Applying lock!`, flags: MessageFlags.Ephemeral })
                         applyLockAwaiting(uuid);
-                        if (userID == interaction.user.id) { userID = keyholderID }
-                        sendLockToast({ serverID: interaction.guildId, userID: userID, actionuser: interaction.user.id, actiontype: "lock", locktype: "simplepadlock", restraintname: lockrestraint, restrainttype: lockrestrainttype, targettype: targettype, extratext: extratext, further: further })
+                        //if (userID == interaction.user.id) { userID = keyholderID }
+                        sendLockToast({ serverID: interaction.guildId, userID: userID, actionuser: interaction.user.id, actiontype: "lock", locktype: "timedpadlock", restraintname: lockrestraint, restrainttype: lockrestrainttype, targettype: targettype, extratext: extratext })
                     },
                     async (reject) => {
                         let nomessage = `<@${userID}> rejected the lock on the ${lockrestraint}.`;
@@ -340,13 +308,31 @@ exports.lockinteractionresponse = async function(interaction) {
     }
 }
 
-exports.applyPermissionModal = function (lockawaiting) {
-    let text = `🔑 **Keyholder:** Your **keyholder** will be <@${lockawaiting.keyholderID}>. Only ${getPronouns(lockawaiting.serverID, lockawaiting.keyholderID, "subject")} will be able to unlock your restraint.`
-    if (lockawaiting.allowclonetoclone) {
-        text = `${text}\n🤝 **Propagation:** If your **primary key** is cloned, cloned keyholders will be allowed to attempt to make additional clones.`
+exports.lockinteractionmodalresponse = function (interaction) {
+    let uuid = interaction.customId.split("_")[1] // We would need to get the UUID from the customId param of interaction. 
+    interaction.deferUpdate();
+    let mintime = interaction.fields.getTextInputValue("choiceinputmin") && interaction.fields.getTextInputValue("choiceinputmin").slice(0,30)
+    let maxtime = interaction.fields.getTextInputValue("choiceinputmax") && interaction.fields.getTextInputValue("choiceinputmax").slice(0,30)
+    updateLockAwaiting(uuid, "minTime", undefined);
+    if (mintime) {
+        updateLockAwaiting(uuid, "minTime", parseTime(mintime).valueOf());
+        updateLockAwaiting(uuid, "maxTime", undefined); // Clear max time in case max time wasn't specified
     }
-    if (lockawaiting.preserveclone) {
-        text = `${text}\n💾 **Preserve:** If your **primary key** is transferred, cloned keys will not be destroyed on transfer.`
+    if (maxtime) {
+        updateLockAwaiting(uuid, "maxTime", parseTime(maxtime).valueOf());
+    }
+
+    if (process.awaitinglockinteractions[uuid]) {
+        this.lockinteraction(process.awaitinglockinteractions[uuid], { uuid: uuid });
+    }
+}
+
+exports.applyPermissionModal = function (lockawaiting) {
+    let trange = lockawaiting?.maxTime ? `until sometime between <t:${Math.floor(lockawaiting?.minTime / 1000)}:f> and <t:${Math.floor(lockawaiting?.maxTime / 1000)}:f>` : `until <t:${Math.floor(lockawaiting?.unlocktime / 1000)}:f>`
+    let khtext = `🔑 **Keyholder:** Your **keyholder** will be <@${lockawaiting.keyholderID}>. Only ${getPronouns(lockawaiting.serverID, lockawaiting.keyholderID, "subject")} will be able to unlock your restraint.`
+    let text = `${khtext}\n⏱️ **Timer:** Your lock will be locked ${lockawaiting.hidetimer ? `for an unknown amount of time.` : trange}. The restraint will automatically unlock at this time.`
+    if (lockawaiting.hidetimer) {
+        text = `${text}\n🤝 **Hidden:** The timer will not be displayed to you or anyone.`
     }
     text = `${text}\n\n${getBaseLock(lockawaiting.locktype).desc}`
     return text;
@@ -355,37 +341,15 @@ exports.applyPermissionModal = function (lockawaiting) {
 // Display Lock Status
 exports.lockStatus = function (data) {
     let lock = getRestraintByUUID(data.uuid)?.restraint?.lock
-    let lockemoji = "🔒"
-    if ((lock.keyholderID == data.userID)) {
-        lockemoji = "🔑"
-    }
-    else if (lock.clonedKeyholders && lock.clonedKeyholders.includes(data.userID)) {
-        lockemoji = process.emojis.keyclone
-    }
-    return `${lockemoji} Locked by <@${lock.keyholderID}>`
+    let lockemoji = lock.hidetimer ? "❓" : "🔒"
+    let locktext = lock.hidetimer ? "Locked for an unknown time..." : `Locked until <t:${Math.floor(lock?.unlocktime / 1000)}:f>`
+    return `${lockemoji} ${locktext}`
 }
 
 // More verbose lock status info
 exports.extendedLockStatus = function (data) {
     let lock = getRestraintByUUID(data.uuid)?.restraint?.lock
-    let lockemoji = "🔒"
-    if (lock.keyholderID == data.userID) {
-        lockemoji = "🔑"
-    }
-    else if (lock.clonedKeyholders && lock.clonedKeyholders.includes(data.userID)) {
-        lockemoji = process.emojis.keyclone
-    }
-    let textreturn = `${lockemoji} Locked by <@${lock.keyholderID}>`
-    if (lock.clonedKeyholders && (lock.clonedKeyholders.length > 0)) {
-        textreturn = `${textreturn}, Cloned Keys held by `
-        for (let i = 0; i < lock.clonedKeyholders.length; i++) {
-            if (i != 0) {
-                textreturn = `${textreturn}, <@${lock.clonedKeyholders[i]}>`
-            }
-            else {
-                textreturn = `${textreturn}<@${lock.clonedKeyholders[i]}>`
-            }
-        }
-    }
-    return textreturn;
+    let lockemoji = lock.hidetimer ? "❓" : "🔒"
+    let locktext = lock.hidetimer ? "Locked for an unknown time..." : `Locked until <t:${Math.floor(lock?.unlocktime / 1000)}:f>`
+    return `${lockemoji} ${locktext}`
 }

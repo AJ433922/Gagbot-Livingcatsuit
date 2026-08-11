@@ -50,7 +50,6 @@ exports.canUnlock = (data) => {
 exports.initializeLock = function(data) {
     // Initialize it by setting the person who started this as the keyholder. 
     let lock = getLockAwaiting(data.uuid);
-    console.log(lock);
     updateLockAwaiting(data.uuid, "restraintname", getItemName(lock.restraintobject));
     updateLockAwaiting(data.uuid, "keyholderID", lock.userID);
 }
