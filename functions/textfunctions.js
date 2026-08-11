@@ -2518,6 +2518,113 @@ const texts_lock = {
                     text: `USER_TAG puts a timed padlock on each of TARGET_TAG's VAR_C1, keeping TARGET_THEIR hands completely helpless VAR_C3! The key for it is given to <@VAR_C4>.`,
                 },
             ]
+        },
+        // region orgasmlock
+        orgasmlock: {
+            "self": [
+                {
+                    only: (t) => {
+                        return (t.c2 == "chastity");
+                    },
+                    text: `USER_TAG puts a heat sensing Orgasm Lock on USER_THEIR VAR_C1. USER_THEY_CAP will need to orgasm at least VAR_C3 times for it to unlock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "chastitybra");
+                    },
+                    text: `USER_TAG puts a heat sensing Orgasm Lock on USER_THEIR VAR_C1. USER_THEY_CAP will need to orgasm at least VAR_C3 times for it to unlock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "collar");
+                    },
+                    text: `USER_TAG puts a heat sensing Orgasm Lock on USER_THEIR VAR_C1. USER_THEY_CAP will need to orgasm at least VAR_C3 times for it to unlock!`,
+                },
+                // Should not happen
+                {
+                    only: (t) => {
+                        return (t.c2 == "gag");
+                    },
+                    text: `USER_TAG puts a heat sensing Orgasm Lock on USER_THEIR VAR_C1. USER_THEY_CAP will need to orgasm at least VAR_C3 times for it to unlock!`,
+                },
+                // Should not happen
+                {
+                    only: (t) => {
+                        return (t.c2 == "mask");
+                    },
+                    text: `USER_TAG puts a heat sensing Orgasm Lock on USER_THEIR VAR_C1. USER_THEY_CAP will need to orgasm at least VAR_C3 times for it to unlock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "corset");
+                    },
+                    text: `USER_TAG puts a heat sensing Orgasm Lock on USER_THEIR VAR_C1. USER_THEY_CAP will need to orgasm at least VAR_C3 times for it to unlock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "heavy");
+                    },
+                    text: `USER_TAG puts a heat sensing Orgasm Lock on USER_THEIR VAR_C1. USER_THEY_CAP will need to orgasm at least VAR_C3 times for it to unlock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "mitten");
+                    },
+                    text: `USER_TAG puts a heat sensing Orgasm Lock on USER_THEIR VAR_C1. USER_THEY_CAP will need to orgasm at least VAR_C3 times for it to unlock!`,
+                },
+            ],
+            "other": [
+                {
+                    only: (t) => {
+                        return (t.c2 == "chastity");
+                    },
+                    text: `USER_TAG puts a heat sensing Orgasm Lock on TARGET_TAG's VAR_C1. TARGET_THEY_CAP will need to orgasm at least VAR_C3 times for it to unlock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "chastitybra");
+                    },
+                    text: `USER_TAG puts a heat sensing Orgasm Lock on TARGET_TAG's VAR_C1. TARGET_THEY_CAP will need to orgasm at least VAR_C3 times for it to unlock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "collar");
+                    },
+                    text: `USER_TAG puts a heat sensing Orgasm Lock on TARGET_TAG's VAR_C1. TARGET_THEY_CAP will need to orgasm at least VAR_C3 times for it to unlock!`,
+                },
+                // Should not happen
+                {
+                    only: (t) => {
+                        return (t.c2 == "gag");
+                    },
+                    text: `USER_TAG puts a heat sensing Orgasm Lock on TARGET_TAG's VAR_C1. TARGET_THEY_CAP will need to orgasm at least VAR_C3 times for it to unlock!`,
+                },
+                // Should not happen
+                {
+                    only: (t) => {
+                        return (t.c2 == "mask");
+                    },
+                    text: `USER_TAG puts a heat sensing Orgasm Lock on TARGET_TAG's VAR_C1. TARGET_THEY_CAP will need to orgasm at least VAR_C3 times for it to unlock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "corset");
+                    },
+                    text: `USER_TAG puts a heat sensing Orgasm Lock on TARGET_TAG's VAR_C1. TARGET_THEY_CAP will need to orgasm at least VAR_C3 times for it to unlock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "heavy");
+                    },
+                    text: `USER_TAG puts a heat sensing Orgasm Lock on TARGET_TAG's VAR_C1. TARGET_THEY_CAP will need to orgasm at least VAR_C3 times for it to unlock!`,
+                },
+                {
+                    only: (t) => {
+                        return (t.c2 == "mitten");
+                    },
+                    text: `USER_TAG puts a heat sensing Orgasm Lock on TARGET_TAG's VAR_C1. TARGET_THEY_CAP will need to orgasm at least VAR_C3 times for it to unlock!`,
+                },
+            ]
         }
     },
     unlock: {
@@ -2558,10 +2665,19 @@ const texts_lock = {
                 `After USER_TAG's intervention, the timer lock finally falls off of TARGET_TAG's VAR_C1! This should never happen, so please report it!`
             ]
         },
-        timerlock: {
+        timedpadlock: {
             "self": [
                 `The timed padlock finally falls off of USER_TAG's VAR_C1!`
             ],
+            "other": [
+                `USER_TAG removes the timer lock from TARGET_TAG's VAR_C1 early!`
+            ]
+        },
+        orgasmlock: {
+            "self": [
+                `With a thrust of USER_THEIR hips, the Orgasm Lock finally falls off of USER_TAG's VAR_C1!`
+            ],
+            // This should never happen
             "other": [
                 `USER_TAG removes the timer lock from TARGET_TAG's VAR_C1 early!`
             ]
