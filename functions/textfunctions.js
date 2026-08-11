@@ -4750,6 +4750,15 @@ const texts_uncollar = {
                         },
                     ],
 				},
+                nolock: [
+                    `USER_TAG undoes the strap on TARGET_TAG's collar before gently pulling it off of TARGET_THEIR neck.`,
+                    {
+                        only: (t) => {
+                            return t.c2.includes("Handcuff Amulet");
+                        },
+                        text: `USER_TAG carefully undoes the clasp on TARGET_TAG's amulet and presents it to TARGET_THEM to put away.`,
+                    },
+                ],
 			},
 			// Ephemeral
 			nocollar: [`TARGET_TAG is not wearing a collar!`],
