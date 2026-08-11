@@ -31,7 +31,11 @@ function assignGag(serverID, userID, gagtype = "ball", intensity = 5, origbinder
 		originalbinder = process.gags[serverID][userID][foundgag].origbinder;
 		process.gags[serverID][userID].splice(foundgag, 1);
 	}
-	process.gags[serverID][userID].push({ gagtype: gagtype, intensity: intensity, origbinder: originalbinder });
+	process.gags[serverID][userID].push({ 
+        gagtype: gagtype, 
+        intensity: intensity, 
+        origbinder: originalbinder
+    });
 
     statsAddCounter(serverID, userID, "worngags")
     
