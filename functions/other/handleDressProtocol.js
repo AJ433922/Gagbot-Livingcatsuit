@@ -296,7 +296,7 @@ function handleDressProtocol(serverID, userID, dp) {
                             let perms = {};
                             if (existingcollar) { 
                                 didswap = true 
-                                perms = { chastity: existingcollar?.chastity, heavy: existingcollar?.heavy, mitten: existingcollar?.mitten, mask: existingcollar?.mask }
+                                perms = { chastity: existingcollar?.chastity, heavy: existingcollar?.heavy, mitten: existingcollar?.mitten, mask: existingcollar?.mask, locks: existingcollar?.locks }
                             }
                             assignCollar(serverID, userID, existingcollar?.keyholder ?? dp.keyholder ?? userID, perms, existingcollar?.keyholder_only ?? true, dp.items[i]);
                             equippeditem = true;
